@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 缓存操作工具
@@ -729,5 +730,18 @@ public class CacheTool {
     public void clear() {
         Log.i(LOG_TAG + "clear", "clear cache level " + levelKey);
         CacheManager.getCacheFileUtil().clear(cacheLevel);
+    }
+
+    /**
+     * 生成一个缓存随机key
+     *
+     * @return key
+     */
+    public static String getRandomKey() {
+        // 创建缓存key
+        String key = UUID.randomUUID().toString();
+        Log.i(LOG_TAG + "getRandomKey", "cache key is " + key);
+
+        return key;
     }
 }

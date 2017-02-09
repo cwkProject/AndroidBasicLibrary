@@ -25,10 +25,6 @@ public class BitmapCacheConvert implements CacheConvert<Bitmap> {
 
     private static BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
 
-    static {
-        bitmapOptions.inPurgeable = true;
-    }
-
     @Override
     public CacheObject<Bitmap> toCacheObject(Bitmap cache) {
         if (cache != null) {

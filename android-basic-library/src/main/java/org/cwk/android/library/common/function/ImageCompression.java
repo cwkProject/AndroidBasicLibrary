@@ -10,6 +10,7 @@ import android.util.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 /**
  * 图片压缩工具
@@ -196,11 +197,12 @@ public class ImageCompression {
      * 压缩图片到指定大小
      *
      * @param image   要压缩图片
-     * @param maxSize 目标大小，单位KB
+     * @param maxSize 目标大小，单位KB，0表示不压缩
      *
      * @return 保存有图片数据的内存输出流
      */
     public static ByteArrayOutputStream compressImage(Bitmap image, int maxSize) {
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         // 初始压缩比率
         int scale = 100;
@@ -209,6 +211,11 @@ public class ImageCompression {
 
         Log.v(LOG_TAG + "compressImage", "now image size is " + os.size() / 1024 + "KB, " +
                 "compress scale is " + scale);
+
+        if (maxSize <= 0) {
+            Log.v(LOG_TAG + "compressImage", "maxSize is 0, not compress");
+            return os;
+        }
 
         // 循环压缩尝试
         while (os.size() / 1024 > maxSize && scale > 0) {
@@ -256,5 +263,59 @@ public class ImageCompression {
                 // 小于10则递减2
                 return scale - 2;
         }
+    }
+
+    /**
+     * 像素压缩
+     *
+     * @param file   图片路径
+     * @param width  目标宽
+     * @param height 目标高
+     *
+     * @return 压缩图
+     */
+    public static Bitmap resolutionBitmap(File file, int width, int height) {
+        Log.i(LOG_TAG + "resolutionBitmap", "resolution compression begin");
+        BitmapFactory.Options options = new BitmapFactory.Options();
+
+        options.inJustDecodeBounds = true;
+
+        BitmapFactory.decodeFile(file.getPath(), options);
+
+        options.inSampleSize = calculateLowSampleSize(options, width, height);
+
+        options.inJustDecodeBounds = false;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(file.getPath(), options);
+        Log.i(LOG_TAG + "resolutionBitmap", "resolution compression end");
+
+        return bitmap;
+    }
+
+    /**
+     * 像素压缩，高比率压缩，图像可能比预期更小且可能失真
+     *
+     * @param file   图片路径
+     * @param width  目标宽
+     * @param height 目标高
+     *
+     * @return 压缩图
+     */
+    public static Bitmap resolutionHighBitmap(File file, int width, int height) {
+        Log.i(LOG_TAG + "resolutionBitmap", "resolution compression begin");
+        BitmapFactory.Options options = new BitmapFactory.Options();
+
+        options.inJustDecodeBounds = true;
+
+        BitmapFactory.decodeFile(file.getPath(), options);
+
+        options.inSampleSize = calculateHighSampleSize(options, width, height);
+
+        options.inJustDecodeBounds = false;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(file.getPath(), options);
+        Log.i(LOG_TAG + "resolutionBitmap", "resolution compression end");
+
+        return bitmap;
     }
 }

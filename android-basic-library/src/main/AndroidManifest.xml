@@ -14,8 +14,6 @@
             android:theme="@android:style/Theme.Black.NoTitleBar">
         </activity>
 
-        <service android:name=".service.VersionUpdateService"/>
-
     </application>
 
 </manifest>

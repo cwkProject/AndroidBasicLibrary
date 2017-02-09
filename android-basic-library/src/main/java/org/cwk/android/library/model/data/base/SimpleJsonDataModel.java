@@ -17,31 +17,31 @@ public abstract class SimpleJsonDataModel extends JsonDataModel {
     /**
      * 服务响应的业务数据的参数默认取值标签
      */
-    protected static final String DATA_TAG = "Data";
+    protected static final String RESULT_TAG = "result";
 
     @Override
     protected boolean onRequestResult(JSONObject handleResult) throws Exception {
         // 得到执行结果
-        return handleResult.getBoolean("IsSuccess");
+        return handleResult.getBoolean("state");
     }
 
     @Override
     protected String onRequestMessage(boolean result, JSONObject handleResult) throws Exception {
-        return handleResult.getString("Message");
+        return handleResult.getString("message");
     }
 
     @Override
     protected void onRequestSuccess(JSONObject handleResult) throws Exception {
-        if (!handleResult.isNull(DATA_TAG)) {
+        if (!handleResult.isNull(RESULT_TAG)) {
             onExtractData(handleResult);
         }
     }
 
     /**
-     * 当请求成功且返回结果中存在"Data"标签的数据时被调用，
+     * 当请求成功且返回结果中存在{@link #RESULT_TAG}标签的数据时被调用，
      * 即"Data"不为null时此方法用于提取装配结果数据
      *
-     * @param jsonData 响应的完整数据结果(包含"Data")
+     * @param jsonData 响应的完整数据结果(包含{@link #RESULT_TAG})
      *
      * @throws Exception 处理过程抛出的异常
      */

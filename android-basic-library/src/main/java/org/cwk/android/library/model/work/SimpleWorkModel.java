@@ -24,7 +24,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
     /**
      * 服务响应的业务数据的参数默认取值标签
      */
-    protected static final String DATA_TAG = "Data";
+    protected static final String RESULT_TAG = "result";
 
     @Override
     protected IIntegratedDataModel<Parameters, Result, ?, ?> onCreateDataModel() {
@@ -58,10 +58,10 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
     protected abstract void onFill(Map<String, String> dataMap, Parameters... parameters);
 
     /**
-     * 当请求成功且返回结果中存在{@link #DATA_TAG}标签的数据时被调用，
-     * 即{@link #DATA_TAG}不为null时此方法用于提取装配结果数据
+     * 当请求成功且返回结果中存在{@link #RESULT_TAG}标签的数据时被调用，
+     * 即{@link #RESULT_TAG}不为null时此方法用于提取装配结果数据
      *
-     * @param jsonResult 响应的完整json对象(包含{@link #DATA_TAG})
+     * @param jsonResult 响应的完整json对象(包含{@link #RESULT_TAG})
      *
      * @return 处理后的任务传出结果
      *
