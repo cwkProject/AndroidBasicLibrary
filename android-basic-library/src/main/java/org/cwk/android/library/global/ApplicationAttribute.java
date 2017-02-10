@@ -35,12 +35,12 @@ public class ApplicationAttribute {
     /**
      * 用户登录请求地址
      */
-    private String loginUrl = ApplicationStaticValue.Url.LOGIN_URL;
+    private String loginUrl = null;
 
     /**
      * 用户注册请求地址
      */
-    private String registerUrl = ApplicationStaticValue.Url.REGISTER_URL;
+    private String registerUrl = null;
 
     /**
      * 获取应用标识
@@ -102,8 +102,8 @@ public class ApplicationAttribute {
         applicationAttribute.appCode = null;
         applicationAttribute.appToken = null;
         applicationAttribute.requestSign = false;
-        applicationAttribute.loginUrl = ApplicationStaticValue.Url.LOGIN_URL;
-        applicationAttribute.registerUrl = ApplicationStaticValue.Url.REGISTER_URL;
+        applicationAttribute.loginUrl = null;
+        applicationAttribute.registerUrl = null;
         return applicationAttribute;
     }
 

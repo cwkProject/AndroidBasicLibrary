@@ -69,12 +69,14 @@ public class MobileWebViewClient extends WebViewClient {
     }
 
     @Override
-    public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+    public void onReceivedError(WebView view, int errorCode, String description, String
+            failingUrl) {
 
         //用javascript隐藏系统定义的404页面信息
 
-        view.loadUrl("javascript:document.title=\"" + Global.getContext().getString(
-                R.string.web_view_load_error_title) + "\";document.body.innerHTML=\"" + Global.getContext().getString(R.string.web_view_load_error_body) + "\"");
+        view.loadUrl("javascript:document.title=\"" + Global.getContext().getString(R.string
+                .web_view_load_error_title) + "\";document.body.innerHTML=\"" + Global.getContext
+                ().getString(R.string.web_view_load_error_body) + "\"");
     }
 
     @Override
@@ -104,6 +106,6 @@ public class MobileWebViewClient extends WebViewClient {
         /**
          * 网页加载完毕后执行的操作
          */
-        public abstract void operate(WebView view, String url);
+        void operate(WebView view, String url);
     }
 }

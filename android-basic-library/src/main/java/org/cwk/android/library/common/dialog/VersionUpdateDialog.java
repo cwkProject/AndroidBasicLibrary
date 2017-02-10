@@ -41,7 +41,7 @@ public class VersionUpdateDialog {
                 Global.getApplicationVersion().getLatestVersionName());
 
         // 设置确认监听器
-        dialog.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -49,8 +49,7 @@ public class VersionUpdateDialog {
                     // 启动下载服务
                     context.startService(new Intent(context, VersionUpdateService.class));
                 } else {
-                    Uri uri = Uri.parse(Global.getApplicationVersion()
-                            .getLatestVersionUrl());
+                    Uri uri = Uri.parse(Global.getApplicationVersion().getLatestVersionUrl());
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     context.startActivity(intent);
                 }
@@ -59,7 +58,7 @@ public class VersionUpdateDialog {
         });
 
         // 设置取消监听器，无操作
-        dialog.setNegativeButton(R.string.button_cancel, null);
+        dialog.setNegativeButton(android.R.string.cancel, null);
 
         // 显示提示框
         dialog.show();

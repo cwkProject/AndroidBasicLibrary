@@ -47,7 +47,7 @@ public class TestHttpWithSign {
 
         @Override
         protected void onExtractData(JSONObject jsonData) throws Exception {
-            result = jsonData.getJSONArray(DATA_TAG).toString();
+            result = jsonData.getJSONArray(RESULT_TAG).toString();
         }
 
         @Override

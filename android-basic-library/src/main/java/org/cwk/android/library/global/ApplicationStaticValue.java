@@ -36,32 +36,7 @@ public interface ApplicationStaticValue {
      * 网络请求地址
      */
     interface Url {
-        /**
-         * 应用登录默认的服务请求地址
-         */
-        String LOGIN_URL = "http://218.92.115.55/M_Platform/Entrance/Login.aspx";
 
-        /**
-         * 应用注册默认的服务请求地址
-         */
-        String REGISTER_URL = "http://218.92.115.55/M_Platform/Entrance/Register.aspx";
-
-        /**
-         * 应用升级默认的get服务请求地址
-         */
-        String UPDATE_REQUEST_URL = "http://218.92.115.55/mobileplatform/Update.aspx";
-
-        /**
-         * 发送手机验证码
-         */
-        String SEND_MOBILE_VERIFICATION_CODE_URL = "http://218.92.115" + "" +
-                ".55/M_Platform/Entrance/GetMobileAuthCode.aspx";
-
-        /**
-         * 验证手机
-         */
-        String VERIFY_MOBILE_URL = "http://218.92.115.55/M_Platform/Entrance/VerifyAuthCode" +
-                ".aspx";
     }
 
     /**

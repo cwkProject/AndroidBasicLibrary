@@ -28,10 +28,12 @@ public class ToolbarInitialize {
      * @param titleId  标题资源id
      * @param center   true表示标题居中，false表示标题居左
      * @param back     true表示有返回按钮，false表示无返回按钮
+     *
+     * @return 初始化完成的Toolbar对象
      */
     @SuppressWarnings("ConstantConditions")
-    public static void initToolbar(final AppCompatActivity activity, @StringRes int titleId,
-                                   boolean center, boolean back) {
+    public static Toolbar initToolbar(final AppCompatActivity activity, @StringRes int titleId,
+                                      boolean center, boolean back) {
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
 
         activity.setSupportActionBar(toolbar);
@@ -56,6 +58,8 @@ public class ToolbarInitialize {
                 }
             });
         }
+
+        return toolbar;
     }
 
     /**
@@ -64,9 +68,11 @@ public class ToolbarInitialize {
      *
      * @param activity Activity
      * @param titleId  标题资源id
+     *
+     * @return 初始化完成的Toolbar对象
      */
-    public static void initToolbar(AppCompatActivity activity, @StringRes int titleId) {
-        initToolbar(activity, titleId, false);
+    public static Toolbar initToolbar(AppCompatActivity activity, @StringRes int titleId) {
+        return initToolbar(activity, titleId, false);
     }
 
     /**
@@ -76,9 +82,11 @@ public class ToolbarInitialize {
      * @param activity Activity
      * @param titleId  标题资源id
      * @param center   true表示标题居中，false表示标题居左
+     *
+     * @return 初始化完成的Toolbar对象
      */
-    public static void initToolbar(AppCompatActivity activity, @StringRes int titleId, boolean
+    public static Toolbar initToolbar(AppCompatActivity activity, @StringRes int titleId, boolean
             center) {
-        initToolbar(activity, titleId, center, true);
+        return initToolbar(activity, titleId, center, true);
     }
 }
