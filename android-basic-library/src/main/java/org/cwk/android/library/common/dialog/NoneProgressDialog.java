@@ -1,7 +1,4 @@
 package org.cwk.android.library.common.dialog;
-/**
- * Created by 超悟空 on 2015/1/22.
- */
 
 import org.cwk.android.library.model.dialog.IProgressDialog;
 

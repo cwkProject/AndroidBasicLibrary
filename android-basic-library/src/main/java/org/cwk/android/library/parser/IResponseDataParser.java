@@ -1,7 +1,4 @@
 package org.cwk.android.library.parser;
-/**
- * Created by 超悟空 on 2015/1/6.
- */
 
 /**
  * 服务器返回数据解析接口

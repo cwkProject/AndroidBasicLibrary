@@ -1,7 +1,4 @@
 package org.cwk.android.library.util;
-/**
- * Created by 超悟空 on 2016/9/13.
- */
 
 import android.util.Log;
 

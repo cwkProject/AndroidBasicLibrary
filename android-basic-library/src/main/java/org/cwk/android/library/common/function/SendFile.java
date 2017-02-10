@@ -1,7 +1,4 @@
 package org.cwk.android.library.common.function;
-/**
- * Created by 超悟空 on 2015/6/4.
- */
 
 import android.content.Context;
 import android.content.Intent;

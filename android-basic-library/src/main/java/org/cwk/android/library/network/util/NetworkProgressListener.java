@@ -1,7 +1,4 @@
 package org.cwk.android.library.network.util;
-/**
- * Created by 超悟空 on 2015/10/29.
- */
 
 /**
  * 网络请求执行进度监听器

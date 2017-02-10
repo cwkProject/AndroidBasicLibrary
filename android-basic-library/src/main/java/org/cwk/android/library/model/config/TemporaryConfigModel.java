@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.config;
-/**
- * Created by 超悟空 on 2015/1/27.
- */
 
 import android.util.Log;
 

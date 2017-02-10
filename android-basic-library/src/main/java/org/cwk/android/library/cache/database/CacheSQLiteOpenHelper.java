@@ -1,7 +1,4 @@
 package org.cwk.android.library.cache.database;
-/**
- * Created by 超悟空 on 2015/11/10.
- */
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

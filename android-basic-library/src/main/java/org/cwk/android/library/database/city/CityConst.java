@@ -1,7 +1,4 @@
 package org.cwk.android.library.database.city;
-/**
- * Created by 超悟空 on 2015/7/16.
- */
 
 /**
  * 城市选择数据库常量

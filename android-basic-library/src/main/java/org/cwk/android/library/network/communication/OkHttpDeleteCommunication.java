@@ -1,7 +1,4 @@
 package org.cwk.android.library.network.communication;
-/**
- * Created by 超悟空 on 2016/8/3.
- */
 
 import android.util.Log;
 

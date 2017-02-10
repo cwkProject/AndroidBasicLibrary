@@ -1,7 +1,4 @@
 package org.cwk.android.library.cache.database;
-/**
- * Created by 超悟空 on 2015/11/10.
- */
 
 /**
  * 缓存文件信息索引数据库相关常量

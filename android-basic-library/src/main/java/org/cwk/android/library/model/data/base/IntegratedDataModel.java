@@ -1,8 +1,4 @@
 package org.cwk.android.library.model.data.base;
-/**
- * Created by 超悟空 on 2016/7/23.
- */
-
 
 import org.cwk.android.library.model.data.IIntegratedDataModel;
 

@@ -1,7 +1,4 @@
 package org.cwk.android.library.cache.util;
-/**
- * Created by 超悟空 on 2015/11/16.
- */
 
 import android.content.Context;
 import android.support.annotation.Nullable;

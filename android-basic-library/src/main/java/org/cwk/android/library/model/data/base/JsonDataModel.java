@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.data.base;
-/**
- * Created by 超悟空 on 2015/7/2.
- */
 
 import org.json.JSONObject;
 import org.cwk.android.library.global.ApplicationAttribute;

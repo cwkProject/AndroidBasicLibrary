@@ -1,7 +1,4 @@
 package org.cwk.android.library.common.function;
-/**
- * Created by 超悟空 on 2016/7/29.
- */
 
 import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
@@ -40,7 +37,7 @@ public class ToolbarInitialize {
         activity.setTitle(titleId);
 
         if (center) {
-            TextView title = (TextView) activity.findViewById(R.id.toolbar_title);
+            TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
 
             if (title != null) {
                 title.setVisibility(View.VISIBLE);

@@ -1,7 +1,4 @@
 package org.cwk.android.library.network.util;
-/**
- * Created by 超悟空 on 2015/11/30.
- */
 
 /**
  * 可设置网络请求执行超时时间的工具接口

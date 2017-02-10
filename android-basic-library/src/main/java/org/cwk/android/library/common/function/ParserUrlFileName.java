@@ -1,7 +1,4 @@
 package org.cwk.android.library.common.function;
-/**
- * Created by 超悟空 on 2015/7/3.
- */
 
 import android.util.Log;
 

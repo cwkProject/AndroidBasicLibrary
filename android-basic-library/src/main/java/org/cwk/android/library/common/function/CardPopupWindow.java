@@ -1,7 +1,4 @@
 package org.cwk.android.library.common.function;
-/**
- * Created by 超悟空 on 2016/7/29.
- */
 
 import android.content.Context;
 import android.graphics.Color;

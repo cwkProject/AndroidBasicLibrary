@@ -1,9 +1,5 @@
 package org.cwk.android.library.global;
 
-/**
- * Created by 超悟空 on 2015/6/11.
- */
-
 import android.content.Context;
 
 import org.cwk.android.library.model.config.PersistenceConfigModel;

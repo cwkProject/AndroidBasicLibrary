@@ -1,7 +1,4 @@
 package org.cwk.android.library.parser;
-/**
- * Created by 超悟空 on 2015/9/15.
- */
 
 import android.util.Log;
 

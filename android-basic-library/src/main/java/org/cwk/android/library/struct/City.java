@@ -1,7 +1,4 @@
 package org.cwk.android.library.struct;
-/**
- * Created by 超悟空 on 2016/3/4.
- */
 
 /**
  * 城市数据结构

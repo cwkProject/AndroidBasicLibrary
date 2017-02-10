@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.data;
-/**
- * Created by 超悟空 on 2016/7/23.
- */
 
 import java.util.Map;
 

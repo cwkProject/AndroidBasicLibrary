@@ -1,7 +1,4 @@
 package org.cwk.android.library.network.factory;
-/**
- * Created by 超悟空 on 2015/4/18.
- */
 
 /**
  * 网络工具类型枚举

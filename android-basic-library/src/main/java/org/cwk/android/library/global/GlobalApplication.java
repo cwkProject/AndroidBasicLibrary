@@ -1,7 +1,4 @@
 package org.cwk.android.library.global;
-/**
- * Created by 超悟空 on 2016/7/21.
- */
 
 import android.app.Application;
 

@@ -1,7 +1,4 @@
 package org.cwk.android.library.cache.util;
-/**
- * Created by 超悟空 on 2015/11/23.
- */
 
 /**
  * 临时缓存对象

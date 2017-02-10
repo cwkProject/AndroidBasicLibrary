@@ -1,8 +1,4 @@
 package org.cwk.android.library.network.util;
-/**
- * Created by 超悟空 on 2015/11/27.
- */
-
 
 import java.io.IOException;
 

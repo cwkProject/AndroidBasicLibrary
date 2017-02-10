@@ -1,7 +1,4 @@
 package org.cwk.android.library.service;
-/**
- * Created by 超悟空 on 2015/10/27.
- */
 
 import android.annotation.TargetApi;
 import android.app.DownloadManager;

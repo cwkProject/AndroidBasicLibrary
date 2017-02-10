@@ -1,7 +1,4 @@
 package org.cwk.android.library.global;
-/**
- * Created by 超悟空 on 2015/4/23.
- */
 
 import org.cwk.android.library.model.config.TemporaryConfigModel;
 

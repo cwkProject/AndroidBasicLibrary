@@ -1,7 +1,4 @@
 package org.cwk.android.library.util;
-/**
- * Created by 超悟空 on 2016/3/19.
- */
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.data.base;
-/**
- * Created by 超悟空 on 2015/12/28.
- */
 
 import org.json.JSONObject;
 

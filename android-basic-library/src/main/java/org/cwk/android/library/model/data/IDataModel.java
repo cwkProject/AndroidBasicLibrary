@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.data;
-/**
- * Created by 超悟空 on 2015/1/6.
- */
 
 /**
  * 基础数据模型接口，用于存放功能组件的各种数据，提供必要的数据处理功能

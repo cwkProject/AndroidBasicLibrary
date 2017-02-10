@@ -1,6 +1,5 @@
 package org.cwk.android.library.common.webview;
 
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;

@@ -1,7 +1,4 @@
 package org.cwk.android.library.global;
-/**
- * Created by 超悟空 on 2015/4/23.
- */
 
 /**
  * 存放类库使用的全局静态常量

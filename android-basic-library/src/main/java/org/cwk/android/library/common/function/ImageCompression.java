@@ -1,7 +1,4 @@
 package org.cwk.android.library.common.function;
-/**
- * Created by 超悟空 on 2015/11/30.
- */
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
