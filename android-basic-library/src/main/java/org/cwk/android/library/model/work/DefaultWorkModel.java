@@ -2,6 +2,12 @@ package org.cwk.android.library.model.work;
 
 import android.util.Log;
 
+import org.cwk.android.library.annotation.Delete;
+import org.cwk.android.library.annotation.Download;
+import org.cwk.android.library.annotation.Get;
+import org.cwk.android.library.annotation.Post;
+import org.cwk.android.library.annotation.Put;
+import org.cwk.android.library.annotation.Upload;
 import org.cwk.android.library.global.Global;
 import org.cwk.android.library.model.data.IDefaultDataModel;
 import org.cwk.android.library.model.operate.AsyncExecute;
@@ -14,6 +20,8 @@ import org.cwk.android.library.network.util.AsyncCommunication;
 import org.cwk.android.library.network.util.NetworkCallback;
 import org.cwk.android.library.network.util.NetworkProgressListener;
 import org.cwk.android.library.network.util.SyncCommunication;
+
+import java.lang.reflect.Method;
 
 /**
  * 默认实现的网络任务模型基类<br>
@@ -393,7 +401,8 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     }
 
     /**
-     * 设置任务请求地址
+     * 设置任务请求地址，同时标记请求协议，默认使用http get发送请求<br>
+     * 或使用{@link NetworkType}中支持的其他请求类型，使用时标记同名注解
      *
      * @return 地址字符串
      */
@@ -401,12 +410,36 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
     /**
      * 设置网络请求类型<br>
-     * 用于{@link CommunicationBuilder#CommunicationBuilder(NetworkType)}生产网络请求实例，
+     * 用于{@link CommunicationBuilder#CommunicationBuilder(int)}生产网络请求实例，
      * 默认为{@link NetworkType#GET}
      *
      * @return 网络请求类型枚举
      */
-    protected NetworkType onNetworkType() {
+    private int onNetworkType() {
+        try {
+            Method method = this.getClass().getDeclaredMethod("onTaskUri");
+            if (method.isAnnotationPresent(Get.class)) {
+                return NetworkType.GET;
+            }
+            if (method.isAnnotationPresent(Post.class)) {
+                return NetworkType.POST;
+            }
+            if (method.isAnnotationPresent(Download.class)) {
+                return NetworkType.DOWNLOAD;
+            }
+            if (method.isAnnotationPresent(Upload.class)) {
+                return NetworkType.UPLOAD;
+            }
+            if (method.isAnnotationPresent(Put.class)) {
+                return NetworkType.PUT;
+            }
+            if (method.isAnnotationPresent(Delete.class)) {
+                return NetworkType.DELETE;
+            }
+        } catch (NoSuchMethodException e) {
+            Log.e(LOG_TAG + "onNetworkType", "no onTaskUri method", e);
+        }
+
         return NetworkType.GET;
     }
 

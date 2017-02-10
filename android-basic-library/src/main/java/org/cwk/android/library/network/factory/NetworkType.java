@@ -7,30 +7,35 @@ package org.cwk.android.library.network.factory;
  * @version 2.0 2016/8/4
  * @since 1.0
  */
-public enum NetworkType {
+public interface NetworkType {
 
     /**
      * http get类型请求
      */
-    GET,
+    int GET = 0;
+
     /**
      * http post类型的请求
      */
-    POST,
+    int POST = 1;
+
     /**
      * 下载
      */
-    DOWNLOAD,
+    int DOWNLOAD = 2;
+
     /**
      * 上传
      */
-    UPLOAD,
+    int UPLOAD = 3;
+
     /**
      * http delete类型的请求
      */
-    DELETE,
+    int DELETE = 4;
+
     /**
      * http put类型的请求
      */
-    PUT
+    int PUT = 5;
 }

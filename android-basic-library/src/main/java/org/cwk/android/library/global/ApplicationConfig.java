@@ -2,8 +2,8 @@ package org.cwk.android.library.global;
 
 import android.content.Context;
 
+import org.cwk.android.library.annotation.Encrypt;
 import org.cwk.android.library.model.config.PersistenceConfigModel;
-import org.cwk.android.library.util.PreferencesUtil;
 
 /**
  * 持久化的全局配置对象
@@ -22,7 +22,7 @@ public class ApplicationConfig extends PersistenceConfigModel {
     /**
      * 密码
      */
-    @PreferencesUtil.Encrypt
+    @Encrypt
     private String password = null;
 
     /**

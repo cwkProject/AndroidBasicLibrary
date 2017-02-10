@@ -3,8 +3,8 @@ package org.cwk.android.library.model.work;
  * Created by 超悟空 on 2015/11/30.
  */
 
+import org.cwk.android.library.annotation.Download;
 import org.cwk.android.library.model.data.base.DownloadDataModel;
-import org.cwk.android.library.network.factory.NetworkType;
 
 /**
  * 默认实现的网络下载任务模型基类<br>
@@ -22,6 +22,7 @@ public abstract class DownloadWorkModel<Parameters, Result, DataModelType extend
         DownloadDataModel> extends DefaultWorkModel<Parameters, Result, DataModelType> {
 
     @Override
+    @Download
     protected final String onTaskUri() {
         return onTaskUri(getParameters());
     }
@@ -35,11 +36,6 @@ public abstract class DownloadWorkModel<Parameters, Result, DataModelType extend
      */
     @SuppressWarnings("unchecked")
     protected abstract String onTaskUri(Parameters... parameters);
-
-    @Override
-    protected NetworkType onNetworkType() {
-        return NetworkType.DOWNLOAD;
-    }
 
     @Override
     protected String onParseSuccessSetMessage(boolean state, DataModelType data) {

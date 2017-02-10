@@ -11,6 +11,8 @@ import org.cwk.android.library.network.util.NetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
 import org.cwk.android.library.network.util.NetworkTimeout;
 
+import static org.cwk.android.library.network.factory.NetworkType.*;
+
 /**
  * 通讯对象构造器
  *
@@ -23,7 +25,7 @@ public class CommunicationBuilder {
     /**
      * 网络工具请求类型
      */
-    private NetworkType networkType = NetworkType.GET;
+    private int networkType = GET;
 
     /**
      * 进度监听器，仅上传和下载时有效
@@ -66,7 +68,7 @@ public class CommunicationBuilder {
      *
      * @param networkType 网络请求类型
      */
-    public CommunicationBuilder(NetworkType networkType) {
+    public CommunicationBuilder(int networkType) {
         this.networkType = networkType;
     }
 

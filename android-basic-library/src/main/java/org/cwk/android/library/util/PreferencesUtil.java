@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.cwk.android.library.annotation.Encrypt;
+
 import java.lang.reflect.Field;
 
 /**
@@ -24,14 +22,6 @@ public class PreferencesUtil {
      * 日志标签前缀
      */
     private static final String LOG_TAG = "PreferencesUtil.";
-
-    /**
-     * 标记需要进行加密的成员属性，需要设置加解密器{@link #setDataCipher(DataCipher)}
-     */
-    @Target(ElementType.FIELD)
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface Encrypt {
-    }
 
     /**
      * 成员属性加解密工具

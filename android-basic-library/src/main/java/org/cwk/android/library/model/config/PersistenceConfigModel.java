@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.CallSuper;
 import android.util.Log;
 
+import org.cwk.android.library.annotation.Encrypt;
 import org.cwk.android.library.util.DesDataCipher;
 import org.cwk.android.library.util.PreferencesUtil;
 
@@ -90,7 +91,7 @@ public abstract class PersistenceConfigModel {
 
     /**
      * 表示是否需要加密，
-     * 在需要加密的字段上使用注解{@link PreferencesUtil.Encrypt}标记，
+     * 在需要加密的字段上使用注解{@link Encrypt}标记，
      * 且需要创建加密器，通过重写{@link #onCreateDataCipher()}可以覆盖默认的加密器实现
      *
      * @return true表示存在加密字段，默认不加密
