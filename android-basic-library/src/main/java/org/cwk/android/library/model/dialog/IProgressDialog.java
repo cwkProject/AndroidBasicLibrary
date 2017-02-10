@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.dialog;
-/**
- * Created by 超悟空 on 2015/1/22.
- */
 
 /**
  * 进度条设置接口
@@ -19,7 +16,7 @@ public interface IProgressDialog<SelfType> {
      *
      * @param progress 当前进度，最大值100
      */
-    public void setProgress(int progress);
+    void setProgress(int progress);
 
     /**
      * 设置超时时间，用于在超时情况下关闭进度条，默认不指定超时时间
@@ -28,5 +25,5 @@ public interface IProgressDialog<SelfType> {
      *
      * @return 设置参数后的当前对象
      */
-    public SelfType setTimeout(int timeout);
+    SelfType setTimeout(int timeout);
 }

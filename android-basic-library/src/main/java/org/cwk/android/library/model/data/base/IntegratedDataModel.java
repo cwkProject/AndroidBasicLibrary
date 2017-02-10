@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public abstract class IntegratedDataModel<Parameters, Result, Handle, Response, Value> extends
         StandardDataModel<Handle, Response, Value> implements IIntegratedDataModel<Parameters,
-                Result, Response, Map<String, Value>> {
+        Result, Response, Map<String, Value>> {
 
     /**
      * 任务传入的参数

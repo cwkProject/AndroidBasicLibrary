@@ -95,7 +95,8 @@ public final class CameraConfigurationManager {
         Camera.Parameters parameters = camera.getParameters();
 
         if (parameters == null) {
-            Log.w(TAG, "Device error: no camera parameters are available. Proceeding without " + "configuration.");
+            Log.w(TAG, "Device error: no camera parameters are available. Proceeding without " +
+                    "configuration.");
             return;
         }
 
@@ -111,10 +112,10 @@ public final class CameraConfigurationManager {
         Camera.Parameters afterParameters = camera.getParameters();
         Camera.Size afterSize = afterParameters.getPreviewSize();
         if (afterSize != null && (cameraResolution.x != afterSize.width || cameraResolution.y !=
-				afterSize.height)) {
+                afterSize.height)) {
             Log.w(TAG, "Camera said it supported preview size " + cameraResolution.x + 'x' +
-					cameraResolution.y + ", but after setting it, preview size is " + afterSize
-					.width + 'x' + afterSize.height);
+                    cameraResolution.y + ", but after setting it, preview size is " + afterSize
+                    .width + 'x' + afterSize.height);
             cameraResolution.x = afterSize.width;
             cameraResolution.y = afterSize.height;
         }
@@ -168,7 +169,7 @@ public final class CameraConfigurationManager {
             StringBuilder previewSizesString = new StringBuilder();
             for (Camera.Size supportedPreviewSize : supportedPreviewSizes) {
                 previewSizesString.append(supportedPreviewSize.width).append('x').append
-						(supportedPreviewSize.height).append(' ');
+                        (supportedPreviewSize.height).append(' ');
             }
             Log.i(TAG, "Supported preview sizes: " + previewSizesString);
         }
@@ -198,7 +199,7 @@ public final class CameraConfigurationManager {
             }
 
             if (maybeFlippedWidth == screenResolution.x && maybeFlippedHeight == screenResolution
-					.y) {
+                    .y) {
                 Point exactPoint = new Point(realWidth, realHeight);
                 Log.v(TAG, "Found preview size exactly matching screen size: " + exactPoint);
                 return exactPoint;

@@ -5,6 +5,7 @@ package org.cwk.android.library.common.dialog;
 
 
 import android.content.Context;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 
 
@@ -41,7 +42,7 @@ public class SimpleDialog {
      * @param context   上下文
      * @param messageId 显示消息的id
      */
-    public static void showDialog(Context context, int messageId) {
+    public static void showDialog(Context context, @StringRes int messageId) {
         // 提示框
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 

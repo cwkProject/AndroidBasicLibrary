@@ -68,7 +68,8 @@ public abstract class BaseIncludeWebFragment extends Fragment implements BackHan
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         // 获取根布局
         View rootView = inflater.inflate(initRootViewLayoutID(), container, false);
         // 获取WebView控件

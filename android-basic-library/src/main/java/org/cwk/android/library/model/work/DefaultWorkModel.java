@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.work;
-/**
- * Created by 超悟空 on 2015/7/2.
- */
 
 import android.util.Log;
 

@@ -74,7 +74,8 @@ public class InactivityTimer {
         if (registered) {
             Log.w(TAG, "PowerStatusReceiver was already registered?");
         } else {
-            activity.registerReceiver(powerStatusReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            activity.registerReceiver(powerStatusReceiver, new IntentFilter(Intent
+                    .ACTION_BATTERY_CHANGED));
             registered = true;
         }
         onActivity();
