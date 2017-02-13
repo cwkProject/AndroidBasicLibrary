@@ -37,11 +37,11 @@ public class ImageCompression {
             reqWidth, int reqHeight) {
         // 如果有0值则仅参考另一项
         if (reqHeight <= 0) {
-            return calculateWidthSampleSize(options, reqWidth);
+            return calculateWidthSampleSize(options, reqWidth, false);
         }
 
         if (reqWidth <= 0) {
-            return calculateHeightSampleSize(options, reqHeight);
+            return calculateHeightSampleSize(options, reqHeight, false);
         }
 
         // 原始宽高
@@ -91,11 +91,11 @@ public class ImageCompression {
 
         // 如果有0值则仅参考另一项
         if (reqHeight <= 0) {
-            return calculateWidthSampleSize(options, reqWidth);
+            return calculateWidthSampleSize(options, reqWidth, true);
         }
 
         if (reqWidth <= 0) {
-            return calculateHeightSampleSize(options, reqHeight);
+            return calculateHeightSampleSize(options, reqHeight, true);
         }
 
         // 原始宽高
@@ -136,11 +136,12 @@ public class ImageCompression {
      *
      * @param options   空加载的图片属性
      * @param reqHeight 期望高度
+     * @param high      是否高压，true表示高压
      *
      * @return 1表示不缩放，大于1为计算后的缩放值
      */
     public static int calculateHeightSampleSize(@NotNull BitmapFactory.Options options, int
-            reqHeight) {
+            reqHeight, boolean high) {
         // 原始高
         final int height = options.outHeight;
 
@@ -152,7 +153,11 @@ public class ImageCompression {
 
         // 计算高缩放
         if (reqHeight > 0 && height > reqHeight) {
-            heightRatio = Math.round((float) height / (float) reqHeight);
+            if (high) {
+                heightRatio = (int) Math.ceil((float) height / (float) reqHeight);
+            } else {
+                heightRatio = Math.round((float) height / (float) reqHeight);
+            }
         }
 
         Log.v(LOG_TAG + "calculateHeightSampleSize", "sampleSize is " + heightRatio);
@@ -166,11 +171,12 @@ public class ImageCompression {
      *
      * @param options  空加载的图片属性
      * @param reqWidth 期望宽度
+     * @param high     是否高压，true表示高压
      *
      * @return 1表示不缩放，大于1为计算后的缩放值
      */
     public static int calculateWidthSampleSize(@NotNull BitmapFactory.Options options, int
-            reqWidth) {
+            reqWidth, boolean high) {
         // 原始宽
         final int width = options.outWidth;
 
@@ -182,7 +188,11 @@ public class ImageCompression {
 
         // 计算宽缩放
         if (reqWidth > 0 && width > reqWidth) {
-            widthRatio = Math.round((float) width / (float) reqWidth);
+            if (high) {
+                widthRatio = (int) Math.ceil((float) width / (float) reqWidth);
+            } else {
+                widthRatio = Math.round((float) width / (float) reqWidth);
+            }
         }
 
         Log.v(LOG_TAG + "calculateWidthSampleSize", "sampleSize is " + widthRatio);
@@ -201,8 +211,8 @@ public class ImageCompression {
     public static ByteArrayOutputStream compressImage(Bitmap image, int maxSize) {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        // 初始压缩比率
-        int scale = 100;
+        // 初始压缩比率，从70%开始
+        int scale = 70;
         // 第一次压缩
         image.compress(Bitmap.CompressFormat.JPEG, scale, os);
 
@@ -215,7 +225,7 @@ public class ImageCompression {
         }
 
         // 循环压缩尝试
-        while (os.size() / 1024 > maxSize && scale > 0) {
+        while (os.size() / 1024 > maxSize && scale > 10) {
             // 清除流
             os.reset();
 
@@ -241,11 +251,8 @@ public class ImageCompression {
      */
     private static int decCompressScale(int scale) {
         switch (scale) {
-            case 100:
-                // 首次压缩递减30
-                return 70;
             case 70:
-                // 第二次压缩递减20
+                // 首次压缩递减20
                 return 50;
             case 50:
             case 40:
@@ -254,11 +261,9 @@ public class ImageCompression {
                 return scale - 10;
             case 20:
             case 15:
+            default:
                 // 之后递减5
                 return scale - 5;
-            default:
-                // 小于10则递减2
-                return scale - 2;
         }
     }
 

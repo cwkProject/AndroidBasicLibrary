@@ -112,7 +112,7 @@ public class ImageUtil {
         // 创建缩略图
         Log.i(LOG_TAG + "createThumbnail", "thumbnail begin");
 
-        Bitmap bitmap = ImageCompression.resolutionBitmap(file, width, height);
+        Bitmap bitmap = ImageCompression.resolutionHighBitmap(file, width, height);
 
         if (bitmap != null) {
             cacheTool.put(THUMBNAIL_CACHE_PRE + key, bitmap);
