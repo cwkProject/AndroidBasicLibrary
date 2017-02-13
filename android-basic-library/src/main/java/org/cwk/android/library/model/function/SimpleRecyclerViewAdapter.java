@@ -12,6 +12,9 @@ import java.util.List;
 /**
  * 增加基础功能实现的{@link android.support.v7.widget.RecyclerView.Adapter}实现
  *
+ * @param <SourceType>     数据源类型
+ * @param <ViewHolderType> Item控件管理器类型
+ *
  * @author 超悟空
  * @version 1.0 2017/2/10
  * @since 1.0 2017/2/10
