@@ -23,8 +23,6 @@ public class BitmapCacheConvert implements CacheConvert<Bitmap> {
      */
     private static final String LOG_TAG = "BitmapCacheConvert.";
 
-    private static BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-
     @Override
     public CacheObject<Bitmap> toCacheObject(Bitmap cache) {
         if (cache != null) {
@@ -57,7 +55,7 @@ public class BitmapCacheConvert implements CacheConvert<Bitmap> {
             return null;
         }
 
-        return BitmapFactory.decodeFile(path, bitmapOptions);
+        return BitmapFactory.decodeFile(path);
     }
 
     @Override
