@@ -195,12 +195,12 @@ public class ImageUtil {
             fileOutputStream.close();
 
         } catch (IOException e) {
-            key = null;
+            newKey = null;
             Log.e(LOG_TAG + "qualityBitmap", "IOException is " + e.getMessage());
         }
 
         Log.i(LOG_TAG + "qualityBitmap", "quality compression end");
-        return key;
+        return newKey;
     }
 
     /**
