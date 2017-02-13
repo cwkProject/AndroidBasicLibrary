@@ -211,8 +211,8 @@ public class ImageCompression {
     public static ByteArrayOutputStream compressImage(Bitmap image, int maxSize) {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        // 初始压缩比率，从70%开始
-        int scale = 70;
+        // 初始压缩比率，从80%开始
+        int scale = 80;
         // 第一次压缩
         image.compress(Bitmap.CompressFormat.JPEG, scale, os);
 
@@ -251,9 +251,9 @@ public class ImageCompression {
      */
     private static int decCompressScale(int scale) {
         switch (scale) {
-            case 70:
+            case 80:
                 // 首次压缩递减20
-                return 50;
+                return 60;
             case 50:
             case 40:
             case 30:

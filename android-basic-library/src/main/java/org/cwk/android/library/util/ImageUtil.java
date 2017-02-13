@@ -112,6 +112,62 @@ public class ImageUtil {
         // 创建缩略图
         Log.i(LOG_TAG + "createThumbnail", "thumbnail begin");
 
+        Bitmap bitmap = ImageCompression.resolutionBitmap(file, width, height);
+
+        if (bitmap != null) {
+            cacheTool.put(THUMBNAIL_CACHE_PRE + key, bitmap);
+            Log.i(LOG_TAG + "createThumbnail", "thumbnail end");
+            return THUMBNAIL_CACHE_PRE + key;
+        } else {
+            Log.d(LOG_TAG + "createThumbnail", "thumbnail failed");
+            return null;
+        }
+    }
+
+    /**
+     * 创建缩略图，异步方法
+     *
+     * @param file      原图文件
+     * @param cacheTool 存放缩略图的缓存工具
+     * @param key       要存放的缓存key（不含前缀）
+     * @param width     缩略图宽
+     * @param height    缩略图高
+     * @param listener  处理完成监听器
+     */
+    public static void createHighThumbnail(@NotNull final File file, @NotNull final CacheTool
+            cacheTool, @NotNull final String key, final int width, final int height, @Nullable
+    final ProcessFinishListener listener) {
+
+        taskExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                if (listener != null) {
+                    listener.finish(cacheTool, createHighThumbnail(file, cacheTool, key, width,
+                            height));
+                }
+            }
+        });
+    }
+
+    /**
+     * 创建高压缩略图，同步方法
+     *
+     * @param file      原图文件
+     * @param cacheTool 存放缩略图的缓存工具
+     * @param key       要存放的缓存key（不含前缀）
+     * @param width     缩略图宽
+     * @param height    缩略图高
+     *
+     * @return 处理后图片的缓存key(已包含前缀)，处理失败则返回null
+     */
+    public static String createHighThumbnail(@NotNull File file, @NotNull CacheTool cacheTool,
+                                             @NotNull String key, int width, int height) {
+        Log.i(LOG_TAG + "createThumbnail", "image path:" + file.getPath() + " target cache key" +
+                key);
+
+        // 创建缩略图
+        Log.i(LOG_TAG + "createThumbnail", "thumbnail begin");
+
         Bitmap bitmap = ImageCompression.resolutionHighBitmap(file, width, height);
 
         if (bitmap != null) {
@@ -351,6 +407,30 @@ public class ImageUtil {
      */
     public String createThumbnail(@NotNull File file, @NotNull String key) {
         return createThumbnail(file, cacheTool, key, thumbnailWidth, thumbnailHeight);
+    }
+
+    /**
+     * 创建高压缩略图，异步方法
+     *
+     * @param file     原图文件
+     * @param key      要存放的缓存key（不含前缀）
+     * @param listener 处理完成监听器
+     */
+    public void createHighThumbnail(@NotNull File file, @NotNull String key, @Nullable final
+    ProcessFinishListener listener) {
+        createHighThumbnail(file, cacheTool, key, thumbnailWidth, thumbnailHeight, listener);
+    }
+
+    /**
+     * 创建高压缩略图，同步方法
+     *
+     * @param file 原图文件
+     * @param key  要存放的缓存key（不含前缀）
+     *
+     * @return 处理后图片的缓存key(已包含前缀)，处理失败则返回null
+     */
+    public String createHighThumbnail(@NotNull File file, @NotNull String key) {
+        return createHighThumbnail(file, cacheTool, key, thumbnailWidth, thumbnailHeight);
     }
 
     /**
