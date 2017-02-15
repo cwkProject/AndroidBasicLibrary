@@ -385,10 +385,12 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      *
      * @param parameters 任务传入参数
      *
-     * @return 检测结果，合法返回true，非法返回false
+     * @return 检测结果，合法返回true，非法返回false，默认为true
      */
     @SuppressWarnings("unchecked")
-    protected abstract boolean onCheckParameters(Parameters... parameters);
+    protected boolean onCheckParameters(Parameters... parameters) {
+        return true;
+    }
 
     /**
      * 参数检测不合法时调用，

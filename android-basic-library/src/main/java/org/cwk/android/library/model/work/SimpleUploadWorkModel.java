@@ -1,25 +1,23 @@
 package org.cwk.android.library.model.work;
-/**
- * Created by 超悟空 on 2016/7/23.
- */
 
-
-import org.json.JSONObject;
+import org.cwk.android.library.annotation.Upload;
 import org.cwk.android.library.model.data.IIntegratedDataModel;
 import org.cwk.android.library.model.data.base.SimpleDataModel;
+import org.cwk.android.library.model.data.base.SimpleUploadDataModel;
+import org.json.JSONObject;
 
 import java.util.Map;
 
 /**
- * 极简的一体化集成式网络任务模型基类，
- * 内置{@link SimpleDataModel}的默认实现
+ * 极简的一体化集成式网络下载任务模型基类，
+ * 内置{@link org.cwk.android.library.model.data.base.SimpleUploadDataModel}的默认实现
  *
  * @author 超悟空
- * @version 1.0 2016/7/23
- * @since 1.0
- */
-public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWorkModel<Parameters,
-        Result> {
+ * @version 1.0 2017/2/15
+ * @since 1.0 2017/2/15
+ **/
+public abstract class SimpleUploadWorkModel<Parameters, Result> extends
+        IntegratedWorkModel<Parameters, Result> {
 
     /**
      * 服务响应的业务数据的参数默认取值标签
@@ -28,7 +26,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
 
     @Override
     protected IIntegratedDataModel<Parameters, Result, ?, ?> onCreateDataModel() {
-        return new SimpleDataModel<Parameters, Result>() {
+        return new SimpleUploadDataModel<Parameters, Result>() {
             @Override
             protected Result onExtractData(JSONObject jsonResult) throws Exception {
                 return onSuccessExtract(jsonResult);
@@ -41,12 +39,28 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
 
             @SafeVarargs
             @Override
-            protected final void onFillRequestParameters(Map<String, String> dataMap,
+            protected final void onFillRequestParameters(Map<String, Object> dataMap,
                                                          Parameters... parameters) {
                 onFill(dataMap, parameters);
             }
         };
     }
+
+    @Override
+    @Upload
+    protected final String onTaskUri() {
+        return onTaskUri(getParameters());
+    }
+
+    /**
+     * 设置文件上传地址
+     *
+     * @param parameters 任务传入参数，即{@link #onCheckParameters(Object[])}检测通过后的参数列表
+     *
+     * @return 上传地址
+     */
+    @SuppressWarnings("unchecked")
+    protected abstract String onTaskUri(Parameters... parameters);
 
     /**
      * 填充服务请求所需的参数
@@ -55,7 +69,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
      * @param parameters 任务传入的参数
      */
     @SuppressWarnings("unchecked")
-    protected abstract void onFill(Map<String, String> dataMap, Parameters... parameters);
+    protected abstract void onFill(Map<String, Object> dataMap, Parameters... parameters);
 
     /**
      * 当请求成功且返回结果中存在{@link #RESULT_TAG}标签的数据时被调用，

@@ -74,12 +74,6 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    protected boolean onCheckParameters(Parameters... parameters) {
-        return true;
-    }
-
     @Override
     @Download
     protected final String onTaskUri() {
