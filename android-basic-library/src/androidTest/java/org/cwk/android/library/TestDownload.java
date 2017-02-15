@@ -10,7 +10,7 @@ import org.cwk.android.library.network.communication.Communication;
 import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.cwk.android.library.network.factory.NetworkType;
 import org.cwk.android.library.network.util.NetworkCallback;
-import org.cwk.android.library.network.util.NetworkProgressListener;
+import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
 import org.junit.Test;
 
@@ -68,7 +68,7 @@ public class TestDownload {
         NetworkRefreshProgressHandler refreshProgressHandler = (NetworkRefreshProgressHandler)
                 communication;
 
-        refreshProgressHandler.setNetworkProgressListener(new NetworkProgressListener() {
+        refreshProgressHandler.setNetworkProgressListener(new OnNetworkProgressListener() {
             @Override
             public void onRefreshProgress(long current, long total, boolean done) {
                 Log.i(LOG_TAG + "async", "download " + current + "/" + total + "，  cast time " +
@@ -153,7 +153,7 @@ public class TestDownload {
         NetworkRefreshProgressHandler refreshProgressHandler = (NetworkRefreshProgressHandler)
                 communication;
 
-        refreshProgressHandler.setNetworkProgressListener(new NetworkProgressListener() {
+        refreshProgressHandler.setNetworkProgressListener(new OnNetworkProgressListener() {
             @Override
             public void onRefreshProgress(long current, long total, boolean done) {
                 Log.i(LOG_TAG + "sync", "download " + current + "/" + total + "，  cast time " +

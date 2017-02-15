@@ -12,7 +12,7 @@ public interface NetworkRefreshProgressHandler {
     /**
      * 设置网络请求进度监听器
      *
-     * @param networkProgressListener 进度监听器实例
+     * @param onNetworkProgressListener 进度监听器实例
      */
-    void setNetworkProgressListener(NetworkProgressListener networkProgressListener);
+    void setNetworkProgressListener(OnNetworkProgressListener onNetworkProgressListener);
 }

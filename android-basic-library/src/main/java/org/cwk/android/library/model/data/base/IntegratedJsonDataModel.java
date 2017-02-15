@@ -11,6 +11,9 @@ import java.util.Map;
  * 解析响应结果为Json字符串的数据模型基类<br>
  * 请求参数为纯文本内容
  *
+ * @param <Parameters> 任务传入参数类型
+ * @param <Result>     任务返回结果类型
+ *
  * @author 超悟空
  * @version 1.0 2016/7/23
  * @since 1.0

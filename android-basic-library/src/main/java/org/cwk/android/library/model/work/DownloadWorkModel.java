@@ -51,14 +51,4 @@ public abstract class DownloadWorkModel<Parameters, Result, DataModelType extend
     protected final Result onRequestFailedSetResult(DataModelType data) {
         return null;
     }
-
-    @Override
-    protected final void onParseSuccess(DataModelType data) {
-        super.onParseSuccess(data);
-    }
-
-    @Override
-    protected final void onParseFailed(DataModelType data) {
-        super.onParseFailed(data);
-    }
 }

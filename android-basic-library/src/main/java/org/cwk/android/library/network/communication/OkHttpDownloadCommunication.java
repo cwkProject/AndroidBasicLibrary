@@ -3,7 +3,7 @@ package org.cwk.android.library.network.communication;
 import android.util.Log;
 
 import org.cwk.android.library.network.util.NetworkCallback;
-import org.cwk.android.library.network.util.NetworkProgressListener;
+import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
 import org.cwk.android.library.network.util.ProgressResponseBody;
 import org.cwk.android.library.network.util.RequestBodyBuilder;
@@ -37,25 +37,25 @@ public class OkHttpDownloadCommunication extends Communication<Map<String, Strin
     /**
      * 下载进度监听器
      */
-    private NetworkProgressListener progressListener = null;
+    private OnNetworkProgressListener onNetworkProgressListener = null;
 
     @Override
-    public void setNetworkProgressListener(NetworkProgressListener networkProgressListener) {
-        this.progressListener = networkProgressListener;
+    public void setNetworkProgressListener(OnNetworkProgressListener onNetworkProgressListener) {
+        this.onNetworkProgressListener = onNetworkProgressListener;
     }
 
     @Override
     protected OkHttpClient.Builder onRebuildClient(OkHttpClient okHttpClient) {
         OkHttpClient.Builder builder = okHttpClient.newBuilder();
 
-        if (progressListener != null) {
+        if (onNetworkProgressListener != null) {
             // 增加拦截器监听下载进度
             builder.networkInterceptors().add(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder().body(new ProgressResponseBody
-                            (originalResponse.body(), progressListener)).build();
+                            (originalResponse.body(), onNetworkProgressListener)).build();
                 }
             });
         }

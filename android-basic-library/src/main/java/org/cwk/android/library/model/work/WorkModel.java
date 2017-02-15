@@ -8,7 +8,7 @@ import android.util.Log;
 
 import org.cwk.android.library.model.operate.AsyncExecute;
 import org.cwk.android.library.model.operate.Cancelable;
-import org.cwk.android.library.model.operate.ProgressUpdate;
+import org.cwk.android.library.model.operate.OnProgressUpdateListener;
 import org.cwk.android.library.model.operate.SyncExecute;
 
 /**
@@ -35,17 +35,17 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
     /**
      * 任务完成回调接口
      */
-    private IWorkEndListener<Result> workEndListener = null;
+    private OnWorkFinishListener<Result> workEndListener = null;
 
     /**
      * 任务取消回调接口
      */
-    private IWorkEndListener<Result> workCancelledListener = null;
+    private OnWorkFinishListener<Result> workCancelledListener = null;
 
     /**
      * 任务的进度更新回调接口，默认不做任何事
      */
-    private ProgressUpdate progressUpdateListener = new ProgressUpdate() {
+    private OnProgressUpdateListener progressUpdateListener = new OnProgressUpdateListener() {
         @Override
         public void onProgressUpdate(Integer... values) {
             // 一个空实现
@@ -96,9 +96,9 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
             onCancelWork(state, getMessage(), getResult());
 
             if (workCancelledListener != null) {
-                Log.v(LOG_TAG + "execute", "workCancelledListener.doEndWork(boolean , String , "
-                        + "Object) is invoked");
-                this.workCancelledListener.doEndWork(state, getMessage(), getResult());
+                Log.v(LOG_TAG + "execute", "workCancelledListener.onFinish(boolean , String , " +
+                        "Object) is invoked");
+                this.workCancelledListener.onFinish(state, getResult(), getMessage());
             }
         } else {
             Log.v(LOG_TAG + "execute", "onStopWork(boolean , String , Object) is invoked");
@@ -107,10 +107,10 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
 
             // 如果设置了回调接口则执行回调方法
             if (this.workEndListener != null) {
-                Log.v(LOG_TAG + "execute", "workEndListener.doEndWork(boolean , String , Object) " +
+                Log.v(LOG_TAG + "execute", "workEndListener.onFinish(boolean , String , Object) " +
                         "is " + "invoked");
 
-                this.workEndListener.doEndWork(state, getMessage(), getResult());
+                this.workEndListener.onFinish(state, getResult(), getMessage());
             }
 
             Log.v(LOG_TAG + "execute", "execute end");
@@ -165,8 +165,8 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
 
             if (workCancelledListener != null) {
                 Log.v(LOG_TAG + "WorkModelAsyncTask.onCancelled", "workCancelledListener" +
-                        ".doEndWork(boolean , String , " + "Object) is invoked");
-                workCancelledListener.doEndWork(state, getMessage(), getResult());
+                        ".onFinish(boolean , String , " + "Object) is invoked");
+                workCancelledListener.onFinish(state, getResult(), getMessage());
             }
         }
 
@@ -186,9 +186,9 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
 
             // 如果设置了回调接口则执行回调方法
             if (workEndListener != null) {
-                Log.v(LOG_TAG + "WorkModelAsyncTask.onPostExecute", "workEndListener.doEndWork" +
+                Log.v(LOG_TAG + "WorkModelAsyncTask.onPostExecute", "workEndListener.onFinish" +
                         "(boolean , String , Object) is invoked");
-                workEndListener.doEndWork(state, getMessage(), getResult());
+                workEndListener.onFinish(state, getResult(), getMessage());
             }
         }
 
@@ -216,7 +216,7 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
      * 取消正在执行的任务<br>
      * 该方法被调用后{@link #isCancelled()}方法将会返回true，
      * 且在{@link #onDoWork(Object[])}执行结束后回调{@link #onCancelWork(boolean , String , Object)
-     * }方法和{@link #setWorkCancelledListener(IWorkEndListener)}中定义的任务取消回调接口
+     * }方法和{@link #setWorkCancelledListener(OnWorkFinishListener)}中定义的任务取消回调接口
      */
     @Override
     public final void cancel() {
@@ -295,8 +295,8 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
      * 在{@link #onDoWork(Object[])}之后被调用，
      * 如果在{@link #onDoWork(Object[])}中任务被取消则该方法会被调用，
      * 且后续不再执行{@link #onStopWork(boolean , String , Object)}和
-     * {@link #setWorkEndListener(IWorkEndListener)}中定义的任务完成回调接口，
-     * 但会执行{@link #setWorkCancelledListener(IWorkEndListener)}中定义的任务取消回调接口。<br>
+     * {@link #setWorkEndListener(OnWorkFinishListener)}中定义的任务完成回调接口，
+     * 但会执行{@link #setWorkCancelledListener(OnWorkFinishListener)}中定义的任务取消回调接口。<br>
      * 本方法默认会被{@link #onCancelWork(boolean , String , Object)}调用，
      * 如果你重写该方法则不应该再重写{@link #onCancelWork(boolean , String , Object)}，
      * 否则可能导致本方法不能被执行
@@ -312,8 +312,8 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
      * 在{@link #onDoWork(Object[])}之后被调用，
      * 如果在{@link #onDoWork(Object[])}中任务被取消则该方法会被调用，
      * 且后续不再执行{@link #onStopWork(boolean , String , Object)}和
-     * {@link #setWorkEndListener(IWorkEndListener)}中定义的任务完成回调接口，
-     * 但会执行{@link #setWorkCancelledListener(IWorkEndListener)}中定义的任务取消回调接口。<br>
+     * {@link #setWorkEndListener(OnWorkFinishListener)}中定义的任务完成回调接口，
+     * 但会执行{@link #setWorkCancelledListener(OnWorkFinishListener)}中定义的任务取消回调接口。<br>
      * 本方法会调用{@link #onCancelWork(boolean , Object)}，
      * 如果你重写该方法则不必重写{@link #onCancelWork(boolean , Object)}，
      * 且不必在本方法中调用super.onCancelWork(boolean , Object)，
@@ -334,7 +334,7 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
      *
      * @param workCancelledListener 监听器对象
      */
-    public final void setWorkCancelledListener(IWorkEndListener<Result> workCancelledListener) {
+    public final void setWorkCancelledListener(OnWorkFinishListener<Result> workCancelledListener) {
         this.workCancelledListener = workCancelledListener;
     }
 
@@ -345,7 +345,7 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
      *
      * @param workEndListener 监听器对象
      */
-    public final void setWorkEndListener(IWorkEndListener<Result> workEndListener) {
+    public final void setWorkEndListener(OnWorkFinishListener<Result> workEndListener) {
         this.workEndListener = workEndListener;
     }
 
@@ -357,7 +357,7 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
      *
      * @param progressUpdateListener 监听器对象
      */
-    public final void setProgressUpdateListener(ProgressUpdate progressUpdateListener) {
+    public final void setProgressUpdateListener(OnProgressUpdateListener progressUpdateListener) {
         this.progressUpdateListener = progressUpdateListener;
     }
 }

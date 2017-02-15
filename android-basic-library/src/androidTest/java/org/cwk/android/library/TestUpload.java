@@ -11,7 +11,7 @@ import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.cwk.android.library.network.factory.NetworkType;
 import org.cwk.android.library.network.util.AsyncCommunication;
 import org.cwk.android.library.network.util.NetworkCallback;
-import org.cwk.android.library.network.util.NetworkProgressListener;
+import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
 import org.cwk.android.library.network.util.SyncCommunication;
 import org.cwk.android.library.struct.FileInfo;
@@ -77,7 +77,7 @@ public class TestUpload {
         NetworkRefreshProgressHandler refreshProgressHandler = (NetworkRefreshProgressHandler)
                 communication;
 
-        refreshProgressHandler.setNetworkProgressListener(new NetworkProgressListener() {
+        refreshProgressHandler.setNetworkProgressListener(new OnNetworkProgressListener() {
             @Override
             public void onRefreshProgress(long current, long total, boolean done) {
                 Log.i(LOG_TAG + "syncUpload", "upload " + current + "/" + total + "，  cast time " +
@@ -119,7 +119,7 @@ public class TestUpload {
         NetworkRefreshProgressHandler refreshProgressHandler = (NetworkRefreshProgressHandler)
                 communication;
 
-        refreshProgressHandler.setNetworkProgressListener(new NetworkProgressListener() {
+        refreshProgressHandler.setNetworkProgressListener(new OnNetworkProgressListener() {
             @Override
             public void onRefreshProgress(long current, long total, boolean done) {
                 Log.i(LOG_TAG + "asyncUpload", "upload " + current + "/" + total + "，  cast time " +
@@ -172,7 +172,7 @@ public class TestUpload {
         NetworkRefreshProgressHandler refreshProgressHandler = (NetworkRefreshProgressHandler)
                 communication;
 
-        refreshProgressHandler.setNetworkProgressListener(new NetworkProgressListener() {
+        refreshProgressHandler.setNetworkProgressListener(new OnNetworkProgressListener() {
             @Override
             public void onRefreshProgress(long current, long total, boolean done) {
                 Log.i(LOG_TAG + "syncCancelUpload", "upload " + current + "/" + total + "，  cast " +
@@ -225,7 +225,7 @@ public class TestUpload {
         NetworkRefreshProgressHandler refreshProgressHandler = (NetworkRefreshProgressHandler)
                 communication;
 
-        refreshProgressHandler.setNetworkProgressListener(new NetworkProgressListener() {
+        refreshProgressHandler.setNetworkProgressListener(new OnNetworkProgressListener() {
             @Override
             public void onRefreshProgress(long current, long total, boolean done) {
                 Log.i(LOG_TAG + "asyncCancelUpload", "upload " + current + "/" + total + "，  cast" +

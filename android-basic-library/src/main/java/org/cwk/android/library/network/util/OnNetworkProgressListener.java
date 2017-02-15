@@ -7,7 +7,7 @@ package org.cwk.android.library.network.util;
  * @version 1.0 2015/10/29
  * @since 1.0
  */
-public interface NetworkProgressListener {
+public interface OnNetworkProgressListener {
 
     /**
      * 刷新进度

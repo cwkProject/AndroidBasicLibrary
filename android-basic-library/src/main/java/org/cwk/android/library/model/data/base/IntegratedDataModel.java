@@ -7,6 +7,12 @@ import java.util.Map;
 /**
  * 集成化数据模型基类
  *
+ * @param <Parameters> 任务传入参数类型
+ * @param <Result>     任务返回结果类型
+ * @param <Handle>     二次处理的结果数据类型
+ * @param <Response>   要解析的结果数据类型
+ * @param <Value>      要序列化的Map值类型
+ *
  * @author 超悟空
  * @version 1.0 2016/7/23
  * @since 1.0

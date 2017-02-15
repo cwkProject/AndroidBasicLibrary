@@ -7,7 +7,7 @@ import org.cwk.android.library.network.communication.OkHttpGetCommunication;
 import org.cwk.android.library.network.communication.OkHttpPostCommunication;
 import org.cwk.android.library.network.communication.OkHttpPutCommunication;
 import org.cwk.android.library.network.communication.OkHttpUploadCommunication;
-import org.cwk.android.library.network.util.NetworkProgressListener;
+import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
 import org.cwk.android.library.network.util.NetworkTimeout;
 
@@ -30,7 +30,7 @@ public class CommunicationBuilder {
     /**
      * 进度监听器，仅上传和下载时有效
      */
-    private NetworkProgressListener progressListener = null;
+    private OnNetworkProgressListener progressListener = null;
 
     /**
      * 请求超时时间
@@ -79,7 +79,7 @@ public class CommunicationBuilder {
      *
      * @return 构造器
      */
-    public CommunicationBuilder networkRefreshProgressListener(NetworkProgressListener
+    public CommunicationBuilder networkRefreshProgressListener(OnNetworkProgressListener
                                                                        progressListener) {
         this.progressListener = progressListener;
         return this;

@@ -3,7 +3,7 @@ package org.cwk.android.library.network.communication;
 import android.util.Log;
 
 import org.cwk.android.library.network.util.NetworkCallback;
-import org.cwk.android.library.network.util.NetworkProgressListener;
+import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
 import org.cwk.android.library.network.util.ProgressRequestBody;
 import org.cwk.android.library.network.util.RequestBodyBuilder;
@@ -35,7 +35,7 @@ public class OkHttpUploadCommunication extends Communication<Map<String, Object>
     /**
      * 上传进度监听器
      */
-    private NetworkProgressListener progressListener = null;
+    private OnNetworkProgressListener onNetworkProgressListener = null;
 
     @Override
     protected Request onCreateRequest(Map<String, Object> sendData) {
@@ -43,8 +43,8 @@ public class OkHttpUploadCommunication extends Communication<Map<String, Object>
         RequestBody body = RequestBodyBuilder.onBuildUploadForm(sendData);
 
         // 考虑是否包装上传进度
-        if (progressListener != null) {
-            body = new ProgressRequestBody(body, progressListener);
+        if (onNetworkProgressListener != null) {
+            body = new ProgressRequestBody(body, onNetworkProgressListener);
         }
 
         return new Request.Builder().url(url).post(body).build();
@@ -70,7 +70,7 @@ public class OkHttpUploadCommunication extends Communication<Map<String, Object>
     }
 
     @Override
-    public void setNetworkProgressListener(NetworkProgressListener networkProgressListener) {
-        this.progressListener = networkProgressListener;
+    public void setNetworkProgressListener(OnNetworkProgressListener onNetworkProgressListener) {
+        this.onNetworkProgressListener = onNetworkProgressListener;
     }
 }

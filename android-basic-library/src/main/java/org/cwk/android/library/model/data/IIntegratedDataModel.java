@@ -5,6 +5,11 @@ import java.util.Map;
 /**
  * 进一步简化的数据模型接口，集成化数据模型
  *
+ * @param <Parameters> 任务传入参数类型
+ * @param <Result>     任务返回结果类型
+ * @param <Response>   要解析的结果数据类型
+ * @param <Request>    要序列化的目标类型
+ *
  * @author 超悟空
  * @version 1.0 2016/7/23
  * @since 1.0

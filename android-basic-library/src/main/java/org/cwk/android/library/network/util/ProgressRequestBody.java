@@ -28,7 +28,7 @@ public class ProgressRequestBody extends RequestBody {
     /**
      * 进度回调接口
      */
-    private NetworkProgressListener progressListener;
+    private OnNetworkProgressListener progressListener;
 
     /**
      * 构造函数
@@ -36,7 +36,8 @@ public class ProgressRequestBody extends RequestBody {
      * @param requestBody      待包装请求体
      * @param progressListener 进度回调接口
      */
-    public ProgressRequestBody(RequestBody requestBody, NetworkProgressListener progressListener) {
+    public ProgressRequestBody(RequestBody requestBody, OnNetworkProgressListener
+            progressListener) {
         this.requestBody = requestBody;
         this.progressListener = progressListener;
     }

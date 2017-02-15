@@ -10,7 +10,7 @@ package org.cwk.android.library.model.operate;
  * @version 1.0 2015/1/7
  * @since 1.0
  */
-public interface ProgressUpdate {
+public interface OnProgressUpdateListener {
     /**
      * 进度更新的回调方法
      *

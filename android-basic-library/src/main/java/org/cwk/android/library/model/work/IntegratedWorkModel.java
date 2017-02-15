@@ -8,7 +8,7 @@ import org.cwk.android.library.model.data.IIntegratedDataModel;
 import org.cwk.android.library.network.communication.Communication;
 
 /**
- * 进一步简化的集成式网络任务模型基类<br>
+ * 集成式网络任务模型基类<br>
  * 内部使用{@link IIntegratedDataModel}作为默认的数据模型类，
  * 使用{@link Communication}作为网络请求工具
  *

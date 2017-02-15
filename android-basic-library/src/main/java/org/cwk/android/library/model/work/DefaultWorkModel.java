@@ -18,7 +18,7 @@ import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.cwk.android.library.network.factory.NetworkType;
 import org.cwk.android.library.network.util.AsyncCommunication;
 import org.cwk.android.library.network.util.NetworkCallback;
-import org.cwk.android.library.network.util.NetworkProgressListener;
+import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.SyncCommunication;
 
 import java.lang.reflect.Method;
@@ -49,12 +49,12 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     /**
      * 任务完成回调接口
      */
-    private IWorkEndListener<Result> workEndListener = null;
+    private OnWorkFinishListener<Result> onWorkFinishListener = null;
 
     /**
      * 网络请求进度监听器，可用于上传和下载进度监听
      */
-    private NetworkProgressListener networkProgressListener = null;
+    private OnNetworkProgressListener onNetworkProgressListener = null;
 
     /**
      * 网络请求工具
@@ -279,21 +279,21 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      *
      * @return 网络请求进度监听器
      */
-    protected NetworkProgressListener onCreateProgressListener() {
-        if (networkProgressListener != null) {
+    protected OnNetworkProgressListener onCreateProgressListener() {
+        if (onNetworkProgressListener != null) {
             // 开始绑定
             Log.v(LOG_TAG + "onCreateProgressListener", "set ProgressListener");
 
             if (isProgressUiThread) {
                 // 发送到UI线程
-                return new NetworkProgressListener() {
+                return new OnNetworkProgressListener() {
                     @Override
                     public void onRefreshProgress(final long current, final long total, final
                     boolean done) {
                         Global.getUiHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                networkProgressListener.onRefreshProgress(current, total, done);
+                                onNetworkProgressListener.onRefreshProgress(current, total, done);
                             }
                         });
                     }
@@ -301,7 +301,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
             } else {
                 // 在当前线程
                 // 直接绑定
-                return networkProgressListener;
+                return onNetworkProgressListener;
             }
         } else {
             return null;
@@ -313,20 +313,21 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
             result) {
         Log.v(LOG_TAG + "onStopWork", "work stop");
         // 如果设置了回调接口则执行回调方法
-        if (!cancelMark && this.workEndListener != null) {
-            Log.v(LOG_TAG + "onStopWork", "workEndListener.doEndWork(boolean , String , Object) " +
+        if (!cancelMark && this.onWorkFinishListener != null) {
+            Log.v(LOG_TAG + "onStopWork", "onWorkFinishListener.onFinish(boolean , String , " +
+                    "Object) " +
                     "is " + "invoked");
             if (isEndUiThread) {
                 // 发送到UI线程
                 Global.getUiHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        workEndListener.doEndWork(state, message, result);
+                        onWorkFinishListener.onFinish(state, result, message);
                     }
                 });
             } else {
                 // 发送到当前线程
-                this.workEndListener.doEndWork(state, message, result);
+                this.onWorkFinishListener.onFinish(state, result, message);
             }
         }
 
@@ -575,13 +576,13 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 在任务执行完成后被回调，
      * 运行于UI线程
      *
-     * @param workEndListener 监听器对象
+     * @param onWorkFinishListener 监听器对象
      *
      * @return 当前任务实例
      */
-    public final DefaultWorkModel<Parameters, Result, DataModelType> setWorkEndListener
-    (IWorkEndListener<Result> workEndListener) {
-        return setWorkEndListener(workEndListener, true);
+    public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkFinishListener
+    (OnWorkFinishListener<Result> onWorkFinishListener) {
+        return setOnWorkEndListener(onWorkFinishListener, true);
     }
 
     /**
@@ -589,13 +590,13 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 在异步任务中实时更新任务执行进度，
      * 运行于UI线程
      *
-     * @param networkProgressListener 监听器对象
+     * @param onNetworkProgressListener 监听器对象
      *
      * @return 当前任务实例
      */
-    public final DefaultWorkModel<Parameters, Result, DataModelType> setProgressListener
-    (NetworkProgressListener networkProgressListener) {
-        return setProgressListener(networkProgressListener, true);
+    public final DefaultWorkModel<Parameters, Result, DataModelType> setOnNetworkProgressListener
+    (OnNetworkProgressListener onNetworkProgressListener) {
+        return setOnNetworkProgressListener(onNetworkProgressListener, true);
     }
 
     /**
@@ -603,17 +604,17 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 在任务执行完成后被回调，
      * 并设置是否在当前线程执行
      *
-     * @param workEndListener 监听器对象
-     * @param isUiThread      指示是否在UI线程回调，
-     *                        true表示在UI线程回调，
-     *                        false表示在当前线程回调，
-     *                        默认为true
+     * @param onWorkFinishListener 监听器对象
+     * @param isUiThread           指示是否在UI线程回调，
+     *                             true表示在UI线程回调，
+     *                             false表示在当前线程回调，
+     *                             默认为true
      *
      * @return 当前任务实例
      */
-    public final DefaultWorkModel<Parameters, Result, DataModelType> setWorkEndListener
-    (IWorkEndListener<Result> workEndListener, boolean isUiThread) {
-        this.workEndListener = workEndListener;
+    public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkEndListener
+    (OnWorkFinishListener<Result> onWorkFinishListener, boolean isUiThread) {
+        this.onWorkFinishListener = onWorkFinishListener;
         this.isEndUiThread = isUiThread;
         return this;
     }
@@ -623,17 +624,17 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 在异步任务中实时更新任务执行进度，
      * 并设置是否在当前线程执行
      *
-     * @param networkProgressListener 监听器对象
-     * @param isUiThread              指示是否在UI线程回调，
-     *                                true表示在UI线程回调，
-     *                                false表示在当前线程回调，
-     *                                默认为true
+     * @param onNetworkProgressListener 监听器对象
+     * @param isUiThread                指示是否在UI线程回调，
+     *                                  true表示在UI线程回调，
+     *                                  false表示在当前线程回调，
+     *                                  默认为true
      *
      * @return 当前任务实例
      */
-    public final DefaultWorkModel<Parameters, Result, DataModelType> setProgressListener
-    (NetworkProgressListener networkProgressListener, boolean isUiThread) {
-        this.networkProgressListener = networkProgressListener;
+    public final DefaultWorkModel<Parameters, Result, DataModelType> setOnNetworkProgressListener
+    (OnNetworkProgressListener onNetworkProgressListener, boolean isUiThread) {
+        this.onNetworkProgressListener = onNetworkProgressListener;
         this.isProgressUiThread = isUiThread;
 
         return this;

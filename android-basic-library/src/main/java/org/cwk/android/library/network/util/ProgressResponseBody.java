@@ -28,7 +28,7 @@ public class ProgressResponseBody extends ResponseBody {
     /**
      * 进度回调接口
      */
-    private final NetworkProgressListener progressListener;
+    private final OnNetworkProgressListener onNetworkProgressListener;
 
     /**
      * 包装后的数据源
@@ -41,10 +41,10 @@ public class ProgressResponseBody extends ResponseBody {
      * @param responseBody     待包装响应体
      * @param progressListener 进度监听器
      */
-    public ProgressResponseBody(ResponseBody responseBody, NetworkProgressListener
+    public ProgressResponseBody(ResponseBody responseBody, OnNetworkProgressListener
             progressListener) {
         this.responseBody = responseBody;
-        this.progressListener = progressListener;
+        this.onNetworkProgressListener = progressListener;
     }
 
     @Override
@@ -88,7 +88,8 @@ public class ProgressResponseBody extends ResponseBody {
                     length = contentLength();
                 }
 
-                progressListener.onRefreshProgress(totalBytesRead, length, bytesRead == -1);
+                onNetworkProgressListener.onRefreshProgress(totalBytesRead, length, bytesRead ==
+                        -1);
                 return bytesRead;
             }
         };
