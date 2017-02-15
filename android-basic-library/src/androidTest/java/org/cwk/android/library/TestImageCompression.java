@@ -122,7 +122,7 @@ public class TestImageCompression {
 
         BitmapFactory.decodeFile(imageFile.getPath(), options);
 
-        options.inSampleSize = ImageCompression.calculateWidthSampleSize(options, 720);
+        options.inSampleSize = ImageCompression.calculateWidthSampleSize(options, 720, false);
 
         assertTrue(options.inSampleSize > 1);
 
@@ -157,7 +157,7 @@ public class TestImageCompression {
 
         BitmapFactory.decodeFile(imageFile.getPath(), options);
 
-        options.inSampleSize = ImageCompression.calculateHeightSampleSize(options, 1280);
+        options.inSampleSize = ImageCompression.calculateHeightSampleSize(options, 1280, false);
 
         assertTrue(options.inSampleSize > 1);
 

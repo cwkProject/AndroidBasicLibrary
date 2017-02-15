@@ -277,7 +277,7 @@ public class ImageCompression {
      * @return 压缩图
      */
     public static Bitmap resolutionBitmap(File file, int width, int height) {
-        Log.i(LOG_TAG + "resolutionBitmap", "resolution compression begin");
+        Log.v(LOG_TAG + "resolutionBitmap", "resolution compression begin");
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         options.inJustDecodeBounds = true;
@@ -289,7 +289,7 @@ public class ImageCompression {
         options.inJustDecodeBounds = false;
 
         Bitmap bitmap = BitmapFactory.decodeFile(file.getPath(), options);
-        Log.i(LOG_TAG + "resolutionBitmap", "resolution compression end");
+        Log.v(LOG_TAG + "resolutionBitmap", "resolution compression end");
 
         return bitmap;
     }
@@ -304,7 +304,7 @@ public class ImageCompression {
      * @return 压缩图
      */
     public static Bitmap resolutionHighBitmap(File file, int width, int height) {
-        Log.i(LOG_TAG + "resolutionBitmap", "resolution compression begin");
+        Log.v(LOG_TAG + "resolutionBitmap", "resolution compression begin");
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         options.inJustDecodeBounds = true;
@@ -316,7 +316,7 @@ public class ImageCompression {
         options.inJustDecodeBounds = false;
 
         Bitmap bitmap = BitmapFactory.decodeFile(file.getPath(), options);
-        Log.i(LOG_TAG + "resolutionBitmap", "resolution compression end");
+        Log.v(LOG_TAG + "resolutionBitmap", "resolution compression end");
 
         return bitmap;
     }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import org.cwk.android.library.cache.util.CacheManager;
 import org.cwk.android.library.cache.util.CacheTool;
 import org.cwk.android.library.common.function.ImageCompression;
 import org.jetbrains.annotations.NotNull;
@@ -45,9 +46,9 @@ public class ImageUtil {
     public static final String THUMBNAIL_CACHE_PRE = "thumbnail_";
 
     /**
-     * 线程池线程数
+     * 线程池线程数，默认4条线程，尽力避免压缩图片时内存溢出
      */
-    private static final int POOL_COUNT = Runtime.getRuntime().availableProcessors() * 3 + 2;
+    private static final int POOL_COUNT = 4;
 
     /**
      * 线程池
@@ -106,17 +107,17 @@ public class ImageUtil {
      */
     public static String createThumbnail(@NotNull File file, @NotNull CacheTool cacheTool,
                                          @NotNull String key, int width, int height) {
-        Log.i(LOG_TAG + "createThumbnail", "image path:" + file.getPath() + " target cache key" +
+        Log.v(LOG_TAG + "createThumbnail", "image path:" + file.getPath() + " target cache key" +
                 key);
 
         // 创建缩略图
-        Log.i(LOG_TAG + "createThumbnail", "thumbnail begin");
+        Log.v(LOG_TAG + "createThumbnail", "thumbnail begin");
 
         Bitmap bitmap = ImageCompression.resolutionBitmap(file, width, height);
 
         if (bitmap != null) {
             cacheTool.put(THUMBNAIL_CACHE_PRE + key, bitmap);
-            Log.i(LOG_TAG + "createThumbnail", "thumbnail end");
+            Log.v(LOG_TAG + "createThumbnail", "thumbnail end");
             return THUMBNAIL_CACHE_PRE + key;
         } else {
             Log.d(LOG_TAG + "createThumbnail", "thumbnail failed");
@@ -162,17 +163,17 @@ public class ImageUtil {
      */
     public static String createHighThumbnail(@NotNull File file, @NotNull CacheTool cacheTool,
                                              @NotNull String key, int width, int height) {
-        Log.i(LOG_TAG + "createThumbnail", "image path:" + file.getPath() + " target cache key" +
+        Log.v(LOG_TAG + "createThumbnail", "image path:" + file.getPath() + " target cache key" +
                 key);
 
         // 创建缩略图
-        Log.i(LOG_TAG + "createThumbnail", "thumbnail begin");
+        Log.v(LOG_TAG + "createThumbnail", "thumbnail begin");
 
         Bitmap bitmap = ImageCompression.resolutionHighBitmap(file, width, height);
 
         if (bitmap != null) {
             cacheTool.put(THUMBNAIL_CACHE_PRE + key, bitmap);
-            Log.i(LOG_TAG + "createThumbnail", "thumbnail end");
+            Log.v(LOG_TAG + "createThumbnail", "thumbnail end");
             return THUMBNAIL_CACHE_PRE + key;
         } else {
             Log.d(LOG_TAG + "createThumbnail", "thumbnail failed");
@@ -194,7 +195,7 @@ public class ImageUtil {
     public static void processPicture(@NotNull final File file, @NotNull final CacheTool
             cacheTool, final String key, final int width, final int height, final int size,
                                       @Nullable final ProcessFinishListener listener) {
-        Log.i(LOG_TAG + "processPicture", "image path:" + file.getPath() + " target cache key" +
+        Log.v(LOG_TAG + "processPicture", "image path:" + file.getPath() + " target cache key" +
                 key);
 
         taskExecutor.submit(new Runnable() {
@@ -231,7 +232,7 @@ public class ImageUtil {
      */
     public static String qualityBitmap(@NotNull CacheTool cacheTool, String key, Bitmap bitmap,
                                        int size) {
-        Log.i(LOG_TAG + "qualityBitmap", "quality compression begin");
+        Log.v(LOG_TAG + "qualityBitmap", "quality compression begin");
         // 进行质量压缩
         ByteArrayOutputStream byteArrayOutputStream = ImageCompression.compressImage(bitmap, size);
 
@@ -255,7 +256,7 @@ public class ImageUtil {
             Log.e(LOG_TAG + "qualityBitmap", "IOException is " + e.getMessage());
         }
 
-        Log.i(LOG_TAG + "qualityBitmap", "quality compression end");
+        Log.v(LOG_TAG + "qualityBitmap", "quality compression end");
         return newKey;
     }
 
@@ -317,17 +318,17 @@ public class ImageUtil {
      */
     public static String resolutionBitmap(@NotNull File file, @NotNull CacheTool cacheTool,
                                           @NotNull String key, int width, int height) {
-        Log.i(LOG_TAG + "resolutionBitmap", "image path:" + file.getPath() + " target cache key" +
+        Log.v(LOG_TAG + "resolutionBitmap", "image path:" + file.getPath() + " target cache key" +
                 key);
 
         // 创建缩略图
-        Log.i(LOG_TAG + "resolutionBitmap", "quality compression");
+        Log.v(LOG_TAG + "resolutionBitmap", "quality compression");
 
         Bitmap bitmap = ImageCompression.resolutionBitmap(file, width, height);
 
         if (bitmap != null) {
-            cacheTool.put(COMPRESSION_IMAGE_CACHE_PRE + key, bitmap);
-            Log.i(LOG_TAG + "resolutionBitmap", "quality compression");
+            cacheTool.put(COMPRESSION_IMAGE_CACHE_PRE + key, bitmap, CacheManager.ONLY_FILE_CACHE);
+            Log.v(LOG_TAG + "resolutionBitmap", "quality compression");
             return COMPRESSION_IMAGE_CACHE_PRE + key;
         } else {
             Log.d(LOG_TAG + "resolutionBitmap", "quality compression");
