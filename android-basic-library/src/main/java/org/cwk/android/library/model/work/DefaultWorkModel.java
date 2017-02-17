@@ -270,7 +270,8 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
         Log.v(LOG_TAG + "onStartWork", "work start");
         // 创建网络请求工具
         if (communication == null) {
-            communication = onCreateCommunication();
+            communication = onCreateCommunication(new CommunicationBuilder(onNetworkType())
+                    .networkRefreshProgressListener(onCreateProgressListener()));
         }
     }
 
@@ -449,15 +450,15 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     /**
      * 创建网络请求工具<br>
      * 用于发送网络请求，
-     * 默认使用{@link CommunicationBuilder}工具进行创建，
-     * 使用{@link #onNetworkType()}返回的请求类型，
-     * 如果需要使用自定义网络请求工具请重写此方法
+     * 使用{@link CommunicationBuilder}工具进行创建，
+     * 如果需要配置网络请求参数请重写此方法
      *
-     * @return 网络请求工具实例
+     * @param builder 网络访问工具构建器
+     *
+     * @return 网络请求工具实例，调用{@link CommunicationBuilder#build()}创建
      */
-    protected Communication onCreateCommunication() {
-        return new CommunicationBuilder(onNetworkType()).networkRefreshProgressListener
-                (onCreateProgressListener()).build();
+    protected Communication onCreateCommunication(CommunicationBuilder builder) {
+        return builder.build();
     }
 
     /**

@@ -30,13 +30,6 @@ public interface ApplicationStaticValue {
     }
 
     /**
-     * 网络请求地址
-     */
-    interface Url {
-
-    }
-
-    /**
      * 广播动作
      */
     interface BroadcastAction {

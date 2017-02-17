@@ -30,16 +30,6 @@ public class ApplicationAttribute {
     private boolean requestSign = false;
 
     /**
-     * 用户登录请求地址
-     */
-    private String loginUrl = null;
-
-    /**
-     * 用户注册请求地址
-     */
-    private String registerUrl = null;
-
-    /**
      * 获取应用标识
      *
      * @return 应用标识码
@@ -67,24 +57,6 @@ public class ApplicationAttribute {
     }
 
     /**
-     * 获取用户登录地址
-     *
-     * @return 用户登录地址
-     */
-    public static String getLoginUrl() {
-        return applicationAttribute.loginUrl;
-    }
-
-    /**
-     * 获取用户注册地址
-     *
-     * @return 用户注册地址
-     */
-    public static String getRegisterUrl() {
-        return applicationAttribute.registerUrl;
-    }
-
-    /**
      * 构造函数
      */
     private ApplicationAttribute() {
@@ -99,8 +71,7 @@ public class ApplicationAttribute {
         applicationAttribute.appCode = null;
         applicationAttribute.appToken = null;
         applicationAttribute.requestSign = false;
-        applicationAttribute.loginUrl = null;
-        applicationAttribute.registerUrl = null;
+
         return applicationAttribute;
     }
 
@@ -137,30 +108,6 @@ public class ApplicationAttribute {
      */
     public ApplicationAttribute appToken(String appToken) {
         this.appToken = appToken;
-        return this;
-    }
-
-    /**
-     * 设置用户登录地址
-     *
-     * @param url 地址
-     *
-     * @return 全局变量对象
-     */
-    public ApplicationAttribute loginUrl(String url) {
-        this.loginUrl = url;
-        return this;
-    }
-
-    /**
-     * 设置用户注册地址
-     *
-     * @param url 地址
-     *
-     * @return 全局变量对象
-     */
-    public ApplicationAttribute registerUrl(String url) {
-        this.registerUrl = url;
         return this;
     }
 }

@@ -113,7 +113,8 @@ public class ImageUtil {
         // 创建缩略图
         Log.v(LOG_TAG + "createThumbnail", "thumbnail begin");
 
-        if (width * height == 0 && ImageCompression.readPictureDegree(file.getPath()) != 0) {
+        if (width * height == 0 && ImageCompression.readPictureDegree(file.getPath()) / 90 % 2 !=
+                0) {
             // 图片被旋转，矫正参数
             int temp = width;
             width = height;

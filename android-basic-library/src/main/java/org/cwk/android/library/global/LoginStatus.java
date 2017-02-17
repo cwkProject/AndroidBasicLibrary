@@ -19,7 +19,7 @@ public class LoginStatus {
     /**
      * 用户标识
      */
-    private String userID = null;
+    private int userID = 0;
 
     /**
      * 公司码
@@ -32,9 +32,19 @@ public class LoginStatus {
     private String companyName = null;
 
     /**
-     * 用户姓名
+     * 用户名
      */
     private String userName = null;
+
+    /**
+     * 用户真实姓名
+     */
+    private String realName = null;
+
+    /**
+     * 用户昵称
+     */
+    private String nickname = null;
 
     /**
      * 手机号
@@ -75,12 +85,14 @@ public class LoginStatus {
     private void onCreate() {
         // 初始化用户参数
         setLogin(false);
-        setUserID(null);
+        setUserID(0);
         setCompanyCode(null);
         setCompanyName(null);
         setUserName(null);
         setMobile(null);
         setLastTime(null);
+        setRealName(null);
+        setNickname(null);
     }
 
     /**
@@ -106,7 +118,7 @@ public class LoginStatus {
      *
      * @return 用户标识串
      */
-    public static String getUserID() {
+    public static int getUserID() {
         return loginStatus.userID;
     }
 
@@ -115,7 +127,7 @@ public class LoginStatus {
      *
      * @param userID 用户标识串
      */
-    public synchronized void setUserID(String userID) {
+    public synchronized void setUserID(int userID) {
         this.userID = userID;
     }
 
@@ -156,18 +168,18 @@ public class LoginStatus {
     }
 
     /**
-     * 获取用户姓名
+     * 获取用户名
      *
-     * @return 用户姓名
+     * @return 用户名
      */
     public static String getUserName() {
         return loginStatus.userName;
     }
 
     /**
-     * 设置用户姓名
+     * 设置用户名
      *
-     * @param userName 用户姓名
+     * @param userName 用户名
      */
     public synchronized void setUserName(String userName) {
         this.userName = userName;
@@ -207,5 +219,41 @@ public class LoginStatus {
      */
     public synchronized void setLastTime(String lastTime) {
         this.lastTime = lastTime;
+    }
+
+    /**
+     * 获取用户真实姓名
+     *
+     * @return 真实姓名
+     */
+    public static String getRealName() {
+        return loginStatus.realName;
+    }
+
+    /**
+     * 设置用户真实姓名
+     *
+     * @param realName 真实姓名
+     */
+    public synchronized void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    /**
+     * 获取用户昵称
+     *
+     * @return 昵称
+     */
+    public static String getNickname() {
+        return loginStatus.nickname;
+    }
+
+    /**
+     * 设置用户昵称
+     *
+     * @param nickname 昵称
+     */
+    public synchronized void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

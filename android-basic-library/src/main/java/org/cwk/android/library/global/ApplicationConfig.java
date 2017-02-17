@@ -20,6 +20,16 @@ public class ApplicationConfig extends PersistenceConfigModel {
     private String userName = null;
 
     /**
+     * 用户标识
+     */
+    private int userID = 0;
+
+    /**
+     * 手机号
+     */
+    private String mobile = null;
+
+    /**
      * 密码
      */
     @Encrypt
@@ -42,6 +52,8 @@ public class ApplicationConfig extends PersistenceConfigModel {
         super.onDefault();
         userName = null;
         password = null;
+        userID = 0;
+        mobile = null;
     }
 
     @Override
@@ -83,5 +95,41 @@ public class ApplicationConfig extends PersistenceConfigModel {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * 获取手机号
+     *
+     * @return 手机号
+     */
+    public String getMobile() {
+        return this.mobile;
+    }
+
+    /**
+     * 设置手机号
+     *
+     * @param mobile 手机号
+     */
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    /**
+     * 获取用户标识
+     *
+     * @return 用户标识串
+     */
+    public int getUserID() {
+        return this.userID;
+    }
+
+    /**
+     * 设置用户标识
+     *
+     * @param userID 用户标识串
+     */
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 }
