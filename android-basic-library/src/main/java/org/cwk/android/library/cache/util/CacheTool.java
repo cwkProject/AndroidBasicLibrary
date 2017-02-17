@@ -590,6 +590,23 @@ public class CacheTool {
     }
 
     /**
+     * 提取一个缓存的文件路径
+     *
+     * @param key 缓存key
+     *
+     * @return 文件路径，如果缓存未保存到文件系统则返回null，如果文件已被清除则文件可能不存在
+     */
+    public String getForPath(@NotNull String key) {
+        Log.v(LOG_TAG + "getForPath", "key is " + key);
+
+        String path = CacheManager.getCacheFileUtil().getPath(key, cacheLevel);
+
+        Log.v(LOG_TAG + "getForPath", "cache " + key + " path is " + path);
+
+        return path;
+    }
+
+    /**
      * 提取一个缓存文件输入流
      *
      * @param key 缓存key

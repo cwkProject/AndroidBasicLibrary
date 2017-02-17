@@ -337,6 +337,26 @@ public class ImageUtil {
     }
 
     /**
+     * 旋转矫正图片，矫正被旋转过的图片
+     *
+     * @param cacheTool 缓存工具
+     * @param key       图片缓存key(完整key)
+     */
+    public static void rotationCorrection(@NotNull CacheTool cacheTool, @NotNull String key) {
+        Log.v(LOG_TAG + "rotationCorrection", "rotation begin");
+        int angle = ImageCompression.readPictureDegree(cacheTool.getForPath(key));
+
+        if (angle != 0) {
+            // 被旋转过
+            Log.v(LOG_TAG + "rotationCorrection", "angle is " + angle);
+
+            cacheTool.put(key, ImageCompression.rotateImage(angle, cacheTool.getForBitmap(key)));
+        }
+
+        Log.v(LOG_TAG + "rotationCorrection", "rotation end");
+    }
+
+    /**
      * 当前的缓存工具
      */
     private CacheTool cacheTool = null;
@@ -491,5 +511,14 @@ public class ImageUtil {
      */
     public String resolutionBitmap(@NotNull File file, @NotNull String key) {
         return resolutionBitmap(file, cacheTool, key, width, height);
+    }
+
+    /**
+     * 旋转矫正图片，矫正被旋转过的图片
+     *
+     * @param key 图片缓存key(完整key)
+     */
+    public void rotationCorrection(@NotNull String key) {
+        rotationCorrection(cacheTool, key);
     }
 }
