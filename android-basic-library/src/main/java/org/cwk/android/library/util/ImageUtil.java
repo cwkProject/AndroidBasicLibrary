@@ -113,6 +113,13 @@ public class ImageUtil {
         // 创建缩略图
         Log.v(LOG_TAG + "createThumbnail", "thumbnail begin");
 
+        if (width * height == 0 && ImageCompression.readPictureDegree(file.getPath()) != 0) {
+            // 图片被旋转，矫正参数
+            int temp = width;
+            width = height;
+            height = temp;
+        }
+
         Bitmap bitmap = ImageCompression.resolutionBitmap(file, width, height);
 
         if (bitmap != null) {
@@ -202,8 +209,19 @@ public class ImageUtil {
             @Override
             public void run() {
 
+                int mWidth = width;
+                int mHeight = height;
+
+                if (mWidth * mHeight == 0 && ImageCompression.readPictureDegree(file.getPath())
+                        != 0) {
+                    // 图片被旋转，矫正参数
+                    int temp = mWidth;
+                    mWidth = mHeight;
+                    mHeight = temp;
+                }
+
                 // 像素压缩
-                Bitmap bitmap = ImageCompression.resolutionBitmap(file, width, height);
+                Bitmap bitmap = ImageCompression.resolutionBitmap(file, mWidth, mHeight);
 
                 if (bitmap == null) {
                     //压缩失败
@@ -324,6 +342,13 @@ public class ImageUtil {
         // 创建缩略图
         Log.v(LOG_TAG + "resolutionBitmap", "quality compression");
 
+        if (width * height == 0 && ImageCompression.readPictureDegree(file.getPath()) != 0) {
+            // 图片被旋转，矫正参数
+            int temp = width;
+            width = height;
+            height = temp;
+        }
+
         Bitmap bitmap = ImageCompression.resolutionBitmap(file, width, height);
 
         if (bitmap != null) {
@@ -337,14 +362,16 @@ public class ImageUtil {
     }
 
     /**
-     * 旋转矫正图片，矫正被旋转过的图片
+     * 根据原图旋转矫正图片，矫正被旋转过的图片
      *
-     * @param cacheTool 缓存工具
-     * @param key       图片缓存key(完整key)
+     * @param cacheTool  缓存工具
+     * @param sourcePath 原图路径
+     * @param key        图片缓存key(完整key)
      */
-    public static void rotationCorrection(@NotNull CacheTool cacheTool, @NotNull String key) {
+    public static void rotationCorrection(@NotNull CacheTool cacheTool, @NotNull String
+            sourcePath, @NotNull String key) {
         Log.v(LOG_TAG + "rotationCorrection", "rotation begin");
-        int angle = ImageCompression.readPictureDegree(cacheTool.getForPath(key));
+        int angle = ImageCompression.readPictureDegree(sourcePath);
 
         if (angle != 0) {
             // 被旋转过
@@ -514,11 +541,12 @@ public class ImageUtil {
     }
 
     /**
-     * 旋转矫正图片，矫正被旋转过的图片
+     * 根据原图旋转矫正图片，矫正被旋转过的图片
      *
-     * @param key 图片缓存key(完整key)
+     * @param sourcePath 原图路径
+     * @param key        图片缓存key(完整key)
      */
-    public void rotationCorrection(@NotNull String key) {
-        rotationCorrection(cacheTool, key);
+    public void rotationCorrection(@NotNull String sourcePath, @NotNull String key) {
+        rotationCorrection(cacheTool, sourcePath, key);
     }
 }
