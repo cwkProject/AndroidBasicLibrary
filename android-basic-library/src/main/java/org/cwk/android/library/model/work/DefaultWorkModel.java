@@ -585,7 +585,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      */
     public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkFinishListener
     (OnWorkFinishListener<Result> onWorkFinishListener) {
-        return setOnWorkEndListener(onWorkFinishListener, true);
+        return setOnWorkFinishListener(onWorkFinishListener, true);
     }
 
     /**
@@ -615,7 +615,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      *
      * @return 当前任务实例
      */
-    public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkEndListener
+    public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkFinishListener
     (OnWorkFinishListener<Result> onWorkFinishListener, boolean isUiThread) {
         this.onWorkFinishListener = onWorkFinishListener;
         this.isEndUiThread = isUiThread;
