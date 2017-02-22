@@ -45,6 +45,16 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
     private int mOrientation = LinearLayoutManager.VERTICAL;
 
     /**
+     * 距开始位置距离
+     */
+    private int startPadding = 0;
+
+    /**
+     * 距结束位置距离
+     */
+    private int endPadding = 0;
+
+    /**
      * 默认分割线：高度为2px，颜色为灰色，列表为垂直
      */
     public RecyclerViewDivider() {
@@ -58,6 +68,18 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
      */
     public RecyclerViewDivider(int orientation) {
         this(orientation, Global.getContext().getResources().getColor(android.R.color.darker_gray));
+    }
+
+    /**
+     * 默认分割线：高度为2px，颜色为灰色
+     *
+     * @param orientation  列表方向
+     * @param startPadding 距开始位置距离
+     * @param endPadding   距结束位置距离
+     */
+    public RecyclerViewDivider(int orientation, int startPadding, int endPadding) {
+        this(orientation, Global.getContext().getResources().getColor(android.R.color
+                .darker_gray), startPadding, endPadding);
     }
 
     /**
@@ -75,9 +97,34 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
      *
      * @param orientation 列表方向
      * @param drawable    分割线图片
+     */
+    public RecyclerViewDivider(int orientation, Drawable drawable, int startPadding, int
+            endPadding) {
+        this(orientation, drawable, DEFAULT_DIVIDER_SIZE, startPadding, endPadding);
+    }
+
+    /**
+     * 自定义分割线
+     *
+     * @param orientation 列表方向
+     * @param drawable    分割线图片
      * @param dividerSize 分割线大小
      */
     public RecyclerViewDivider(int orientation, Drawable drawable, int dividerSize) {
+        this(orientation, drawable, dividerSize, 0, 0);
+    }
+
+    /**
+     * 自定义分割线
+     *
+     * @param orientation  列表方向
+     * @param drawable     分割线图片
+     * @param dividerSize  分割线大小
+     * @param startPadding 距开始位置距离
+     * @param endPadding   距结束位置距离
+     */
+    public RecyclerViewDivider(int orientation, Drawable drawable, int dividerSize, int
+            startPadding, int endPadding) {
         if (orientation != LinearLayoutManager.VERTICAL && orientation != LinearLayoutManager
                 .HORIZONTAL) {
             throw new IllegalArgumentException("orientation error");
@@ -85,6 +132,8 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
         mOrientation = orientation;
         mDivider = drawable;
         mDividerSize = dividerSize;
+        this.startPadding = startPadding;
+        this.endPadding = endPadding;
     }
 
     /**
@@ -102,9 +151,25 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
      *
      * @param orientation  列表方向
      * @param dividerColor 分割线颜色
-     * @param dividerSize  分割线大小
+     * @param startPadding 距开始位置距离
+     * @param endPadding   距结束位置距离
      */
-    public RecyclerViewDivider(int orientation, int dividerColor, int dividerSize) {
+    public RecyclerViewDivider(int orientation, int dividerColor, int startPadding, int
+            endPadding) {
+        this(orientation, dividerColor, DEFAULT_DIVIDER_SIZE, startPadding, endPadding);
+    }
+
+    /**
+     * 自定义分割线
+     *
+     * @param orientation  列表方向
+     * @param dividerColor 分割线颜色
+     * @param dividerSize  分割线大小
+     * @param startPadding 距开始位置距离
+     * @param endPadding   距结束位置距离
+     */
+    public RecyclerViewDivider(int orientation, int dividerColor, int dividerSize, int
+            startPadding, int endPadding) {
         if (orientation != LinearLayoutManager.VERTICAL && orientation != LinearLayoutManager
                 .HORIZONTAL) {
             throw new IllegalArgumentException("orientation error");
@@ -115,6 +180,8 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(dividerColor);
         mPaint.setStyle(Paint.Style.FILL);
+        this.startPadding = startPadding;
+        this.endPadding = endPadding;
     }
 
     @Override
@@ -144,8 +211,8 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
      * @param parent 画笔
      */
     private void drawVertical(Canvas canvas, RecyclerView parent) {
-        final int left = parent.getPaddingLeft();
-        final int right = parent.getMeasuredWidth() - parent.getPaddingRight();
+        final int left = parent.getPaddingLeft() - startPadding;
+        final int right = parent.getMeasuredWidth() - parent.getPaddingRight() - endPadding;
         final int childSize = parent.getChildCount();
         for (int i = 0; i < childSize; i++) {
             final View child = parent.getChildAt(i);
@@ -170,8 +237,8 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
      * @param parent 画笔
      */
     private void drawHorizontal(Canvas canvas, RecyclerView parent) {
-        final int top = parent.getPaddingTop();
-        final int bottom = parent.getMeasuredHeight() - parent.getPaddingBottom();
+        final int top = parent.getPaddingTop() - startPadding;
+        final int bottom = parent.getMeasuredHeight() - parent.getPaddingBottom() - endPadding;
         final int childSize = parent.getChildCount();
         for (int i = 0; i < childSize; i++) {
             final View child = parent.getChildAt(i);
