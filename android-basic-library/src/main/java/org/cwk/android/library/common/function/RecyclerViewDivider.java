@@ -95,8 +95,10 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
     /**
      * 自定义分割线
      *
-     * @param orientation 列表方向
-     * @param drawable    分割线图片
+     * @param orientation  列表方向
+     * @param drawable     分割线图片
+     * @param startPadding 距开始位置距离
+     * @param endPadding   距结束位置距离
      */
     public RecyclerViewDivider(int orientation, Drawable drawable, int startPadding, int
             endPadding) {
