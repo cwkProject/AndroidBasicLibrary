@@ -208,6 +208,7 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
      *
      * @return true表示已被取消
      */
+    @Override
     public final boolean isCancelled() {
         return work != null ? work.isCancelled() : cancelMark;
     }

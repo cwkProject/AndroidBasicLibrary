@@ -266,6 +266,11 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     }
 
     @Override
+    public boolean isCancelled() {
+        return this.cancelMark;
+    }
+
+    @Override
     protected final void onStartWork() {
         Log.v(LOG_TAG + "onStartWork", "work start");
         // 创建网络请求工具
