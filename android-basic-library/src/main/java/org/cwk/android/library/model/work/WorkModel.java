@@ -209,13 +209,13 @@ public abstract class WorkModel<Parameters, Result> extends WorkProcessModel<Par
      * @return true表示已被取消
      */
     @Override
-    public final boolean isCancelled() {
+    public final boolean isCanceled() {
         return work != null ? work.isCancelled() : cancelMark;
     }
 
     /**
      * 取消正在执行的任务<br>
-     * 该方法被调用后{@link #isCancelled()}方法将会返回true，
+     * 该方法被调用后{@link #isCanceled()}方法将会返回true，
      * 且在{@link #onDoWork(Object[])}执行结束后回调{@link #onCancelWork(boolean , String , Object)
      * }方法和{@link #setWorkCancelledListener(OnWorkFinishListener)}中定义的任务取消回调接口
      */

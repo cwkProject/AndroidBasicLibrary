@@ -266,7 +266,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     }
 
     @Override
-    public boolean isCancelled() {
+    public boolean isCanceled() {
         return this.cancelMark;
     }
 

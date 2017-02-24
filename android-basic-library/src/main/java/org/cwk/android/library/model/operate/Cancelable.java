@@ -22,5 +22,5 @@ public interface Cancelable {
      *
      * @return true表示执行了{@link #cancel()}，false表示未执行{@link #cancel()}
      */
-    boolean isCancelled();
+    boolean isCanceled();
 }

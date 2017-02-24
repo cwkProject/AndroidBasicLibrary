@@ -283,4 +283,9 @@ public abstract class Communication<RequestType, ResponseType> implements
             call.cancel();
         }
     }
+
+    @Override
+    public boolean isCanceled() {
+        return call.isCanceled();
+    }
 }
