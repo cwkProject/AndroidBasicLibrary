@@ -425,28 +425,39 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * @return 网络请求类型枚举
      */
     private int onNetworkType() {
-        try {
-            Method method = this.getClass().getDeclaredMethod("onTaskUri");
-            if (method.isAnnotationPresent(Get.class)) {
-                return NetworkType.GET;
+        Class<?> thisClass = this.getClass();
+
+        Method method = null;
+
+        while (method == null) {
+            for (Method name : thisClass.getDeclaredMethods()) {
+
+                if (name.getName().equals("onTaskUri") && name.getParameterTypes().length == 0) {
+                    method = name;
+                    break;
+                }
             }
-            if (method.isAnnotationPresent(Post.class)) {
-                return NetworkType.POST;
-            }
-            if (method.isAnnotationPresent(Download.class)) {
-                return NetworkType.DOWNLOAD;
-            }
-            if (method.isAnnotationPresent(Upload.class)) {
-                return NetworkType.UPLOAD;
-            }
-            if (method.isAnnotationPresent(Put.class)) {
-                return NetworkType.PUT;
-            }
-            if (method.isAnnotationPresent(Delete.class)) {
-                return NetworkType.DELETE;
-            }
-        } catch (NoSuchMethodException e) {
-            Log.e(LOG_TAG + "onNetworkType", "no onTaskUri method", e);
+
+            thisClass = thisClass.getSuperclass();
+        }
+
+        if (method.isAnnotationPresent(Get.class)) {
+            return NetworkType.GET;
+        }
+        if (method.isAnnotationPresent(Post.class)) {
+            return NetworkType.POST;
+        }
+        if (method.isAnnotationPresent(Download.class)) {
+            return NetworkType.DOWNLOAD;
+        }
+        if (method.isAnnotationPresent(Upload.class)) {
+            return NetworkType.UPLOAD;
+        }
+        if (method.isAnnotationPresent(Put.class)) {
+            return NetworkType.PUT;
+        }
+        if (method.isAnnotationPresent(Delete.class)) {
+            return NetworkType.DELETE;
         }
 
         return NetworkType.GET;
