@@ -16,11 +16,6 @@ import javax.crypto.spec.SecretKeySpec;
 public class DesDataCipher implements PreferencesUtil.DataCipher {
 
     /**
-     * 一个默认密钥
-     */
-    private static final String DEFAULT_KEY = "x9mACP2GNK4=";
-
-    /**
      * 生成key使用的算法
      */
     private static final String KEY_ALGORITHM = "DES";
@@ -37,22 +32,25 @@ public class DesDataCipher implements PreferencesUtil.DataCipher {
 
     /**
      * 构造函数
+     *
+     * @param key 指定的默认base64密钥
      */
-    public DesDataCipher() {
-        this(null);
+    public DesDataCipher(String key) {
+        this(key, null);
     }
 
     /**
      * 构造函数
      *
-     * @param key 指定的用默认密钥加密的base64密钥
+     * @param defaultKey 指定的默认base64密钥
+     * @param newKey     指定的用默认密钥{@code defaultKey}加密的新base64密钥
      */
-    public DesDataCipher(String key) {
+    public DesDataCipher(String defaultKey, String newKey) {
         cipherUtil = new SymmetricCipherUtil(CIPHER_ALGORITHM, new SecretKeySpec(Base64.decode
-                (DEFAULT_KEY, Base64.DEFAULT), KEY_ALGORITHM));
+                (defaultKey, Base64.DEFAULT), KEY_ALGORITHM));
 
-        if (key != null) {
-            cipherUtil.setKey(cipherUtil.getKey(Base64.decode(key, Base64.DEFAULT)));
+        if (newKey != null) {
+            cipherUtil.setKey(cipherUtil.getKey(Base64.decode(newKey, Base64.DEFAULT)));
         }
     }
 

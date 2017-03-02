@@ -4,7 +4,8 @@ import android.content.Context;
 import android.support.annotation.CallSuper;
 import android.util.Log;
 
-import org.cwk.android.library.annotation.Encrypt;
+import org.cwk.android.library.global.ApplicationAttribute;
+import org.cwk.android.library.global.ApplicationStaticValue;
 import org.cwk.android.library.util.DesDataCipher;
 import org.cwk.android.library.util.PreferencesUtil;
 
@@ -33,8 +34,7 @@ public abstract class PersistenceConfigModel {
      * @param context 上下文对象
      */
     public PersistenceConfigModel(Context context) {
-        // 默认使用"config"作为配置文件名
-        this(context, "config");
+        this(context, ApplicationStaticValue.AppConfig.APPLICATION_CONFIG_FILE_NAME);
     }
 
     /**
@@ -48,10 +48,7 @@ public abstract class PersistenceConfigModel {
         this.preferencesUtil = new PreferencesUtil(context, fileName);
         Log.v(LOG_TAG + "PersistenceConfigModel", "config name is " + fileName);
 
-        if (onIsEncrypt()) {
-            Log.v(LOG_TAG + "PersistenceConfigModel", "need encrypt");
-            this.preferencesUtil.setDataCipher(onCreateDataCipher());
-        }
+        this.preferencesUtil.setDataCipher(onCreateDataCipher());
     }
 
     /**
@@ -90,17 +87,6 @@ public abstract class PersistenceConfigModel {
     }
 
     /**
-     * 表示是否需要加密，
-     * 在需要加密的字段上使用注解{@link Encrypt}标记，
-     * 且需要创建加密器，通过重写{@link #onCreateDataCipher()}可以覆盖默认的加密器实现
-     *
-     * @return true表示存在加密字段，默认不加密
-     */
-    protected boolean onIsEncrypt() {
-        return false;
-    }
-
-    /**
      * 创建一个加解密执行器，默认为DES加密器
      *
      * @return 加密器
@@ -109,10 +95,14 @@ public abstract class PersistenceConfigModel {
         // 用于存放加密密钥的键
         final String keyTag = "PersistenceConfigModel.encryption";
 
+        if (ApplicationAttribute.getDesKey() == null) {
+            return null;
+        }
+
         // 尝试读取保存的key
         String key = preferencesUtil.getSharedPreferences().getString(keyTag, null);
 
-        DesDataCipher cipher = new DesDataCipher(key);
+        DesDataCipher cipher = new DesDataCipher(ApplicationAttribute.getDesKey(), key);
 
         if (key == null) {
             key = cipher.createNewKey();

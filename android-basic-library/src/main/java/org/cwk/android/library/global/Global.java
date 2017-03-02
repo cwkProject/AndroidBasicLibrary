@@ -49,11 +49,6 @@ public class Global {
     private OkHttpClient okHttpClient = null;
 
     /**
-     * 全局持久化配置对象
-     */
-    private ApplicationConfig applicationConfig = null;
-
-    /**
      * 保存当前应用版本信息的数据
      */
     private ApplicationVersion applicationVersion = null;
@@ -79,15 +74,6 @@ public class Global {
      */
     public static OkHttpClient getOkHttpClient() {
         return global.okHttpClient;
-    }
-
-    /**
-     * 获取全局持久化配置对象
-     *
-     * @return 全局持久化配置对象
-     */
-    public static ApplicationConfig getApplicationConfig() {
-        return global.applicationConfig;
     }
 
     /**
@@ -120,7 +106,6 @@ public class Global {
     private Global(Context context) {
         this.context = context;
         handler = new Handler(Looper.getMainLooper());
-        applicationConfig = new ApplicationConfig(context);
         applicationVersion = new ApplicationVersion();
 
         initOkHttpClient();

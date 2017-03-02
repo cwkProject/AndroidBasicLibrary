@@ -30,6 +30,11 @@ public class ApplicationAttribute {
     private boolean requestSign = false;
 
     /**
+     * 默认des加密key
+     */
+    private String desKey = null;
+
+    /**
      * 获取应用标识
      *
      * @return 应用标识码
@@ -57,6 +62,15 @@ public class ApplicationAttribute {
     }
 
     /**
+     * 获取默认使用的des加密key
+     *
+     * @return base64编码的key
+     */
+    public static String getDesKey() {
+        return applicationAttribute.desKey;
+    }
+
+    /**
      * 构造函数
      */
     private ApplicationAttribute() {
@@ -71,7 +85,7 @@ public class ApplicationAttribute {
         applicationAttribute.appCode = null;
         applicationAttribute.appToken = null;
         applicationAttribute.requestSign = false;
-
+        applicationAttribute.desKey = null;
         return applicationAttribute;
     }
 
@@ -108,6 +122,18 @@ public class ApplicationAttribute {
      */
     public ApplicationAttribute appToken(String appToken) {
         this.appToken = appToken;
+        return this;
+    }
+
+    /**
+     * 设置默认的des加密key
+     *
+     * @param desKey base64编码的key
+     *
+     * @return 全局变量对象
+     */
+    public ApplicationAttribute desKey(String desKey) {
+        this.desKey = desKey;
         return this;
     }
 }
