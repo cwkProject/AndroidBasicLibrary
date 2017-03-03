@@ -15,13 +15,14 @@
  */
 package org.cwk.android.library.scan.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -41,6 +42,7 @@ import org.cwk.android.library.scan.utils.BeepManager;
 import org.cwk.android.library.scan.utils.CaptureActivityHandler;
 import org.cwk.android.library.scan.utils.DecodeStatus;
 import org.cwk.android.library.scan.utils.InactivityTimer;
+import org.cwk.android.library.scan.utils.QrScanContentTypeFilter;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -54,7 +56,7 @@ import java.lang.reflect.Field;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
+public final class CaptureActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 
@@ -67,6 +69,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
      * 扫描完成跳转activity设置标签
      */
     public static final String JUMP_ACTIVITY_TAG = "class";
+
+    /**
+     * 扫描结果类型的过滤器
+     */
+    public static final String SCAN_RESULT_FILTER_TAG = "filter";
 
     private CameraManager cameraManager;
     private CaptureActivityHandler handler;
@@ -82,6 +89,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
      * 扫描完成跳转对象
      */
     private Class jumpActivity = null;
+
+    /**
+     * 扫描结果内容过滤器
+     */
+    private QrScanContentTypeFilter qrScanContentTypeFilter = null;
 
     private Rect mCropRect = null;
 
@@ -134,6 +146,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             this.jumpActivity = (Class) o;
         }
 
+        o = intent.getSerializableExtra(SCAN_RESULT_FILTER_TAG);
+
+        if (o instanceof QrScanContentTypeFilter) {
+            this.qrScanContentTypeFilter = (QrScanContentTypeFilter) o;
+        }
     }
 
     @Override
@@ -215,6 +232,18 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
      * @param bundle    The extras
      */
     public void handleDecode(Result rawResult, Bundle bundle) {
+        String result = rawResult.getText();
+
+        if (qrScanContentTypeFilter != null && !qrScanContentTypeFilter.onScanFinishListener
+                (result)) {
+            if (handler != null) {
+                Message message = new Message();
+                message.what = DecodeStatus.RESTART_PREVIEW;
+                handler.handleMessage(message);
+            }
+            return;
+        }
+
         inactivityTimer.onActivity();
         beepManager.playBeepSoundAndVibrate();
 

@@ -23,7 +23,6 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.cwk.android.library.R;
@@ -56,8 +55,8 @@ public class BeepManager implements MediaPlayer.OnCompletionListener, MediaPlaye
     }
 
     private synchronized void updatePrefs() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        playBeep = shouldBeep(prefs, activity);
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        playBeep = false;
         vibrate = true;
         if (playBeep && mediaPlayer == null) {
             // The volume on STREAM_SYSTEM is not adjustable, and users found it
