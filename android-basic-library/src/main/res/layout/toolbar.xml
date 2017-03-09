@@ -7,6 +7,7 @@
     android:layout_height="?actionBarSize"
     android:background="?colorPrimary"
     android:elevation="4dp"
+    android:fitsSystemWindows="true"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     app:theme="@style/ToolbarStyle">
 

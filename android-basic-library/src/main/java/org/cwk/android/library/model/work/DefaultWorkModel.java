@@ -411,7 +411,13 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
     /**
      * 设置任务请求地址，同时标记请求协议，默认使用http get发送请求<br>
-     * 或使用{@link NetworkType}中支持的其他请求类型，使用时标记同名注解
+     * 或使用{@link NetworkType}中支持的其他请求类型，使用时标记同名注解。<br>
+     * 如果项目使用混淆，请加入<br>
+     * {@code -keepclassmembers class * extends org.cwk.android.library.model.work
+     * .DefaultWorkModel {
+     * protected ** onTaskUri();
+     * }
+     * }
      *
      * @return 地址字符串
      */
