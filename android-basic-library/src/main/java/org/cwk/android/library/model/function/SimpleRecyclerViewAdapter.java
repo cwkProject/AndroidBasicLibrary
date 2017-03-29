@@ -113,7 +113,7 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
             list = new ArrayList<>();
 
             for (int i = start; i < start + count; i++) {
-                list.add(dataList.remove(i));
+                list.add(dataList.remove(start));
             }
 
             notifyItemRangeRemoved(start, count);
@@ -157,8 +157,8 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
 
     @Override
     public void swap(int fromPosition, int toPosition) {
-        if (fromPosition >= 0 && toPosition >= 0 && fromPosition < dataList.size() &&
-                toPosition < dataList.size()) {
+        if (fromPosition >= 0 && toPosition >= 0 && fromPosition < dataList.size() && toPosition
+                < dataList.size()) {
             Collections.swap(dataList, fromPosition, toPosition);
             notifyItemMoved(fromPosition, toPosition);
         }
@@ -169,6 +169,19 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
         int count = dataList.size();
         dataList.clear();
         notifyItemRangeRemoved(0, count);
+    }
+
+    @Override
+    public void clear(int position) {
+        if (position >= 0 && position < dataList.size()) {
+            int count = dataList.size();
+
+            for (int i = 0; i < count - position; i++) {
+                dataList.remove(position);
+            }
+
+            notifyItemRangeRemoved(position, count - position);
+        }
     }
 
     @Override

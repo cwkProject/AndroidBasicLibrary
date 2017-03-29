@@ -96,6 +96,13 @@ public interface BasicRecyclerViewAdapterFunction<SourceType> {
     void clear();
 
     /**
+     * 清空数据
+     *
+     * @param position 指定的开始位置
+     */
+    void clear(int position);
+
+    /**
      * 获取数据源
      *
      * @return 数据集
