@@ -318,11 +318,21 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     protected final void onStopWork(final boolean state, final String message, final Result
             result) {
         Log.v(LOG_TAG + "onStopWork", "work stop");
+        if (!cancelMark) {
+            // 不同结果的后继执行
+            if (state) {
+                Log.v(LOG_TAG + "onStopWork", "onSuccess invoke");
+                onSuccess();
+            } else {
+                Log.v(LOG_TAG + "onStopWork", "onFailed invoke");
+                onFailed();
+            }
+        }
+
         // 如果设置了回调接口则执行回调方法
-        if (!cancelMark && this.onWorkFinishListener != null) {
+        if (!cancelMark && isAsync && this.onWorkFinishListener != null) {
             Log.v(LOG_TAG + "onStopWork", "onWorkFinishListener.onFinish(boolean , String , " +
-                    "Object) " +
-                    "is " + "invoked");
+                    "Object) " + "is " + "invoked");
             if (isEndUiThread) {
                 // 发送到UI线程
                 Global.getUiHandler().post(new Runnable() {
@@ -338,17 +348,6 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
         }
 
         if (!cancelMark) {
-            // 不同结果的后继执行
-            if (state) {
-                Log.v(LOG_TAG + "onStopWork", "onSuccess invoke");
-                onSuccess();
-            } else {
-                Log.v(LOG_TAG + "onStopWork", "onFailed invoke");
-                onFailed();
-            }
-        }
-
-        if (!cancelMark) {
             // 最后执行
             Log.v(LOG_TAG + "onStopWork", "onFinish invoke");
             onFinish();
@@ -359,7 +358,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
     /**
      * 本次任务执行成功后执行，
-     * 即设置请求结果和返回数据之后，并且在回调任务发送后才执行此函数，
+     * 即设置请求结果和返回数据之后，并且在回调接口之前执行此函数，
      * 该方法在{@link #onFinish()}之前被调用
      */
     protected void onSuccess() {
@@ -368,7 +367,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
     /**
      * 本次任务执行成功后执行，
-     * 即设置请求结果和返回数据之后，并且在回调任务发送后才执行此函数，
+     * 即设置请求结果和返回数据之后，并且在回调接口之前执行此函数，
      * 该方法在{@link #onFinish()}之前被调用
      */
     protected void onFailed() {
