@@ -22,11 +22,6 @@ public interface ApplicationStaticValue {
          * 应用程序默认使用的配置文件名
          */
         String APPLICATION_CONFIG_FILE_NAME = "app_config";
-
-        /**
-         * 应用升级下载文件的ID在配置文件中保存的标签
-         */
-        String UPDATE_APP_FILE_ID_TAG = "update_app_file_id_tag";
     }
 
     /**

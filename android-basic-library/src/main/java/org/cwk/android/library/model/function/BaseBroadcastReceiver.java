@@ -32,7 +32,7 @@ public abstract class BaseBroadcastReceiver extends BroadcastReceiver {
      *
      * @param context 上下文
      */
-    public final void unregisterReceivers(Context context) {
+    public final void unregisterLocalReceiver(Context context) {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
     }
 

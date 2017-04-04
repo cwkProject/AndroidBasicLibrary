@@ -49,11 +49,6 @@ public class Global {
     private OkHttpClient okHttpClient = null;
 
     /**
-     * 保存当前应用版本信息的数据
-     */
-    private ApplicationVersion applicationVersion = null;
-
-    /**
      * 全局UI线程Handler
      */
     private Handler handler = null;
@@ -77,15 +72,6 @@ public class Global {
     }
 
     /**
-     * 获取全局应用版本信息参数
-     *
-     * @return 返回应用版本信息对象
-     */
-    public static ApplicationVersion getApplicationVersion() {
-        return global.applicationVersion;
-    }
-
-    /**
      * 获取全局UI线程Handler
      *
      * @return UI线程Handler
@@ -106,7 +92,6 @@ public class Global {
     private Global(Context context) {
         this.context = context;
         handler = new Handler(Looper.getMainLooper());
-        applicationVersion = new ApplicationVersion();
 
         initOkHttpClient();
     }

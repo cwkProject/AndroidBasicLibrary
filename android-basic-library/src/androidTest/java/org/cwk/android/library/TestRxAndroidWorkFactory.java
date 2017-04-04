@@ -3,7 +3,7 @@ package org.cwk.android.library;
 import android.util.Log;
 
 import org.cwk.android.library.model.data.WorkResult;
-import org.cwk.android.library.model.work.RxAndroidWorkUtil;
+import org.cwk.android.library.model.work.WorkFactory;
 import org.cwk.android.library.model.work.SimpleWorkModel;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -17,13 +17,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * 测试{@link RxAndroidWorkUtil}
+ * 测试{@link WorkFactory}
  *
  * @author 超悟空
  * @version 1.0 2017/4/3
  * @since 1.0
  */
-public class TestRxAndroidWorkUtil {
+public class TestRxAndroidWorkFactory {
 
     public static class TestWork extends SimpleWorkModel<String, String> {
         @Override
@@ -39,8 +39,8 @@ public class TestRxAndroidWorkUtil {
 
         @Override
         protected void onSuccess() {
-            Log.v("TestRxAndroidWorkUtil.TestWork.onSuccess", "thread id:" + Thread.currentThread
-                    ().getId());
+            Log.v("TestRxAndroidWorkFactory.TestWork.onSuccess", "thread id:" + Thread
+                    .currentThread().getId());
         }
 
         @Override
@@ -54,13 +54,14 @@ public class TestRxAndroidWorkUtil {
 
         final Integer LOCK = 1;
 
-        RxAndroidWorkUtil.from(TestWork.class).createObservable("123").subscribe(new Consumer<WorkResult<String>>() {
+        WorkFactory.from(TestWork.class).observable("123").subscribe(new Consumer<WorkResult<String>>() {
             @Override
             public void accept(@NonNull WorkResult<String> stringWorkResult) throws Exception {
-                Log.v("TestRxAndroidWorkUtil.test", "state:" + stringWorkResult.isSuccess() + " ;" +
-                        "" + "" + "" + "" + "" + "" + "" + "" + "result:" + stringWorkResult
-                        .getResult());
-                Log.v("TestRxAndroidWorkUtil.test", "thread id:" + Thread.currentThread().getId());
+                Log.v("TestRxAndroidWorkFactory.test", "state:" + stringWorkResult.isSuccess() +
+                        " ;" + "" + "" + "" + "" + "" + "" + "" + "" + "result:" +
+                        stringWorkResult.getResult());
+                Log.v("TestRxAndroidWorkFactory.test", "thread id:" + Thread.currentThread()
+                        .getId());
                 assertTrue(stringWorkResult.isSuccess());
                 assertEquals("123", stringWorkResult.getResult().trim());
 

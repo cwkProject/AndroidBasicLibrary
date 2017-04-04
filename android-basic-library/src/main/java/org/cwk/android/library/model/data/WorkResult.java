@@ -1,9 +1,9 @@
 package org.cwk.android.library.model.data;
 
-import org.cwk.android.library.model.operate.CreateObservable;
+import org.cwk.android.library.model.operate.CreateRxObservable;
 
 /**
- * 任务模型{@link CreateObservable#createObservable(Object[])}的通知数据，包含任务执行结果和响应数据
+ * 任务模型{@link CreateRxObservable#observable(Object[])}的通知数据，包含任务执行结果和响应数据
  *
  * @author 超悟空
  * @version 1.0 2017/4/3
