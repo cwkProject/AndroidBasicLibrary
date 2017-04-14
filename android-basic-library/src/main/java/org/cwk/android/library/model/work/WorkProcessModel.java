@@ -110,11 +110,12 @@ public abstract class WorkProcessModel<Parameters, Result> {
     }
 
     /**
-     * 任务被取消
+     * 任务被取消，在执行取消操作的线程中执行
      *
      * @param parameters 任务传入参数
      */
-    protected void onCanceled(Parameters... parameters) {
+    @SafeVarargs
+    protected final void onCanceled(Parameters... parameters) {
 
     }
 }

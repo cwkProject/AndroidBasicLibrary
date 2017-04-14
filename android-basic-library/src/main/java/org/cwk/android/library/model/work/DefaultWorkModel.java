@@ -663,7 +663,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * @param onWorkFinishListener 监听器对象
      * @param isUiThread           指示是否在UI线程回调，
      *                             true表示在UI线程回调，
-     *                             false表示在当前线程回调，
+     *                             false表示在当前线程（网络IO线程）回调，
      *                             默认为true
      *
      * @return 当前任务实例
@@ -683,7 +683,8 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * @param onNetworkProgressListener 监听器对象
      * @param isUiThread                指示是否在UI线程回调，
      *                                  true表示在UI线程回调，
-     *                                  false表示在当前线程回调，
+     *                                  false表示在当前线程（通过{@link #execute(Object[])}执行则在相同线程，
+     *                                  通过{@link #beginExecute(Object[])}执行则在网络IO线程）回调，
      *                                  默认为true
      *
      * @return 当前任务实例
@@ -718,7 +719,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * @param onWorkCanceledListener 监听器对象
      * @param isUiThread             指示是否在UI线程回调，
      *                               true表示在UI线程回调，
-     *                               false表示在当前线程回调，
+     *                               false表示在当前线程（执行{@link #cancel()}的线程）回调，
      *                               默认为true
      *
      * @return 当前任务实例
