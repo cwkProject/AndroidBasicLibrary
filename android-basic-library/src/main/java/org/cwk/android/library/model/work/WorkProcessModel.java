@@ -108,4 +108,13 @@ public abstract class WorkProcessModel<Parameters, Result> {
      */
     protected void onStopWork(boolean state, String message, Result result) {
     }
+
+    /**
+     * 任务被取消
+     *
+     * @param parameters 任务传入参数
+     */
+    protected void onCanceled(Parameters... parameters) {
+
+    }
 }

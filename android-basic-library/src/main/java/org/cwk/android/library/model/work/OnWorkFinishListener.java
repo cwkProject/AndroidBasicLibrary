@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.work;
-/**
- * Created by 超悟空 on 2015/10/16.
- */
 
 /**
  * 任务结束回调接口

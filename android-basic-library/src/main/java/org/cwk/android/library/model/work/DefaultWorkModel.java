@@ -57,6 +57,11 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     private OnNetworkProgressListener onNetworkProgressListener = null;
 
     /**
+     * 任务被取消回调接口
+     */
+    private OnWorkCanceledListener<Parameters> onWorkCanceledListener = null;
+
+    /**
      * 网络请求工具
      */
     private Communication communication = null;
@@ -70,6 +75,11 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 指示是否将进度回调接口在UI线程执行，默认为发送到UI线程
      */
     private boolean isProgressUiThread = true;
+
+    /**
+     * 指示是否将取消任务回调接口在UI线程执行，默认为发送到UI线程
+     */
+    private boolean isCancelUiThread = true;
 
     /**
      * 任务取消状态标签
@@ -89,8 +99,6 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     @SafeVarargs
     @Override
     protected final boolean onDoWork(Parameters... parameters) {
-        // 保存参数对象
-        mParameters = parameters;
 
         // 校验参数
         if (!onCheckParameters(parameters)) {
@@ -204,6 +212,8 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     @Override
     public final void beginExecute(Parameters... parameters) {
         Log.v(LOG_TAG + "beginExecute", "beginExecute start");
+        // 保存参数对象
+        mParameters = parameters;
         cancelMark = false;
         isAsync = true;
 
@@ -229,6 +239,8 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     @Override
     public final boolean execute(Parameters... parameters) {
         Log.v(LOG_TAG + "execute", "execute start");
+        // 保存参数对象
+        mParameters = parameters;
         cancelMark = false;
         isAsync = false;
 
@@ -262,6 +274,26 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
         this.cancelMark = true;
         if (communication != null) {
             communication.cancel();
+        }
+
+        Log.v(LOG_TAG + "onCanceled", "work canceled");
+        onCanceled(getParameters());
+
+        if (onWorkCanceledListener != null) {
+            Log.v(LOG_TAG + "onCanceled", "onWorkCanceledListener.onCanceled(Parameters) is " +
+                    "invoked");
+            if (isCancelUiThread) {
+                // 发送到UI线程
+                Global.getUiHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onWorkCanceledListener.onCanceled(getParameters());
+                    }
+                });
+            } else {
+                // 发送到当前线程
+                this.onWorkCanceledListener.onCanceled(getParameters());
+            }
         }
     }
 
@@ -661,6 +693,40 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
         this.onNetworkProgressListener = onNetworkProgressListener;
         this.isProgressUiThread = isUiThread;
 
+        return this;
+    }
+
+    /**
+     * 设置任务的取消回调接口<br>
+     * 在任务取消时被回调，
+     * 运行于UI线程
+     *
+     * @param onWorkCanceledListener 监听器对象
+     *
+     * @return 当前任务实例
+     */
+    public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkCanceledListener
+    (OnWorkCanceledListener<Parameters> onWorkCanceledListener) {
+        return setOnWorkCanceledListener(onWorkCanceledListener, true);
+    }
+
+    /**
+     * 设置任务的取消回调接口<br>
+     * 在任务取消时被回调，
+     * 并设置是否在当前线程执行
+     *
+     * @param onWorkCanceledListener 监听器对象
+     * @param isUiThread             指示是否在UI线程回调，
+     *                               true表示在UI线程回调，
+     *                               false表示在当前线程回调，
+     *                               默认为true
+     *
+     * @return 当前任务实例
+     */
+    public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkCanceledListener
+    (OnWorkCanceledListener<Parameters> onWorkCanceledListener, boolean isUiThread) {
+        this.onWorkCanceledListener = onWorkCanceledListener;
+        this.isCancelUiThread = isUiThread;
         return this;
     }
 }

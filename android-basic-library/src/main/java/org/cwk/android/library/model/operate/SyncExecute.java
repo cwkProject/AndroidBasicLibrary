@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.operate;
-/**
- * Created by 超悟空 on 2015/10/29.
- */
 
 /**
  * 任务同步执行接口
