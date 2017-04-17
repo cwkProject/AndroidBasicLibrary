@@ -1,5 +1,7 @@
 package org.cwk.android.library.model.work;
 
+import android.support.annotation.NonNull;
+
 import org.cwk.android.library.model.data.IDefaultDataModel;
 import org.cwk.android.library.model.data.WorkResult;
 import org.cwk.android.library.model.operate.CreateRxObservable;
@@ -7,7 +9,6 @@ import org.cwk.android.library.model.operate.CreateRxObservable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Cancellable;
 
 /**
