@@ -54,31 +54,10 @@ public abstract class BaseOperator<DataModel> {
         this.sqLiteHelper = onCreateReadDatabaseHelper(context);
         this.writeSqLiteHelper = onCreateWriteDatabaseHelper(context);
 
-        if (this.sqLiteHelper == null && this.writeSqLiteHelper == null) {
-            this.sqLiteHelper = this.writeSqLiteHelper = onCreateDatabaseHelper(context);
-        } else {
-            if (this.sqLiteHelper == null) {
-                this.sqLiteHelper = onCreateDatabaseHelper(context);
-            }
-
-            if (this.writeSqLiteHelper == null) {
-                this.writeSqLiteHelper = onCreateDatabaseHelper(context);
-            }
-        }
-
         tableName = onCreateTableName();
         // 创建数据库表
         onCreateTable(this.writeSqLiteHelper);
     }
-
-    /**
-     * 创建数据库工具
-     *
-     * @param context 上下文
-     *
-     * @return 已实现的数据库工具对象
-     */
-    protected abstract SQLiteOpenHelper onCreateDatabaseHelper(Context context);
 
     /**
      * 创建写入专用数据库工具<br>
@@ -89,9 +68,7 @@ public abstract class BaseOperator<DataModel> {
      *
      * @return 数据库连接工具
      */
-    protected SQLiteOpenHelper onCreateWriteDatabaseHelper(Context context) {
-        return null;
-    }
+    protected abstract SQLiteOpenHelper onCreateWriteDatabaseHelper(Context context);
 
     /**
      * 创建读取专用数据库工具<br>
@@ -102,9 +79,7 @@ public abstract class BaseOperator<DataModel> {
      *
      * @return 数据库连接工具
      */
-    protected SQLiteOpenHelper onCreateReadDatabaseHelper(Context context) {
-        return null;
-    }
+    protected abstract SQLiteOpenHelper onCreateReadDatabaseHelper(Context context);
 
     /**
      * 创建数据库操作工具执行的表名
@@ -356,8 +331,8 @@ public abstract class BaseOperator<DataModel> {
      * @return 存在返回true，不存在返回false
      */
     public synchronized final boolean isExist() {
-        final String sql = String.format("select count(*) from sqlite_master where type='table' " +
-                "and " + "name='%s'", tableName);
+        final String sql = String.format("select count(*) from sqlite_master where type='table' "
+                + "and " + "name='%s'", tableName);
         Cursor cursor = sqLiteHelper.getReadableDatabase().rawQuery(sql, null);
         if (cursor.moveToNext()) {
             if (cursor.getInt(0) > 0) {
