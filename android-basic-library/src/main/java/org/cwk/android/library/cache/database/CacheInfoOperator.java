@@ -39,7 +39,7 @@ public class CacheInfoOperator extends BaseOperator<CacheInfo> {
     }
 
     @Override
-    protected SQLiteOpenHelper onCreateDatabaseHelper(Context context) {
+    protected SQLiteOpenHelper onCreateReadDatabaseHelper(Context context) {
         return new CacheSQLiteOpenHelper(context);
     }
 

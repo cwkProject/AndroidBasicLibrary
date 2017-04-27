@@ -36,7 +36,7 @@ public class CacheLevelOperator extends BaseOperator<CacheLevel> {
     }
 
     @Override
-    protected SQLiteOpenHelper onCreateDatabaseHelper(Context context) {
+    protected SQLiteOpenHelper onCreateReadDatabaseHelper(Context context) {
         return new CacheSQLiteOpenHelper(context);
     }
 
