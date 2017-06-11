@@ -151,7 +151,10 @@ public class PreferencesUtil {
                 if (data != null) {
                     editor.putString(pre + "." + field.getName(), cipher.encrypt(String.valueOf
                             (data)));
+                } else {
+                    editor.remove(pre + "." + field.getName());
                 }
+
                 return;
             }
 
