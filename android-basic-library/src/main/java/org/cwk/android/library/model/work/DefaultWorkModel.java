@@ -638,7 +638,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      */
     public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkFinishListener
     (OnWorkFinishListener<Result> onWorkFinishListener) {
-        return setOnWorkFinishListener(onWorkFinishListener, true);
+        return setOnWorkFinishListener(true, onWorkFinishListener);
     }
 
     /**
@@ -652,7 +652,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      */
     public final DefaultWorkModel<Parameters, Result, DataModelType> setOnNetworkProgressListener
     (OnNetworkProgressListener onNetworkProgressListener) {
-        return setOnNetworkProgressListener(onNetworkProgressListener, true);
+        return setOnNetworkProgressListener(true, onNetworkProgressListener);
     }
 
     /**
@@ -660,16 +660,16 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 在任务执行完成后被回调，
      * 并设置是否在当前线程执行
      *
-     * @param onWorkFinishListener 监听器对象
      * @param isUiThread           指示是否在UI线程回调，
      *                             true表示在UI线程回调，
      *                             false表示在当前线程（网络IO线程）回调，
      *                             默认为true
+     * @param onWorkFinishListener 监听器对象
      *
      * @return 当前任务实例
      */
     public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkFinishListener
-    (OnWorkFinishListener<Result> onWorkFinishListener, boolean isUiThread) {
+    (boolean isUiThread, OnWorkFinishListener<Result> onWorkFinishListener) {
         this.onWorkFinishListener = onWorkFinishListener;
         this.isEndUiThread = isUiThread;
         return this;
@@ -680,17 +680,17 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 在异步任务中实时更新任务执行进度，
      * 并设置是否在当前线程执行
      *
-     * @param onNetworkProgressListener 监听器对象
      * @param isUiThread                指示是否在UI线程回调，
      *                                  true表示在UI线程回调，
      *                                  false表示在当前线程（通过{@link #execute(Object[])}执行则在相同线程，
      *                                  通过{@link #beginExecute(Object[])}执行则在网络IO线程）回调，
      *                                  默认为true
+     * @param onNetworkProgressListener 监听器对象
      *
      * @return 当前任务实例
      */
     public final DefaultWorkModel<Parameters, Result, DataModelType> setOnNetworkProgressListener
-    (OnNetworkProgressListener onNetworkProgressListener, boolean isUiThread) {
+    (boolean isUiThread, OnNetworkProgressListener onNetworkProgressListener) {
         this.onNetworkProgressListener = onNetworkProgressListener;
         this.isProgressUiThread = isUiThread;
 
@@ -708,7 +708,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      */
     public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkCanceledListener
     (OnWorkCanceledListener<Parameters> onWorkCanceledListener) {
-        return setOnWorkCanceledListener(onWorkCanceledListener, true);
+        return setOnWorkCanceledListener(true, onWorkCanceledListener);
     }
 
     /**
@@ -716,16 +716,16 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 在任务取消时被回调，
      * 并设置是否在当前线程执行
      *
-     * @param onWorkCanceledListener 监听器对象
      * @param isUiThread             指示是否在UI线程回调，
      *                               true表示在UI线程回调，
      *                               false表示在当前线程（执行{@link #cancel()}的线程）回调，
      *                               默认为true
+     * @param onWorkCanceledListener 监听器对象
      *
      * @return 当前任务实例
      */
     public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkCanceledListener
-    (OnWorkCanceledListener<Parameters> onWorkCanceledListener, boolean isUiThread) {
+    (boolean isUiThread, OnWorkCanceledListener<Parameters> onWorkCanceledListener) {
         this.onWorkCanceledListener = onWorkCanceledListener;
         this.isCancelUiThread = isUiThread;
         return this;
