@@ -49,7 +49,7 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
      * 在这里应该将{@code handleResult}写入到文件或内存中，
      * 只有这里读取{@code handleResult}后网络连接才会真正开始向服务器拉取数据，
      * 所以该方法并不是下载完成后被调用，
-     * 而是成功建立连接并开始下载数据时才被调用。<br>
+     * 而是成功建立连接并开始下载数据时就被调用。<br>
      * 由于该方法的父框架需要同步返回执行结果，
      * 所以该方法不必新开线程进行IO操作，
      * 如果该任务通过异步启动，

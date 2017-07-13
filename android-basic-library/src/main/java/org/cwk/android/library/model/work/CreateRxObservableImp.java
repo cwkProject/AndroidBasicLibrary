@@ -54,13 +54,13 @@ class CreateRxObservableImp<T extends DefaultWorkModel<Parameters, Result, ? ext
                         }
                     }
                 });
-                work.setOnWorkFinishListener(new OnWorkFinishListener<Result>() {
+                work.setOnWorkFinishListener(false, new OnWorkFinishListener<Result>() {
                     @Override
                     public void onFinish(boolean state, Result data, String message) {
                         e.onNext(new WorkResult<>(state, message, data));
                         e.onComplete();
                     }
-                }, false).beginExecute(parameters);
+                }).beginExecute(parameters);
             }
         });
     }

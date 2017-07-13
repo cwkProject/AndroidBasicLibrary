@@ -3,14 +3,13 @@ package org.cwk.android.library;
 import android.util.Log;
 
 import org.cwk.android.library.model.data.WorkResult;
-import org.cwk.android.library.model.work.WorkFactory;
 import org.cwk.android.library.model.work.SimpleWorkModel;
+import org.cwk.android.library.model.work.WorkFactory;
 import org.json.JSONObject;
 import org.junit.Test;
 
 import java.util.Map;
 
-import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
 import static org.junit.Assert.assertEquals;
@@ -56,7 +55,7 @@ public class TestRxAndroidWorkFactory {
 
         WorkFactory.from(TestWork.class).observable("123").subscribe(new Consumer<WorkResult<String>>() {
             @Override
-            public void accept(@NonNull WorkResult<String> stringWorkResult) throws Exception {
+            public void accept(WorkResult<String> stringWorkResult) throws Exception {
                 Log.v("TestRxAndroidWorkFactory.test", "state:" + stringWorkResult.isSuccess() +
                         " ;" + "" + "" + "" + "" + "" + "" + "" + "" + "result:" +
                         stringWorkResult.getResult());
