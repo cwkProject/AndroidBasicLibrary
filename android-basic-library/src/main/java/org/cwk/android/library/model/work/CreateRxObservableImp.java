@@ -58,7 +58,6 @@ class CreateRxObservableImp<T extends DefaultWorkModel<Parameters, Result, ? ext
                     @Override
                     public void onFinish(boolean state, Result data, String message) {
                         e.onNext(new WorkResult<>(state, message, data));
-                        e.onComplete();
                     }
                 }).beginExecute(parameters);
             }
