@@ -38,4 +38,9 @@ public interface NetworkType {
      * http put类型的请求
      */
     int PUT = 5;
+
+    /**
+     * 仅流的形式上传，content-type = application/octet-stream ，其余参数将拼接到url中
+     */
+    int UPLOAD_STREAM = 6;
 }

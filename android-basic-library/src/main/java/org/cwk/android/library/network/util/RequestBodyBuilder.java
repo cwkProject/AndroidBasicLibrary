@@ -52,7 +52,8 @@ public class RequestBodyBuilder {
                 for (Map.Entry<String, String> dataEntry : sendData.entrySet()) {
 
                     Log.v(LOG_TAG + "onBuildParameter", "parameter is " + dataEntry.getKey() + " " +
-                            "= " + dataEntry.getValue());
+                            "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "= " + dataEntry
+                            .getValue());
 
                     if (dataEntry.getValue() != null) {
                         params.append(dataEntry.getKey());
@@ -193,5 +194,27 @@ public class RequestBodyBuilder {
         }
 
         return builder.build();
+    }
+
+    /**
+     * 创建上传流
+     *
+     * @param path 要上传的文件路径
+     *
+     * @return 装配好的表单
+     */
+    public static RequestBody onBuildUploadStream(String path) {
+        if (path != null) {
+            File file = new File(path);
+
+            if (file.exists()) {
+                Log.v(LOG_TAG + "onBuildUploadStream", "sendStream is " + path);
+                return RequestBody.create(MediaType.parse("application/octet-stream"), file);
+            } else {
+                Log.d(LOG_TAG + "onBuildUploadStream", "no file " + path);
+            }
+        }
+
+        return RequestBody.create(MediaType.parse("application/octet-stream"), new byte[]{});
     }
 }

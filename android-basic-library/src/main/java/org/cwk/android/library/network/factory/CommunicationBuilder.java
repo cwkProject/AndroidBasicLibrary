@@ -6,6 +6,7 @@ import org.cwk.android.library.network.communication.OkHttpDownloadCommunication
 import org.cwk.android.library.network.communication.OkHttpGetCommunication;
 import org.cwk.android.library.network.communication.OkHttpPostCommunication;
 import org.cwk.android.library.network.communication.OkHttpPutCommunication;
+import org.cwk.android.library.network.communication.OkHttpStreamUploadCommunication;
 import org.cwk.android.library.network.communication.OkHttpUploadCommunication;
 import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
@@ -172,6 +173,9 @@ public class CommunicationBuilder {
                 break;
             case DELETE:
                 communication = new OkHttpDeleteCommunication();
+                break;
+            case UPLOAD_STREAM:
+                communication = new OkHttpStreamUploadCommunication();
                 break;
             default:
                 throw new IllegalArgumentException("error networkType");

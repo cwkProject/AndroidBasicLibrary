@@ -8,6 +8,7 @@ import org.cwk.android.library.annotation.Get;
 import org.cwk.android.library.annotation.Post;
 import org.cwk.android.library.annotation.Put;
 import org.cwk.android.library.annotation.Upload;
+import org.cwk.android.library.annotation.UploadStream;
 import org.cwk.android.library.global.Global;
 import org.cwk.android.library.model.data.IDefaultDataModel;
 import org.cwk.android.library.model.operate.AsyncExecute;
@@ -495,6 +496,9 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
         }
         if (method.isAnnotationPresent(Delete.class)) {
             return NetworkType.DELETE;
+        }
+        if (method.isAnnotationPresent(UploadStream.class)) {
+            return NetworkType.UPLOAD_STREAM;
         }
 
         return NetworkType.GET;
