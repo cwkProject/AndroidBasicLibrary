@@ -160,6 +160,16 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
         if (fromPosition >= 0 && toPosition >= 0 && fromPosition < dataList.size() && toPosition
                 < dataList.size()) {
             Collections.swap(dataList, fromPosition, toPosition);
+            notifyItemChanged(fromPosition);
+            notifyItemChanged(toPosition);
+        }
+    }
+
+    @Override
+    public void move(int fromPosition, int toPosition) {
+        if (fromPosition >= 0 && toPosition >= 0 && fromPosition < dataList.size() && toPosition
+                < dataList.size()) {
+            dataList.add(toPosition, dataList.remove(fromPosition));
             notifyItemMoved(fromPosition, toPosition);
         }
     }

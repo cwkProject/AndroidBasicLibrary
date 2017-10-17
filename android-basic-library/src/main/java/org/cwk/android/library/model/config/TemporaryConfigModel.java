@@ -13,7 +13,7 @@ public abstract class TemporaryConfigModel {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "TemporaryConfigModel.";
+    private static final String TAG = "TemporaryConfigModel";
 
     /**
      * 构造函数
@@ -25,13 +25,13 @@ public abstract class TemporaryConfigModel {
     /**
      * 初始化数据，
      * 在创建时执行一次，
-     * 在{@link #Reset()}被调用
+     * 在{@link #reset()}被调用
      */
     protected abstract void onCreate();
 
     /**
      * 刷新数据,
-     * 在{@link #Refresh()}被调用
+     * 在{@link #refresh()}被调用
      */
     protected void onRefresh() {
     }
@@ -39,16 +39,16 @@ public abstract class TemporaryConfigModel {
     /**
      * 刷新数据
      */
-    public final void Refresh() {
-        Log.v(LOG_TAG + "Refresh", "Refresh() is invoked");
+    public final void refresh() {
+        Log.v(TAG, "refresh invoked");
         onRefresh();
     }
 
     /**
      * 重置数据
      */
-    public final void Reset() {
-        Log.v(LOG_TAG + "Reset", "Reset() is invoked");
+    public final void reset() {
+        Log.v(TAG, "reset invoked");
         onCreate();
     }
 }

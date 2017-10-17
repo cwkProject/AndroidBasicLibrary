@@ -1,5 +1,7 @@
 package org.cwk.android.library.network.util;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -78,7 +80,7 @@ public class ProgressResponseBody extends ResponseBody {
             long length = 0L;
 
             @Override
-            public long read(Buffer sink, long byteCount) throws IOException {
+            public long read(@NonNull Buffer sink, long byteCount) throws IOException {
                 long bytesRead = super.read(sink, byteCount);
                 // read() returns the number of bytes read, or -1 if this source is exhausted.
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;

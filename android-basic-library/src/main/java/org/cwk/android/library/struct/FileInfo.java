@@ -13,8 +13,6 @@ import java.io.File;
  */
 public class FileInfo {
 
-    private static final String LOG_TAG = "FileInfo.";
-
     /**
      * 要上传的文件
      */

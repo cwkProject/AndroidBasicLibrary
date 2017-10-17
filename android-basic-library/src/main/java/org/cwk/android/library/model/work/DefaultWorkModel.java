@@ -1,5 +1,6 @@
 package org.cwk.android.library.model.work;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cwk.android.library.annotation.Delete;
@@ -10,9 +11,11 @@ import org.cwk.android.library.annotation.Put;
 import org.cwk.android.library.annotation.Upload;
 import org.cwk.android.library.annotation.UploadStream;
 import org.cwk.android.library.global.Global;
+import org.cwk.android.library.model.data.IDataModel;
 import org.cwk.android.library.model.data.IDefaultDataModel;
 import org.cwk.android.library.model.operate.AsyncExecute;
 import org.cwk.android.library.model.operate.Cancelable;
+import org.cwk.android.library.model.operate.CreateRxObservable;
 import org.cwk.android.library.model.operate.SyncExecute;
 import org.cwk.android.library.network.communication.Communication;
 import org.cwk.android.library.network.factory.CommunicationBuilder;
@@ -24,33 +27,48 @@ import org.cwk.android.library.network.util.SyncCommunication;
 
 import java.lang.reflect.Method;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableOnSubscribe;
+import io.reactivex.Maybe;
+import io.reactivex.MaybeEmitter;
+import io.reactivex.MaybeOnSubscribe;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.functions.Cancellable;
+
 /**
  * 默认实现的网络任务模型基类<br>
  * 内部使用{@link IDefaultDataModel}作为默认的数据模型类，
  * 使用{@link SyncCommunication}作为同步网络请求工具，
- * 使用{@link AsyncCommunication}作为异步网络请求工具
+ * 使用{@link AsyncCommunication}作为异步网络请求工具，
+ * 集成RxJava构建器
  *
  * @param <Parameters>    功能所需参数类型
  * @param <Result>        结果数据类型
  * @param <DataModelType> 任务请求使用的数据模型类型
  *
  * @author 超悟空
- * @version 3.0 2015/11/2
- * @since 1.0
+ * @version 4.0 2017/10/17
+ * @since 1.0 2014/11/2
  */
-public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
-        IDefaultDataModel> extends WorkProcessModel<Parameters, Result> implements
-        SyncExecute<Parameters>, AsyncExecute<Parameters>, Cancelable {
+public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends IDataModel>
+        extends WorkProcessModel<Parameters, DataModelType> implements SyncExecute<Parameters>,
+        AsyncExecute<Parameters>, Cancelable, CreateRxObservable<Parameters, DataModelType> {
 
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "DefaultWorkModel.";
+    private static final String TAG = "DefaultWorkModel";
 
     /**
      * 任务完成回调接口
      */
-    private OnWorkFinishListener<Result> onWorkFinishListener = null;
+    private OnWorkFinishListener<DataModelType> onWorkFinishListener = null;
 
     /**
      * 网络请求进度监听器，可用于上传和下载进度监听
@@ -92,29 +110,11 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      */
     private boolean isAsync = true;
 
-    /**
-     * 参数
-     */
-    private Parameters[] mParameters = null;
-
-    @SafeVarargs
     @Override
-    protected final boolean onDoWork(Parameters... parameters) {
-
-        // 校验参数
-        if (!onCheckParameters(parameters)) {
-            // 数据异常
-            Log.d(LOG_TAG + "onDoWork", "parameters is error");
-            // 执行异常回调
-            onParameterError(parameters);
-            return false;
-        }
-
-        // 创建数据模型
-        final DataModelType data = onCreateDataModel(parameters);
-
+    protected final boolean onDoWork() {
         if (!cancelMark) {
-            Log.v(LOG_TAG + "onDoWork", "task request url is " + onTaskUri());
+            Log.v(TAG, "onDoWork invoked");
+            Log.v(TAG, "onDoWork task request url is " + onTaskUri());
 
             // 设置请求地址
             communication.setTaskName(onTaskUri());
@@ -125,17 +125,15 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
                 // 发送请求
                 //noinspection unchecked
-                communication.Request(data.serialization(), new NetworkCallback() {
+                communication.Request(mData.serialization(), new NetworkCallback() {
                     @Override
                     public void onFinish(boolean result, Object response) {
                         if (!cancelMark) {
                             // 解析响应数据
-                            boolean success = onParseResult(data, result, response);
+                            onParseResult(result, response);
 
-                            Log.v(LOG_TAG + "onDoWork", "onStopWork(boolean , String , Object) "
-                                    + "is invoked");
                             // 执行后继任务
-                            onStopWork(success, getMessage(), getResult());
+                            onStopWork();
                         }
                     }
                 });
@@ -147,11 +145,11 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
                 // 发送请求
                 //noinspection unchecked
-                communication.Request(data.serialization());
+                communication.request(mData.serialization());
 
                 // 解析响应数据
-                boolean success = onParseResult(data, communication.isSuccessful(), communication
-                        .Response());
+                boolean success = onParseResult(communication.isSuccessful(), communication
+                        .response());
 
                 // 关闭网络
                 communication.close();
@@ -165,46 +163,36 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     /**
      * 解析响应数据
      *
-     * @param data     数据模型
      * @param result   请求结果
      * @param response 响应数据
      *
      * @return 任务执行结果，true表示成功
      */
-    private boolean onParseResult(DataModelType data, boolean result, Object response) {
-        Log.v(LOG_TAG + "onParseResult", "result parse start");
+    private boolean onParseResult(boolean result, Object response) {
+        Log.v(TAG, "onParseResult result parse start");
         // 解析数据
         //noinspection unchecked
-        if (result && data.parse(response)) {
+        if (result && mData.parse(response)) {
             // 解析成功
-            Log.v(LOG_TAG + "onParseResult", "result parse success");
-            Log.v(LOG_TAG + "onParseResult", "onParseSuccess(IDefaultDataModel) is invoked");
+            Log.v(TAG, "onParseResult result parse success");
+            Log.v(TAG, "onParseSuccess invoked");
             // 解析成功回调
-            onParseSuccess(data);
-            // 设置结果消息
-            setMessage(onParseSuccessSetMessage(data.isSuccess(), data));
-
-            if (data.isSuccess()) {
+            onParseSuccess();
+            if (mData.isSuccess()) {
                 // 设置请求成功后返回的数据
-                Log.v(LOG_TAG + "onParseResult", "work success");
-                setResult(onRequestSuccessSetResult(data));
+                Log.v(TAG, "work success");
                 return true;
             } else {
                 // 设置请求失败后返回的数据
-                Log.i(LOG_TAG + "onParseResult", "work failed");
-                setResult(onRequestFailedSetResult(data));
+                Log.v(TAG, "work failed");
                 return false;
             }
         } else {
             // 解析失败
-            Log.v(LOG_TAG + "onDoWork", "result parse failed");
-            Log.v(LOG_TAG + "onDoWork", "onParseFailed(IDefaultDataModel) is invoked");
+            Log.v(TAG, "onParseResult result parse failed");
+            Log.v(TAG, "onParseFailed invoked");
             // 解析失败回调
-            onParseFailed(data);
-            // 设置结果消息
-            setMessage(onParseFailedSetMessage(data));
-            // 设置解析失败返回的数据
-            setResult(onParseFailedSetResult(data));
+            onParseFailed();
             return false;
         }
     }
@@ -212,26 +200,25 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     @SafeVarargs
     @Override
     public final void beginExecute(Parameters... parameters) {
-        Log.v(LOG_TAG + "beginExecute", "beginExecute start");
-        // 保存参数对象
-        mParameters = parameters;
+        Log.v(TAG, "beginExecute start");
+
         cancelMark = false;
         isAsync = true;
 
-        if (!cancelMark) {
-            Log.v(LOG_TAG + "beginExecute", "onStartWork() is invoked");
-            // 执行前导任务
-            onStartWork();
-        }
+        // 是否继续执行
+        boolean next = true;
 
         if (!cancelMark) {
-            Log.v(LOG_TAG + "beginExecute", "onDoWork(Object[]) is invoked");
+            // 执行前导任务
+            next = onStartWork();
+        }
+
+        if (!cancelMark && next) {
             // 执行核心任务
-            if (!onDoWork(parameters)) {
-                Log.v(LOG_TAG + "beginExecute", "onStopWork(boolean , String , Object) is invoked");
-                // 任务启动出错
+            if (!onDoWork()) {
+                // 任务执行失败
                 // 执行后继任务
-                onStopWork(false, getMessage(), getResult());
+                onStopWork();
             }
         }
     }
@@ -239,31 +226,29 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     @SafeVarargs
     @Override
     public final boolean execute(Parameters... parameters) {
-        Log.v(LOG_TAG + "execute", "execute start");
-        // 保存参数对象
-        mParameters = parameters;
+        Log.v(TAG, "execute start");
         cancelMark = false;
         isAsync = false;
 
-        // 用于保存执行结果
+        // 保留执行结果
         boolean state = false;
 
+        // 是否继续执行
+        boolean next = true;
+
         if (!cancelMark) {
-            Log.v(LOG_TAG + "execute", "onStartWork() is invoked");
             // 执行前导任务
-            onStartWork();
+            next = onStartWork();
         }
 
-        if (!cancelMark) {
-            Log.v(LOG_TAG + "execute", "onDoWork(Object[]) is invoked");
+        if (!cancelMark && next) {
             // 执行核心任务
-            state = onDoWork(parameters);
+            state = onDoWork();
         }
 
-        if (!cancelMark) {
-            Log.v(LOG_TAG + "execute", "onStopWork(boolean , String , Object) is invoked");
+        if (!cancelMark && next) {
             // 执行后继任务
-            onStopWork(state, getMessage(), getResult());
+            onStopWork();
         }
 
         return state;
@@ -271,29 +256,28 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
     @Override
     public final void cancel() {
-        Log.v(LOG_TAG + "cancel", "work cancel");
+        Log.v(TAG, "work cancel");
         this.cancelMark = true;
         if (communication != null) {
             communication.cancel();
         }
 
-        Log.v(LOG_TAG + "onCanceled", "work canceled");
-        onCanceled(getParameters());
+        Log.v(TAG, "onCanceled invoked");
+        onCanceled();
 
         if (onWorkCanceledListener != null) {
-            Log.v(LOG_TAG + "onCanceled", "onWorkCanceledListener.onCanceled(Parameters) is " +
-                    "invoked");
+            Log.v(TAG, "onWorkCanceledListener invoked");
             if (isCancelUiThread) {
                 // 发送到UI线程
                 Global.getUiHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        onWorkCanceledListener.onCanceled(getParameters());
+                        onWorkCanceledListener.onCanceled(mParameters);
                     }
                 });
             } else {
                 // 发送到当前线程
-                this.onWorkCanceledListener.onCanceled(getParameters());
+                this.onWorkCanceledListener.onCanceled(mParameters);
             }
         }
     }
@@ -303,14 +287,20 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
         return this.cancelMark;
     }
 
+    @SafeVarargs
     @Override
-    protected final void onStartWork() {
-        Log.v(LOG_TAG + "onStartWork", "work start");
+    protected final boolean onStartWork(Parameters... parameters) {
+        Log.v(TAG, "onStartWork invoked");
+
+        boolean next = super.onStartWork(parameters);
+
         // 创建网络请求工具
-        if (communication == null) {
+        if (next && communication == null) {
             communication = onCreateCommunication(new CommunicationBuilder(onNetworkType())
                     .networkRefreshProgressListener(onCreateProgressListener()));
         }
+
+        return next;
     }
 
     /**
@@ -321,7 +311,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     protected OnNetworkProgressListener onCreateProgressListener() {
         if (onNetworkProgressListener != null) {
             // 开始绑定
-            Log.v(LOG_TAG + "onCreateProgressListener", "set ProgressListener");
+            Log.v(TAG, "set ProgressListener");
 
             if (isProgressUiThread) {
                 // 发送到UI线程
@@ -348,45 +338,43 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     }
 
     @Override
-    protected final void onStopWork(final boolean state, final String message, final Result
-            result) {
-        Log.v(LOG_TAG + "onStopWork", "work stop");
+    protected final void onStopWork() {
+        Log.v(TAG, "onStopWork invoked");
         if (!cancelMark) {
             // 不同结果的后继执行
-            if (state) {
-                Log.v(LOG_TAG + "onStopWork", "onSuccess invoke");
+            if (mData.isSuccess()) {
+                Log.v(TAG, "onSuccessResult invoke");
                 onSuccess();
             } else {
-                Log.v(LOG_TAG + "onStopWork", "onFailed invoke");
+                Log.v(TAG, "onFailed invoke");
                 onFailed();
             }
         }
 
         // 如果设置了回调接口则执行回调方法
         if (!cancelMark && isAsync && this.onWorkFinishListener != null) {
-            Log.v(LOG_TAG + "onStopWork", "onWorkFinishListener.onFinish(boolean , String , " +
-                    "Object) " + "is " + "invoked");
+            Log.v(TAG, "onWorkFinishListener invoked");
             if (isEndUiThread) {
                 // 发送到UI线程
                 Global.getUiHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        onWorkFinishListener.onFinish(state, result, message);
+                        onWorkFinishListener.onFinish(mData);
                     }
                 });
             } else {
                 // 发送到当前线程
-                this.onWorkFinishListener.onFinish(state, result, message);
+                this.onWorkFinishListener.onFinish(mData);
             }
         }
 
         if (!cancelMark) {
             // 最后执行
-            Log.v(LOG_TAG + "onStopWork", "onFinish invoke");
+            Log.v(TAG, "onFinish invoke");
             onFinish();
         }
 
-        Log.v(LOG_TAG + "onStopWork", "work end");
+        Log.v(TAG, "work end");
     }
 
     /**
@@ -399,7 +387,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     }
 
     /**
-     * 本次任务执行成功后执行，
+     * 本次任务执行失败后执行，
      * 即设置请求结果和返回数据之后，并且在回调接口之前执行此函数，
      * 该方法在{@link #onFinish()}之前被调用
      */
@@ -415,33 +403,6 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     }
 
     /**
-     * 参数合法性检测<br>
-     * 用于检测传入参数是否合法，
-     * 需要子类重写检测规则<br>
-     * 检测成功后续任务才会被正常执行，
-     * 如果检测失败则{@link #onParameterError(Object[])}会被调用
-     *
-     * @param parameters 任务传入参数
-     *
-     * @return 检测结果，合法返回true，非法返回false，默认为true
-     */
-    @SuppressWarnings("unchecked")
-    protected boolean onCheckParameters(Parameters... parameters) {
-        return true;
-    }
-
-    /**
-     * 参数检测不合法时调用，
-     * 即{@link #onCheckParameters(Object[])}返回false时被调用，
-     * 且后续任务不再执行
-     *
-     * @param parameters 任务传入参数
-     */
-    @SuppressWarnings("unchecked")
-    protected void onParameterError(Parameters... parameters) {
-    }
-
-    /**
      * 设置任务请求地址，同时标记请求协议，默认使用http get发送请求<br>
      * 或使用{@link NetworkType}中支持的其他请求类型，使用时标记同名注解。<br>
      * 如果项目使用混淆，请加入<br>
@@ -453,6 +414,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      *
      * @return 地址字符串
      */
+    @Get
     protected abstract String onTaskUri();
 
     /**
@@ -520,115 +482,16 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
     /**
      * 服务器响应数据解析成功后调用，
-     * 即在{@link IDefaultDataModel#parse(Object)}返回true时调用
-     *
-     * @param data 解析后的数据模型对象
+     * 即在{@link IDataModel#parse(Object)}返回true时调用
      */
-    protected void onParseSuccess(DataModelType data) {
-    }
-
-    /**
-     * 设置解析成功后返回的结果消息<br>
-     * 在{@link #onParseSuccess(IDefaultDataModel)}之后被调用，
-     * 默认使用{@link IDefaultDataModel#getMessage()}的返回值，
-     * 如果需要自定义返回结果消息请重写此方法
-     *
-     * @param state 服务执行结果
-     * @param data  解析后的数据模型对象
-     *
-     * @return 要返回的任务结果消息
-     */
-    protected String onParseSuccessSetMessage(boolean state, DataModelType data) {
-        return data.getMessage();
+    protected void onParseSuccess() {
     }
 
     /**
      * 服务器响应数据解析失败后调用，
-     * 即在{@link IDefaultDataModel#parse(Object)}返回false时调用
-     *
-     * @param data 数据模型对象
+     * 即在{@link IDataModel#parse(Object)}返回false时调用
      */
-    protected void onParseFailed(DataModelType data) {
-    }
-
-    /**
-     * 设置解析失败后返回的结果消息<br>
-     * 在{@link #onParseFailed(IDefaultDataModel)}之后被调用，
-     * 默认使用{@link IDefaultDataModel#getMessage()}的返回值，
-     * 如果需要自定义返回结果消息请重写此方法
-     *
-     * @param data 数据模型对象
-     *
-     * @return 要返回的任务结果消息
-     */
-    protected String onParseFailedSetMessage(DataModelType data) {
-        return data.getMessage();
-    }
-
-    /**
-     * 设置服务请求成功时的返回数据<br>
-     * 服务返回数据解析成功后，
-     * 并且服务执行结果为成功即{@link IDefaultDataModel#isSuccess()}返回true时，
-     * 设置任务的返回数据，
-     * 即设置{@link #setResult(Object)}的参数。
-     * 该方法在{@link #onParseSuccess(IDefaultDataModel)}之后被调用
-     *
-     * @param data 解析后的数据模型对象
-     *
-     * @return 任务返回数据
-     */
-    protected abstract Result onRequestSuccessSetResult(DataModelType data);
-
-    /**
-     * 设置服务请求失败时的返回数据<br>
-     * 服务返回数据解析成功后，
-     * 但是服务执行结果为失败即{@link IDefaultDataModel#isSuccess()}返回false时设置任务返回数据，
-     * 即设置{@link #setResult(Object)}的参数。<br>
-     * 该方法在{@link #onParseSuccess(IDefaultDataModel)}之后被调用，
-     * 默认返回null引用，
-     * 如果需要自定义结果数据请重写该方法
-     *
-     * @param data 解析后的数据模型对象
-     *
-     * @return 任务返回数据
-     */
-    protected Result onRequestFailedSetResult(DataModelType data) {
-        return null;
-    }
-
-    /**
-     * 设置服务请求解析失败时的返回数据<br>
-     * 服务返回数据解析失败后，
-     * 即在{@link IDefaultDataModel#parse(Object)}返回false时设置任务返回数据，
-     * 即设置{@link #setResult(Object)}的参数。<br>
-     * 该方法在{@link #onParseFailed(IDefaultDataModel)}之后调用
-     *
-     * @param data 数据模型对象
-     *
-     * @return 任务返回数据
-     */
-    protected Result onParseFailedSetResult(DataModelType data) {
-        return null;
-    }
-
-    /**
-     * 创建数据模型对象并填充参数
-     *
-     * @param parameters 传入参数
-     *
-     * @return 参数设置完毕后的数据模型对象
-     */
-    @SuppressWarnings("unchecked")
-    protected abstract DataModelType onCreateDataModel(Parameters... parameters);
-
-    /**
-     * 获取当前任务传入的参数，
-     * {@link #onStartWork()}执行之后可获取
-     *
-     * @return 参数集合
-     */
-    protected final Parameters[] getParameters() {
-        return mParameters;
+    protected void onParseFailed() {
     }
 
     /**
@@ -641,7 +504,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * @return 当前任务实例
      */
     public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkFinishListener
-    (OnWorkFinishListener<Result> onWorkFinishListener) {
+    (OnWorkFinishListener<DataModelType> onWorkFinishListener) {
         return setOnWorkFinishListener(true, onWorkFinishListener);
     }
 
@@ -673,7 +536,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * @return 当前任务实例
      */
     public final DefaultWorkModel<Parameters, Result, DataModelType> setOnWorkFinishListener
-    (boolean isUiThread, OnWorkFinishListener<Result> onWorkFinishListener) {
+    (boolean isUiThread, OnWorkFinishListener<DataModelType> onWorkFinishListener) {
         this.onWorkFinishListener = onWorkFinishListener;
         this.isEndUiThread = isUiThread;
         return this;
@@ -733,5 +596,118 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
         this.onWorkCanceledListener = onWorkCanceledListener;
         this.isCancelUiThread = isUiThread;
         return this;
+    }
+
+    @SafeVarargs
+    @Override
+    public final Observable<DataModelType> observable(final Parameters... parameters) {
+        return Observable.create(new ObservableOnSubscribe<DataModelType>() {
+            @Override
+            public void subscribe(@NonNull final ObservableEmitter<DataModelType> e) throws
+                    Exception {
+
+                // 设置需要任务监听
+                e.setCancellable(new Cancellable() {
+                    @Override
+                    public void cancel() throws Exception {
+                        DefaultWorkModel.this.cancel();
+                    }
+                });
+
+                setOnWorkFinishListener(false, new OnWorkFinishListener<DataModelType>() {
+                    @Override
+                    public void onFinish(DataModelType data) {
+                        e.onNext(data);
+                    }
+                }).beginExecute(parameters);
+            }
+        });
+    }
+
+    @SafeVarargs
+    @Override
+    public final Maybe<DataModelType> maybe(final Parameters... parameters) {
+        return Maybe.create(new MaybeOnSubscribe<DataModelType>() {
+            @Override
+            public void subscribe(final MaybeEmitter<DataModelType> maybeEmitter) throws Exception {
+                // 设置需要任务监听
+                maybeEmitter.setCancellable(new Cancellable() {
+                    @Override
+                    public void cancel() throws Exception {
+                        DefaultWorkModel.this.cancel();
+                    }
+                });
+
+                setOnWorkFinishListener(false, new OnWorkFinishListener<DataModelType>() {
+                    @Override
+                    public void onFinish(DataModelType data) {
+                        if (data.isSuccess()) {
+                            maybeEmitter.onSuccess(data);
+                        } else {
+                            maybeEmitter.onComplete();
+                        }
+                    }
+                }).beginExecute(parameters);
+            }
+        });
+    }
+
+    @SafeVarargs
+    @Override
+    public final Single<DataModelType> single(final Parameters... parameters) {
+        return Single.create(new SingleOnSubscribe<DataModelType>() {
+            @Override
+            public void subscribe(final SingleEmitter<DataModelType> singleEmitter) throws
+                    Exception {
+
+                // 设置需要任务监听
+                singleEmitter.setCancellable(new Cancellable() {
+                    @Override
+                    public void cancel() throws Exception {
+                        DefaultWorkModel.this.cancel();
+                    }
+                });
+
+                setOnWorkFinishListener(false, new OnWorkFinishListener<DataModelType>() {
+                    @Override
+                    public void onFinish(DataModelType data) {
+                        if (data.isSuccess()) {
+                            singleEmitter.onSuccess(data);
+                        } else {
+                            singleEmitter.onError(new Throwable(data.getMessage()));
+                        }
+                    }
+                }).beginExecute(parameters);
+            }
+        });
+    }
+
+    @SafeVarargs
+    @Override
+    public final Completable completable(final Parameters... parameters) {
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(final CompletableEmitter completableEmitter) throws Exception {
+
+                // 设置需要任务监听
+                completableEmitter.setCancellable(new Cancellable() {
+                    @Override
+                    public void cancel() throws Exception {
+                        DefaultWorkModel.this.cancel();
+                    }
+                });
+
+                setOnWorkFinishListener(false, new OnWorkFinishListener<DataModelType>() {
+                    @Override
+                    public void onFinish(DataModelType data) {
+                        if (data.isSuccess()) {
+                            completableEmitter.onComplete();
+                        } else {
+                            completableEmitter.onError(new Throwable(data.getMessage()));
+                        }
+                    }
+                }).beginExecute(parameters);
+            }
+        });
     }
 }

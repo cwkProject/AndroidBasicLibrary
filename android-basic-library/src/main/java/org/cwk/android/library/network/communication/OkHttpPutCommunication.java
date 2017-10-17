@@ -27,7 +27,7 @@ public class OkHttpPutCommunication extends Communication<Map<String, String>, S
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "OkHttpPutCommunication.";
+    private static final String TAG = "OkHttpPutCommunication";
 
     @Override
     protected Request onCreateRequest(Map<String, String> sendData) {
@@ -48,16 +48,16 @@ public class OkHttpPutCommunication extends Communication<Map<String, String>, S
     protected void onAsyncSuccess(ResponseBody body, NetworkCallback<String> callback) throws
             IOException {
         String responseString = body.string();
-        Log.v(LOG_TAG + "Request", "response is " + responseString);
+        Log.v(TAG, "response is " + responseString);
         callback.onFinish(true, responseString);
     }
 
     @Override
-    public String Response() {
+    public String response() {
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(LOG_TAG + "Response", "error", e);
+            Log.e(TAG, "response error", e);
 
             return null;
         }

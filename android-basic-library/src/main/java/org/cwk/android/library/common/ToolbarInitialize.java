@@ -1,4 +1,4 @@
-package org.cwk.android.library.common.function;
+package org.cwk.android.library.common;
 
 import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +32,10 @@ public class ToolbarInitialize {
     public static Toolbar initToolbar(final AppCompatActivity activity, @StringRes int titleId,
                                       boolean center, boolean back) {
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+
+        if (toolbar == null) {
+            return null;
+        }
 
         activity.setSupportActionBar(toolbar);
         activity.setTitle(titleId);

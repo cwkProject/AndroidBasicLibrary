@@ -14,7 +14,7 @@ public class NetworkTimeout {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "NetworkTimeout.";
+    private static final String TAG = "NetworkTimeout";
 
     /**
      * 请求超时时间
@@ -37,7 +37,7 @@ public class NetworkTimeout {
      * @param timeout 超时时间，单位毫秒
      */
     public void setReadTimeout(int timeout) {
-        Log.v(LOG_TAG + "setReadTimeout", "timeout is " + timeout);
+        Log.v(TAG, "read timeout is " + timeout);
         this.readTimeout = timeout;
     }
 
@@ -47,7 +47,7 @@ public class NetworkTimeout {
      * @param timeout 超时时间，单位毫秒
      */
     public void setWriteTimeout(int timeout) {
-        Log.v(LOG_TAG + "setWriteTimeout", "timeout is " + timeout);
+        Log.v(TAG, "write timeout is " + timeout);
         this.writeTimeout = timeout;
     }
 
@@ -57,7 +57,7 @@ public class NetworkTimeout {
      * @param timeout 超时时间，单位毫秒
      */
     public void setConnectTimeout(int timeout) {
-        Log.v(LOG_TAG + "setConnectTimeout", "timeout is " + timeout);
+        Log.v(TAG, "connect timeout is " + timeout);
         this.connectTimeout = timeout;
     }
 

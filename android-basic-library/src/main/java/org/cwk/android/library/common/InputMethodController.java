@@ -1,4 +1,4 @@
-package org.cwk.android.library.common.function;
+package org.cwk.android.library.common;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,7 +18,7 @@ public class InputMethodController {
      *
      * @param activity 上下文
      */
-    public static void CloseInputMethod(Activity activity) {
+    public static void closeInputMethod(Activity activity) {
         //得到InputMethodManager的实例
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context
                 .INPUT_METHOD_SERVICE);

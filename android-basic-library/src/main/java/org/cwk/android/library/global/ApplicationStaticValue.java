@@ -23,24 +23,4 @@ public interface ApplicationStaticValue {
          */
         String APPLICATION_CONFIG_FILE_NAME = "app_config";
     }
-
-    /**
-     * 广播动作
-     */
-    interface BroadcastAction {
-        /**
-         * 应用版本状态
-         */
-        String APPLICATION_VERSION_STATE = "org.cwk.android.library:app_version";
-
-        /**
-         * 登录状态
-         */
-        String LOGIN_STATE = "org.cwk.android.library:login";
-
-        /**
-         * 用户信息状态
-         */
-        String USER_INFO_STATE = "org.cwk.android.library:user_info";
-    }
 }

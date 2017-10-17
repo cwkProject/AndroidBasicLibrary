@@ -30,7 +30,7 @@ public class OkHttpUploadCommunication extends Communication<Map<String, Object>
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "OkHttpUploadCommunication.";
+    private static final String TAG = "OkHttpUploadCommunication";
 
     /**
      * 上传进度监听器
@@ -54,16 +54,16 @@ public class OkHttpUploadCommunication extends Communication<Map<String, Object>
     protected void onAsyncSuccess(ResponseBody body, NetworkCallback<String> callback) throws
             IOException {
         String responseString = body.string();
-        Log.v(LOG_TAG + "Request", "response is " + responseString);
+        Log.v(TAG, "response is " + responseString);
         callback.onFinish(true, responseString);
     }
 
     @Override
-    public String Response() {
+    public String response() {
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(LOG_TAG + "Response", "error", e);
+            Log.e(TAG, "response error", e);
 
             return null;
         }

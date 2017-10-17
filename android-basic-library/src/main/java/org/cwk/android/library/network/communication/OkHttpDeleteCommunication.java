@@ -49,16 +49,16 @@ public class OkHttpDeleteCommunication extends Communication<Map<String, String>
             IOException {
 
         String responseString = body.string();
-        Log.v(LOG_TAG + "Request", "response is " + responseString);
+        Log.v(LOG_TAG + "request", "response is " + responseString);
         callback.onFinish(true, responseString);
     }
 
     @Override
-    public String Response() {
+    public String response() {
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(LOG_TAG + "Response", "error", e);
+            Log.e(LOG_TAG + "response", "error", e);
 
             return null;
         }

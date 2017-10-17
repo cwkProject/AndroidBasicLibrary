@@ -1,5 +1,7 @@
 package org.cwk.android.library.model.data.base;
 
+import org.cwk.android.library.model.work.SimpleDownloadWorkModel;
+
 import java.io.InputStream;
 
 /**
@@ -23,7 +25,7 @@ public abstract class SimpleDownloadDataModel<Parameters, Result> extends
      * 而是成功建立连接并开始下载数据时才被调用。<br>
      * 由于该方法的父框架需要同步返回执行结果，
      * 所以该方法不必新开线程进行IO操作，
-     * 如果该数据模型依赖的任务模型{@link DownloadDataModel}通过异步启动，
+     * 如果该数据模型依赖的任务模型{@link SimpleDownloadWorkModel}通过异步启动，
      * 则该方法本身就会运行在新线程中，
      * 如果任务通过同步启动，
      * 则该方法会在用户建立的任务执行线程中运行。
@@ -33,7 +35,7 @@ public abstract class SimpleDownloadDataModel<Parameters, Result> extends
      * @throws Exception
      */
     @Override
-    protected abstract Result onSuccess(InputStream handleResult) throws Exception;
+    protected abstract Result onSuccessResult(InputStream handleResult) throws Exception;
 
     @Override
     protected final boolean onCheckResponse(InputStream inputStream) {
@@ -54,10 +56,5 @@ public abstract class SimpleDownloadDataModel<Parameters, Result> extends
     protected final String onRequestMessage(boolean result, InputStream handleResult) throws
             Exception {
         return null;
-    }
-
-    @Override
-    protected final Result onFailed(InputStream handleResult) throws Exception {
-        return super.onFailed(handleResult);
     }
 }

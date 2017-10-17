@@ -75,7 +75,7 @@ public class OkHttpDownloadCommunication extends Communication<Map<String, Strin
 
         // 最终请求地址
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
-        Log.v(LOG_TAG + "Request", "final url is " + finalUrl);
+        Log.v(LOG_TAG + "request", "final url is " + finalUrl);
 
         return new Request.Builder().url(finalUrl).build();
     }
@@ -87,7 +87,7 @@ public class OkHttpDownloadCommunication extends Communication<Map<String, Strin
     }
 
     @Override
-    public InputStream Response() {
+    public InputStream response() {
         return response == null ? null : response.byteStream();
     }
 }

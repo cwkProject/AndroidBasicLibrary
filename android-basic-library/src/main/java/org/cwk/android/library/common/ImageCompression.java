@@ -1,4 +1,4 @@
-package org.cwk.android.library.common.function;
+package org.cwk.android.library.common;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,7 +24,7 @@ public class ImageCompression {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "ImageCompression.";
+    private static final String TAG = "ImageCompression";
 
     /**
      * 计算图片压缩量<br>
@@ -51,8 +51,8 @@ public class ImageCompression {
         int height = options.outHeight;
         int width = options.outWidth;
 
-        Log.v(LOG_TAG + "calculateLowSampleSize", "old height:" + height + " old width:" + width);
-        Log.v(LOG_TAG + "calculateLowSampleSize", "target height:" + reqHeight + " target width:" +
+        Log.v(TAG, "calculateLowSampleSize old height:" + height + " old width:" + width);
+        Log.v(TAG, "calculateLowSampleSize target height:" + reqHeight + " target width:" +
                 reqWidth);
 
         // 宽高矫正
@@ -74,7 +74,7 @@ public class ImageCompression {
         // 最终压缩比例
         int sampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
 
-        Log.v(LOG_TAG + "calculateLowSampleSize", "sampleSize is " + sampleSize);
+        Log.v(TAG, "sampleSize is " + sampleSize);
 
         return sampleSize;
     }
@@ -105,8 +105,8 @@ public class ImageCompression {
         int height = options.outHeight;
         int width = options.outWidth;
 
-        Log.v(LOG_TAG + "calculateHighSampleSize", "old height:" + height + " old width:" + width);
-        Log.v(LOG_TAG + "calculateHighSampleSize", "target height:" + reqHeight + " target width:" +
+        Log.v(TAG, "calculateHighSampleSize old height:" + height + " old width:" + width);
+        Log.v(TAG, "calculateHighSampleSize target height:" + reqHeight + " target width:" +
                 reqWidth);
 
         // 宽高矫正
@@ -128,7 +128,7 @@ public class ImageCompression {
         // 最终压缩比例
         int sampleSize = heightRatio < widthRatio ? widthRatio : heightRatio;
 
-        Log.v(LOG_TAG + "calculateHighSampleSize", "sampleSize is " + sampleSize);
+        Log.v(TAG, "calculateHighSampleSize sampleSize is " + sampleSize);
 
         return sampleSize;
     }
@@ -148,7 +148,7 @@ public class ImageCompression {
         // 原始高
         final int height = options.outHeight;
 
-        Log.v(LOG_TAG + "calculateHeightSampleSize", "old height:" + height + " target height:" +
+        Log.v(TAG, "calculateHeightSampleSize old height:" + height + " target height:" +
                 reqHeight);
 
         // 计算后缩放值
@@ -163,7 +163,7 @@ public class ImageCompression {
             }
         }
 
-        Log.v(LOG_TAG + "calculateHeightSampleSize", "sampleSize is " + heightRatio);
+        Log.v(TAG, "sampleSize is " + heightRatio);
 
         return heightRatio;
     }
@@ -183,8 +183,7 @@ public class ImageCompression {
         // 原始宽
         final int width = options.outWidth;
 
-        Log.v(LOG_TAG + "calculateWidthSampleSize", "old width:" + width + " target width:" +
-                reqWidth);
+        Log.v(TAG, "calculateWidthSampleSize old width:" + width + " target width:" + reqWidth);
 
         // 计算后缩放值
         int widthRatio = 1;
@@ -198,7 +197,7 @@ public class ImageCompression {
             }
         }
 
-        Log.v(LOG_TAG + "calculateWidthSampleSize", "sampleSize is " + widthRatio);
+        Log.v(TAG, "sampleSize is " + widthRatio);
 
         return widthRatio;
     }
@@ -219,11 +218,11 @@ public class ImageCompression {
         // 第一次压缩
         image.compress(Bitmap.CompressFormat.JPEG, scale, os);
 
-        Log.v(LOG_TAG + "compressImage", "now image size is " + os.size() / 1024 + "KB, " +
-                "compress scale is " + scale);
+        Log.v(TAG, "compressImage now image size is " + os.size() / 1024 + "KB, " + "compress " +
+                "scale is " + scale);
 
         if (maxSize <= 0) {
-            Log.v(LOG_TAG + "compressImage", "maxSize is 0, not compress");
+            Log.v(TAG, "compressImage maxSize is 0, not compress");
             return os;
         }
 
@@ -238,8 +237,7 @@ public class ImageCompression {
             // 重新压缩
             image.compress(Bitmap.CompressFormat.JPEG, scale, os);
 
-            Log.v(LOG_TAG + "compressImage", "now image size is " + os.size() / 1024 + "KB, " +
-                    "compress scale is " + scale);
+            Log.v(TAG, "now image size is " + os.size() / 1024 + "KB, compress scale is " + scale);
         }
 
         return os;
@@ -280,7 +278,7 @@ public class ImageCompression {
      * @return 压缩图
      */
     public static Bitmap resolutionBitmap(File file, int width, int height) {
-        Log.v(LOG_TAG + "resolutionBitmap", "resolution compression begin");
+        Log.v(TAG, "resolution compression begin");
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         options.inJustDecodeBounds = true;
@@ -292,7 +290,7 @@ public class ImageCompression {
         options.inJustDecodeBounds = false;
 
         Bitmap bitmap = BitmapFactory.decodeFile(file.getPath(), options);
-        Log.v(LOG_TAG + "resolutionBitmap", "resolution compression end");
+        Log.v(TAG, "resolution compression end");
 
         return bitmap;
     }
@@ -307,7 +305,7 @@ public class ImageCompression {
      * @return 压缩图
      */
     public static Bitmap resolutionHighBitmap(File file, int width, int height) {
-        Log.v(LOG_TAG + "resolutionBitmap", "resolution compression begin");
+        Log.v(TAG, "resolution compression begin");
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         options.inJustDecodeBounds = true;
@@ -319,7 +317,7 @@ public class ImageCompression {
         options.inJustDecodeBounds = false;
 
         Bitmap bitmap = BitmapFactory.decodeFile(file.getPath(), options);
-        Log.v(LOG_TAG + "resolutionBitmap", "resolution compression end");
+        Log.v(TAG, "resolution compression end");
 
         return bitmap;
     }
@@ -332,7 +330,7 @@ public class ImageCompression {
      * @return degree旋转的角度
      */
     public static int readPictureDegree(String path) {
-        Log.v(LOG_TAG + "readPictureDegree", "image path is " + path);
+        Log.v(TAG, "readPictureDegree image path is " + path);
         int degree = 0;
         try {
             ExifInterface exifInterface = new ExifInterface(path);
@@ -350,9 +348,9 @@ public class ImageCompression {
                     break;
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG + "readPictureDegree", "IOException", e);
+            Log.e(TAG, "readPictureDegree error", e);
         }
-        Log.v(LOG_TAG + "readPictureDegree", "degree is " + degree);
+        Log.v(TAG, "degree is " + degree);
 
         return degree;
     }
@@ -366,7 +364,7 @@ public class ImageCompression {
      * @return 旋转后的图片
      */
     public static Bitmap rotateImage(int angle, Bitmap bitmap) {
-        Log.v(LOG_TAG + "rotateImage", "angle is " + angle);
+        Log.v(TAG, "rotateImage angle is " + angle);
         //旋转图片
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);

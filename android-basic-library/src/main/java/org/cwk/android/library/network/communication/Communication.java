@@ -1,5 +1,6 @@
 package org.cwk.android.library.network.communication;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cwk.android.library.network.util.AsyncCommunication;
@@ -32,7 +33,7 @@ public abstract class Communication<RequestType, ResponseType> implements
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "Communication.";
+    private static final String TAG = "Communication";
 
     /**
      * 超时时间配置
@@ -75,7 +76,7 @@ public abstract class Communication<RequestType, ResponseType> implements
      * @param encoded 编码字符串，默认为UTF-8
      */
     public void setEncoded(String encoded) {
-        Log.v(LOG_TAG + "setEncoded", "encoded is " + encoded);
+        Log.v(TAG, "encoded is " + encoded);
         this.encoded = encoded;
     }
 
@@ -87,13 +88,12 @@ public abstract class Communication<RequestType, ResponseType> implements
     @Override
     public void setTaskName(String url) {
         this.url = url;
-        Log.v(LOG_TAG + "setTaskName", "url is " + this.url);
+        Log.v(TAG, "url is " + url);
     }
 
     @Override
-    public void Request(RequestType sendData) {
-        Log.v(LOG_TAG + "Request", "Request start");
-        Log.v(LOG_TAG + "Request", "url is " + url);
+    public void request(RequestType sendData) {
+        Log.v(TAG, "request start");
 
         this.success = false;
         response = null;
@@ -101,7 +101,7 @@ public abstract class Communication<RequestType, ResponseType> implements
         if (url == null || (!url.trim().toLowerCase().startsWith("http://") && !url.trim()
                 .toLowerCase().startsWith("https://"))) {
             // 地址不合法
-            Log.d(LOG_TAG + "Request", "url is error");
+            Log.d(TAG, "url is error");
             return;
         }
 
@@ -116,22 +116,24 @@ public abstract class Communication<RequestType, ResponseType> implements
             call = okHttpClient.newCall(request);
             Response response = call.execute();
 
-            Log.v(LOG_TAG + "Request", "response code is " + response.code());
-            Log.v(LOG_TAG + "Request", "response message is " + response.message());
+            int code = response.code();
+            String message = response.message();
+
+            Log.v(TAG, "response code is " + code);
+            Log.v(TAG, "response message is " + message);
 
             if (response.isSuccessful()) {
-                Log.v(LOG_TAG + "Request", "request is success");
+                Log.v(TAG, "request is success");
                 this.success = true;
                 this.response = response.body();
-                Log.v(LOG_TAG + "Request", "response is " + this.response);
             } else {
-                Log.v(LOG_TAG + "Request", "request is failed");
+                Log.v(TAG, "request is failed");
                 this.success = false;
                 this.response = null;
             }
 
         } catch (IOException e) {
-            Log.e(LOG_TAG + "Request", "call error", e);
+            Log.e(TAG, "call error", e);
 
             this.success = false;
             response = null;
@@ -212,13 +214,12 @@ public abstract class Communication<RequestType, ResponseType> implements
 
     @Override
     public void Request(RequestType sendData, final NetworkCallback<ResponseType> callback) {
-        Log.v(LOG_TAG + "Request", "Request start");
-        Log.v(LOG_TAG + "Request", "url is " + url);
+        Log.v(TAG + "request", "request start");
 
         if (url == null || (!url.trim().toLowerCase().startsWith("http://") && !url.trim()
                 .toLowerCase().startsWith("https://"))) {
             // 地址不合法
-            Log.d(LOG_TAG + "Request", "url is error");
+            Log.d(TAG, "url is error");
 
             if (callback != null) {
                 callback.onFinish(false, null);
@@ -237,8 +238,8 @@ public abstract class Communication<RequestType, ResponseType> implements
         call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(LOG_TAG + "Request", "call error", e);
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "call error", e);
 
                 if (callback != null) {
                     callback.onFinish(false, null);
@@ -246,21 +247,30 @@ public abstract class Communication<RequestType, ResponseType> implements
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Log.v(LOG_TAG + "Request", "onResponse response code is " + response.code());
-                Log.v(LOG_TAG + "Request", "onResponse response message is " + response.message());
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws
+                    IOException {
+                int code = response.code();
+                String message = response.message();
+
+                Log.v(TAG, "response code is " + code);
+                Log.v(TAG, "response message is " + message);
+
                 if (callback != null) {
 
                     if (response.isSuccessful()) {
-                        Log.v(LOG_TAG + "Request", "request is success");
+                        Log.v(TAG, "request is success");
+
+                        ResponseBody body = response.body();
 
                         // 处理结果
-                        onAsyncSuccess(response.body(), callback);
+                        onAsyncSuccess(body, callback);
 
                         // 关闭流
-                        response.body().close();
+                        if (body != null) {
+                            body.close();
+                        }
                     } else {
-                        Log.v(LOG_TAG + "Request", "request is failed");
+                        Log.v(TAG, "request is failed");
                         callback.onFinish(false, null);
                     }
                 }

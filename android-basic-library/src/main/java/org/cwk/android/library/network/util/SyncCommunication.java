@@ -26,7 +26,7 @@ public interface SyncCommunication<RequestType, ResponseType> extends Cancelable
      *
      * @param sendData 向服务器发送的数据
      */
-    void Request(RequestType sendData);
+    void request(RequestType sendData);
 
     /**
      * 判断请求是否成功
@@ -40,7 +40,7 @@ public interface SyncCommunication<RequestType, ResponseType> extends Cancelable
      *
      * @return 服务器返回的数据
      */
-    ResponseType Response();
+    ResponseType response();
 
     /**
      * 关闭网络连接

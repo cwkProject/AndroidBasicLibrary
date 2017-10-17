@@ -1,121 +1,135 @@
 package org.cwk.android.library.model.work;
-/**
- * Created by 超悟空 on 2015/10/29.
- */
 
+import android.support.annotation.CallSuper;
 import android.util.Log;
+
+import org.cwk.android.library.model.data.IDataModel;
 
 /**
  * 任务流程的基本模型
  *
  * @param <Parameters> 任务所需参数类型
- * @param <Result>     结果数据类型
+ * @param <DataModel>  协议数据类型
  *
  * @author 超悟空
  * @version 1.0 2015/10/29
  * @since 1.0
  */
-public abstract class WorkProcessModel<Parameters, Result> {
+public abstract class WorkProcessModel<Parameters, DataModel extends IDataModel> {
 
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "WorkProcessModel.";
+    private static final String TAG = "WorkProcessModel";
 
     /**
-     * 结果数据对象
+     * 协议数据处理器
      */
-    private Result result = null;
+    protected DataModel mData = null;
 
     /**
-     * 执行结果信息
+     * 参数
      */
-    private String message = null;
+    protected Parameters[] mParameters = null;
 
     /**
      * 任务启动前置方法<br>
-     * 在{@link #onDoWork(Object[])}之前被调用，
+     * 在{@link #onDoWork()}之前被调用，
      * 运行于当前线程
+     *
+     * @param parameters 任务传入参数
+     *
+     * @return 是否继续执行任务，true表示继续
      */
-    protected void onStartWork() {
+    @SuppressWarnings("unchecked")
+    @CallSuper
+    protected boolean onStartWork(Parameters... parameters) {
+        // 校验参数
+        if (!onCheckParameters(parameters)) {
+            // 数据异常
+            Log.d(TAG, "onStartWork parameters is error");
+            // 执行异常回调
+            onParameterError(parameters);
+
+            return false;
+        }
+
+        mParameters = parameters;
+
+        // 创建数据模型
+        mData = onCreateDataModel(parameters);
+
+        return true;
+    }
+
+    /**
+     * 创建数据模型对象并填充参数
+     *
+     * @param parameters 传入参数
+     *
+     * @return 参数设置完毕后的数据模型对象
+     */
+    @SuppressWarnings("unchecked")
+    protected abstract DataModel onCreateDataModel(Parameters... parameters);
+
+    /**
+     * 参数合法性检测<br>
+     * 用于检测传入参数是否合法，
+     * 需要子类重写检测规则<br>
+     * 检测成功后续任务才会被正常执行，
+     * 如果检测失败则{@link #onParameterError(Object[])}会被调用
+     *
+     * @param parameters 任务传入参数
+     *
+     * @return 检测结果，合法返回true，非法返回false，默认为true
+     */
+    @SuppressWarnings("unchecked")
+    protected boolean onCheckParameters(Parameters... parameters) {
+        return true;
+    }
+
+    /**
+     * 参数检测不合法时调用，
+     * 即{@link #onCheckParameters(Object[])}返回false时被调用，
+     * 且后续任务不再执行
+     *
+     * @param parameters 任务传入参数
+     */
+    @SuppressWarnings("unchecked")
+    protected void onParameterError(Parameters... parameters) {
     }
 
     /**
      * 任务逻辑核心方法<br>
      * 任务主要逻辑应该在该方法中被实现，
-     * 并且在该方法中通过调用{@link #setResult(Object)}设置任务结果回传数据，
-     * 调用{@link #setMessage(String)}设置任务结果回传信息，
      * 并且方法返回任务执行结果。
-     *
-     * @param parameters 任务传入参数
      *
      * @return 执行结果
      */
     @SuppressWarnings("unchecked")
-    protected abstract boolean onDoWork(Parameters... parameters);
-
-    /**
-     * 获取任务执行结果数据<br>
-     * 该结果应该在{@link #onDoWork(Object[])}中调用{@link #setResult(Object)}进行赋值，
-     * 否则你将会获取null引用
-     *
-     * @return 结果数据
-     */
-    public final Result getResult() {
-        return result;
-    }
-
-    /**
-     * 设置任务结果数据<br>
-     * 应该在{@link #onDoWork(Object[])}中设置结果
-     *
-     * @param result 结果数据对象
-     */
-    protected final void setResult(Result result) {
-        Log.v(LOG_TAG + "setResult", "result is " + result);
-        this.result = result;
-    }
-
-    /**
-     * 获取任务结果消息<br>
-     * 该消息应该在{@link #onDoWork(Object[])}中调用{@link #setMessage(String)}进行赋值，
-     * 否则你将会获取null引用
-     *
-     * @return 结果消息
-     */
-    public final String getMessage() {
-        return message;
-    }
-
-    /**
-     * 设置任务结果消息<br>
-     * 应该在{@link #onDoWork(Object[])}中设置消息
-     *
-     * @param message 结果消息
-     */
-    protected final void setMessage(String message) {
-        Log.v(LOG_TAG + "setMessage", "message is " + message);
-        this.message = message;
-    }
+    protected abstract boolean onDoWork();
 
     /**
      * 任务完成后置方法<br>
-     * 在{@link #onDoWork(Object[])}之后被调用
-     *
-     * @param state   任务执行结果
-     * @param message 结果消息
-     * @param result  结果数据对象
+     * 在{@link #onDoWork()}之后被调用
      */
-    protected void onStopWork(boolean state, String message, Result result) {
+    protected void onStopWork() {
     }
 
     /**
      * 任务被取消，在执行取消操作的线程中执行
-     *
-     * @param parameters 任务传入参数
      */
-    @SafeVarargs
-    protected final void onCanceled(Parameters... parameters) {
+    protected void onCanceled() {
 
+    }
+
+    /**
+     * 获取请求结果数据处理器，
+     * 包含响应结果数据
+     *
+     * @return 数据处理器
+     */
+    public DataModel getResult() {
+        return mData;
     }
 }

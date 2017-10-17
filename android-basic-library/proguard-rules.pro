@@ -15,3 +15,28 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# 自己的库
+-keepclassmembernames class * extends org.cwk.android.library.model.work.DefaultWorkModel {
+    protected ** onTaskUri();
+}
+-keepclassmembernames class * extends org.cwk.android.library.model.config.PersistenceConfigModel {*;}
+
+# okhttp3
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
+
+# rxjava2
+-dontwarn io.reactivex.**
+-keep class io.reactivex.** { *; }
+
+# 屏蔽日志
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int i(...);
+    public static int d(...);
+}

@@ -19,7 +19,7 @@ public class HashMD5 {
     /**
      * 日志前缀
      */
-    private static final String LOG_TAG = "HashMD5.";
+    private static final String TAG = "HashMD5";
 
     /**
      * 默认编码
@@ -50,10 +50,10 @@ public class HashMD5 {
             }
             return hex.toString();
         } catch (NoSuchAlgorithmException e) {
-            Log.e(LOG_TAG + "hash", "NoSuchAlgorithmException is " + e.getMessage());
+            Log.e(TAG, "hash error", e);
             return "";
         } catch (UnsupportedEncodingException e) {
-            Log.e(LOG_TAG + "hash", "UnsupportedEncodingException is " + e.getMessage());
+            Log.e(TAG, "hash error", e);
             return "";
         }
     }

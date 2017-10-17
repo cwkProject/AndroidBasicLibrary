@@ -18,7 +18,7 @@ public class BroadcastUtil {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "MemoryBroadcast.";
+    private static final String TAG = "MemoryBroadcast";
 
     /**
      * 发送广播
@@ -27,7 +27,7 @@ public class BroadcastUtil {
      * @param action  动作字符串
      */
     public static void sendBroadcast(Context context, String action) {
-        Log.i(LOG_TAG + "send", "send action is " + action);
+        Log.v(TAG, "send action is " + action);
         sendBroadcast(context, new Intent(action));
     }
 
@@ -38,7 +38,7 @@ public class BroadcastUtil {
      * @param intent  包含一组动作字符串的意图
      */
     public static void sendBroadcast(Context context, Intent intent) {
-        Log.v(LOG_TAG + "send", "send intent");
+        Log.v(TAG, "send intent");
         LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(context);
         lbm.sendBroadcast(intent);
     }

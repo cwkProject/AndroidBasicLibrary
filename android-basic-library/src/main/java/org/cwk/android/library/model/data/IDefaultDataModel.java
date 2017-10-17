@@ -14,18 +14,4 @@ import java.util.Map;
  */
 public interface IDefaultDataModel<Response, Request extends Map<String, ?>> extends
         IDataModel<Response, Request> {
-
-    /**
-     * 判断本次服务请求是否成功
-     *
-     * @return true表示成功，false表示失败
-     */
-    boolean isSuccess();
-
-    /**
-     * 获取本次请求返回的结果消息
-     *
-     * @return 消息字符串
-     */
-    String getMessage();
 }

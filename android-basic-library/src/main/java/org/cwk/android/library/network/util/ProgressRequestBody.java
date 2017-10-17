@@ -1,5 +1,7 @@
 package org.cwk.android.library.network.util;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -53,7 +55,7 @@ public class ProgressRequestBody extends RequestBody {
     }
 
     @Override
-    public void writeTo(BufferedSink sink) throws IOException {
+    public void writeTo(@NonNull BufferedSink sink) throws IOException {
         // 包装
         BufferedSink bufferedSink = Okio.buffer(sink(sink));
         // 写入
@@ -76,7 +78,7 @@ public class ProgressRequestBody extends RequestBody {
             long bytesWritten = 0L;
 
             @Override
-            public void write(Buffer source, long byteCount) throws IOException {
+            public void write(@NonNull Buffer source, long byteCount) throws IOException {
                 super.write(source, byteCount);
 
                 // 增加当前写入的字节数

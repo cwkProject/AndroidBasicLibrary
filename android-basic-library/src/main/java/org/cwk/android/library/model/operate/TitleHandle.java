@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.operate;
-/**
- * Created by 超悟空 on 2015/1/26.
- */
 
 /**
  * 用于设置和返回对象标题的接口

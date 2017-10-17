@@ -213,14 +213,14 @@ public class XMLReader {
      * 清空XMLreader对象
      */
     public void Clear() {
-        Log.v(LOG_TAG + "Clear", "Clear() is invoked");
+        Log.v(LOG_TAG + "clear", "clear() is invoked");
         this.stringXML = null;
 
         if (inStream != null) {
             try {
                 this.inStream.close();
             } catch (IOException e) {
-                Log.e(LOG_TAG + "Clear", "IOException is " + e.getMessage());
+                Log.e(LOG_TAG + "clear", "IOException is " + e.getMessage());
                 return;
             }
         }

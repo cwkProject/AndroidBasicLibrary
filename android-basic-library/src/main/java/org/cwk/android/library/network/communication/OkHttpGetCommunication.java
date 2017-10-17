@@ -23,7 +23,7 @@ public class OkHttpGetCommunication extends Communication<Map<String, String>, S
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "OkHttpGetCommunication.";
+    private static final String TAG = "OkHttpGetCommunication";
 
     @Override
     protected Request onCreateRequest(Map<String, String> sendData) {
@@ -38,7 +38,7 @@ public class OkHttpGetCommunication extends Communication<Map<String, String>, S
 
         // 最终请求地址
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
-        Log.v(LOG_TAG + "Request", "final url is " + finalUrl);
+        Log.v(TAG, "final url is " + finalUrl);
 
         return new Request.Builder().url(finalUrl).build();
     }
@@ -47,16 +47,16 @@ public class OkHttpGetCommunication extends Communication<Map<String, String>, S
     protected void onAsyncSuccess(ResponseBody body, NetworkCallback<String> callback) throws
             IOException {
         String responseString = body.string();
-        Log.v(LOG_TAG + "Request", "response is " + responseString);
+        Log.v(TAG, "response is " + responseString);
         callback.onFinish(true, responseString);
     }
 
     @Override
-    public String Response() {
+    public String response() {
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(LOG_TAG + "Response", "error", e);
+            Log.e(TAG, "response error", e);
 
             return null;
         }

@@ -28,12 +28,12 @@ public class OkHttpStreamUploadCommunication extends Communication<Map<String, S
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "OkHttpUploadCommunication.";
+    private static final String TAG = "OkHttpUploadCommunication";
 
     /**
      * 文件标签
      */
-    private static final String TAG = "file";
+    private static final String FILE_TAG = "file";
 
     /**
      * 上传进度监听器
@@ -45,7 +45,7 @@ public class OkHttpStreamUploadCommunication extends Communication<Map<String, S
         String data = null;
 
         if (!sendData.isEmpty()) {
-            data = sendData.remove(TAG);
+            data = sendData.remove(FILE_TAG);
         }
 
         // 拼接参数
@@ -74,16 +74,16 @@ public class OkHttpStreamUploadCommunication extends Communication<Map<String, S
     protected void onAsyncSuccess(ResponseBody body, NetworkCallback<String> callback) throws
             IOException {
         String responseString = body.string();
-        Log.v(LOG_TAG + "Request", "response is " + responseString);
+        Log.v(TAG, "response is " + responseString);
         callback.onFinish(true, responseString);
     }
 
     @Override
-    public String Response() {
+    public String response() {
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(LOG_TAG + "Response", "error", e);
+            Log.e(TAG, "response error", e);
 
             return null;
         }

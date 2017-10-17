@@ -1,4 +1,4 @@
-package org.cwk.android.library.common.function;
+package org.cwk.android.library.common;
 
 import android.content.Context;
 import android.util.Log;
@@ -19,36 +19,33 @@ public class DatabaseCopy {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "DatabaseCopy.";
+    private static final String TAG = "DatabaseCopy";
 
     /**
      * 首次运行复制数据库
      */
     public static void copy(Context context, String databaseName) {
-        Log.v(LOG_TAG + "copy", "copy() is invoked");
+        Log.v(TAG, "copy invoked");
 
         try {
             //欲导入的数据库
-            Log.v(LOG_TAG + "copy", "copy database begin");
-            Log.v(LOG_TAG + "copy", "create database path");
+            Log.v(TAG, "copy database begin");
 
             InputStream in = context.getAssets().open(databaseName);
-            Log.v(LOG_TAG + "copy", "InputStream open");
             FileOutputStream out = new FileOutputStream(context.getDatabasePath(databaseName)
                     .getAbsoluteFile());
-            Log.v(LOG_TAG + "copy", "FileOutputStream open");
             byte[] buffer = new byte[1024];
             int count;
             while ((count = in.read(buffer)) > 0) {
                 out.write(buffer, 0, count);
             }
-            Log.v(LOG_TAG + "copy", "copy database end");
+            Log.v(TAG, "copy database end");
             out.flush();
             out.close();
             in.close();
-            Log.v(LOG_TAG + "copy", "stream close");
+            Log.v(TAG, "stream close");
         } catch (IOException e) {
-            Log.e(LOG_TAG + "copy", "IOException error", e);
+            Log.e(TAG, "IOException error", e);
         }
     }
 }

@@ -21,7 +21,7 @@ public class PreferencesUtil {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "PreferencesUtil.";
+    private static final String TAG = "PreferencesUtil";
 
     /**
      * 成员属性加解密工具
@@ -63,7 +63,7 @@ public class PreferencesUtil {
      */
     public PreferencesUtil(Context context, String fileName) {
         this.sharedPreferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        Log.i(LOG_TAG + "PreferencesUtil", "file name is " + fileName);
+        Log.v(TAG, "file name is " + fileName);
     }
 
     /**
@@ -80,12 +80,10 @@ public class PreferencesUtil {
      *
      * @param obj 要保存的对象
      */
-    public void Save(Object obj) {
-
-        Log.v(LOG_TAG + "Save", "Save(Object) start");
+    public void save(Object obj) {
+        Log.v(TAG, "save start");
 
         if (isNullObject(obj)) {
-            Log.d(LOG_TAG + "Save", "object is null");
             return;
         }
 
@@ -94,7 +92,7 @@ public class PreferencesUtil {
 
         // 获取对象类名
         String objectName = obj.getClass().getName();
-        Log.i(LOG_TAG + "Save", "object name is " + objectName);
+        Log.v(TAG, "save object name is " + objectName);
 
         // 获取对象的全部属性
         Field[] fields = obj.getClass().getDeclaredFields();
@@ -107,7 +105,7 @@ public class PreferencesUtil {
 
         // 提交保存
         editor.commit();
-        Log.v(LOG_TAG + "Save", "Save(Object) end");
+        Log.v(TAG, "save end");
     }
 
     /**
@@ -119,7 +117,7 @@ public class PreferencesUtil {
      */
     private boolean isNullObject(Object obj) {
         if (obj == null) {
-            Log.d(LOG_TAG + "isNullObject", "The target Object is null");
+            Log.d(TAG, "The target Object is null");
             return true;
         }
         return false;
@@ -138,13 +136,12 @@ public class PreferencesUtil {
         field.setAccessible(true);
 
         try {
-            Log.v(LOG_TAG + "put", "field type is " + field.getType().getName());
-            Log.v(LOG_TAG + "put", "field name is " + field.getName());
-            Log.v(LOG_TAG + "put", "field value is " + field.get(obj));
+            Log.v(TAG, "put field type:" + field.getType().getName() + "; name:" + field.getName
+                    () + "; value:" + field.get(obj));
 
             // 是否需要加密
             if (cipher != null && field.isAnnotationPresent(Encrypt.class)) {
-                Log.v(LOG_TAG + "put", "field " + field.getName() + " use encrypt");
+                Log.v(TAG, "put field " + field.getName() + " is encrypt");
 
                 Object data = field.get(obj);
 
@@ -177,7 +174,7 @@ public class PreferencesUtil {
                     break;
             }
         } catch (IllegalAccessException e) {
-            Log.d(LOG_TAG + "put", "IllegalAccessException is " + e.getMessage());
+            Log.e(TAG, "put error ", e);
         }
     }
 
@@ -186,11 +183,10 @@ public class PreferencesUtil {
      *
      * @param obj 要填充的对象
      */
-    public void Read(Object obj) {
-        Log.v(LOG_TAG + "Read", "Read(Object) start");
+    public void read(Object obj) {
+        Log.v(TAG, "read start");
 
         if (isNullObject(obj)) {
-            Log.d(LOG_TAG + "Read", "object is null");
             return;
         }
 
@@ -199,7 +195,7 @@ public class PreferencesUtil {
 
         // 获取对象类名
         String objectName = obj.getClass().getName();
-        Log.v(LOG_TAG + "Read", "object name is " + objectName);
+        Log.v(TAG, "read object name is " + objectName);
 
         // 获取对象的全部属性
         Field[] fields = obj.getClass().getDeclaredFields();
@@ -210,7 +206,7 @@ public class PreferencesUtil {
             push(reader, field, obj, objectName);
         }
 
-        Log.v(LOG_TAG + "Read", "Read(Object) end");
+        Log.v(TAG, "read end");
     }
 
     /**
@@ -226,12 +222,9 @@ public class PreferencesUtil {
         field.setAccessible(true);
 
         try {
-            Log.v(LOG_TAG + "push", "field type is " + field.getType().getName());
-            Log.v(LOG_TAG + "push", "field name is " + field.getName());
-
             // 是否需要解密
             if (cipher != null && field.isAnnotationPresent(Encrypt.class)) {
-                Log.v(LOG_TAG + "push", "field " + field.getName() + " need decrypt");
+                Log.v(TAG, "push field " + field.getName() + " need decrypt");
 
                 String cipherText = reader.getString(pre + "." + field.getName(), (String) field
                         .get(obj));
@@ -285,20 +278,20 @@ public class PreferencesUtil {
                             (obj)));
                     break;
             }
-            Log.v(LOG_TAG + "push", "field value is " + field.get(obj));
+            Log.v(TAG, "push field type:" + field.getType().getName() + "; name:" + field.getName
+                    () + "; value:" + field.get(obj));
         } catch (IllegalAccessException e) {
-            Log.d(LOG_TAG + "push", "IllegalAccessException is " + e.getMessage());
+            Log.e(TAG, "push error", e);
         }
     }
 
     /**
      * 从文件清空对象属性
      */
-    public void Clear(Object obj) {
-        Log.v(LOG_TAG + "Clear", "Clear(Object) start");
+    public void clear(Object obj) {
+        Log.v(TAG, "clear start");
 
         if (isNullObject(obj)) {
-            Log.d(LOG_TAG + "Clear", "object is null");
             return;
         }
 
@@ -307,21 +300,21 @@ public class PreferencesUtil {
 
         // 获取对象类名
         String objectName = obj.getClass().getName();
-        Log.v(LOG_TAG + "Clear", "object name is " + objectName);
+        Log.v(TAG, "clear object name is " + objectName);
 
         // 获取对象的全部属性
         Field[] fields = obj.getClass().getDeclaredFields();
 
         // 遍历全部对象属性
         for (Field field : fields) {
-            Log.v(LOG_TAG + "Clear", "field name is " + field.getName());
+            Log.v(TAG, "clear field name is " + field.getName());
             // 移除一个属性值
             editor.remove(objectName + "." + field.getName());
         }
 
         // 提交保存
         editor.commit();
-        Log.v(LOG_TAG + "Clear", "Clear(Object) end");
+        Log.v(TAG, "clear end");
     }
 
     /**

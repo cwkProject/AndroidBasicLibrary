@@ -21,7 +21,7 @@ public abstract class PersistenceConfigModel {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "PersistenceConfigModel.";
+    private static final String TAG = "PersistenceConfigModel";
 
     /**
      * 持久化对象
@@ -46,7 +46,7 @@ public abstract class PersistenceConfigModel {
     public PersistenceConfigModel(Context context, String fileName) {
         // 新建持久化对象
         this.preferencesUtil = new PreferencesUtil(context, fileName);
-        Log.v(LOG_TAG + "PersistenceConfigModel", "config name is " + fileName);
+        Log.v(TAG, "config name is " + fileName);
 
         this.preferencesUtil.setDataCipher(onCreateDataCipher());
     }
@@ -55,33 +55,33 @@ public abstract class PersistenceConfigModel {
      * 保存设置
      */
     @CallSuper
-    public void Save() {
-        Log.v(LOG_TAG + "Save", "Save() is invoked");
-        this.preferencesUtil.Save(this);
+    public void save() {
+        Log.v(TAG, "save invoked");
+        this.preferencesUtil.save(this);
     }
 
     /**
      * 刷新配置参数，从配置文件中重新读取参数
      */
     @CallSuper
-    public void Refresh() {
-        Log.v(LOG_TAG + "Refresh", "Refresh() is invoked");
-        this.preferencesUtil.Read(this);
+    public void refresh() {
+        Log.v(TAG, "refresh invoked");
+        this.preferencesUtil.read(this);
     }
 
     /**
      * 清空配置文件，重置当前参数
      */
     @CallSuper
-    public void Clear() {
-        Log.v(LOG_TAG + "Clear", "Clear() is invoked");
-        this.preferencesUtil.Clear(this);
+    public void clear() {
+        Log.v(TAG, "clear invoked");
+        this.preferencesUtil.clear(this);
         onDefault();
     }
 
     /**
      * 设置参数默认值，
-     * 用于在{@link #Clear()}时调用以清空全局变量
+     * 用于在{@link #clear()}时调用以清空全局变量
      */
     protected void onDefault() {
     }

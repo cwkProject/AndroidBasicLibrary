@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.operate;
-/**
- * Created by 超悟空 on 2016/7/22.
- */
 
 /**
  * 数据改变通知者

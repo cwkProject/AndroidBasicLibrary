@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.operate;
-/**
- * Created by 超悟空 on 2015/3/5.
- */
 
 /**
  * 用于向数据提供对象索要数据的接口

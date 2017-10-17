@@ -1,7 +1,4 @@
 package org.cwk.android.library.model.operate;
-/**
- * Created by 超悟空 on 2015/3/4.
- */
 
 /**
  * 带有传入数据的数据改变监听器，

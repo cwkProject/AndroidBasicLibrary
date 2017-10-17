@@ -2,9 +2,9 @@ package org.cwk.android.library.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 
-import org.cwk.android.library.global.ApplicationStaticValue;
 import org.cwk.android.library.global.Global;
 
 import java.util.UUID;
@@ -66,9 +66,8 @@ public class DeviceID {
      * 从配置文件读取
      */
     private static void readConfig() {
-        SharedPreferences sharedPreferences = Global.getContext().getSharedPreferences
-                (ApplicationStaticValue.AppConfig.APPLICATION_CONFIG_FILE_NAME, Context
-                        .MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences
+                (Global.getContext());
 
         deviceId = sharedPreferences.getString(DEVICE_ID, null);
     }
@@ -93,9 +92,8 @@ public class DeviceID {
      * 写入配置文件
      */
     private static void writeConfig() {
-        SharedPreferences.Editor editor = Global.getContext().getSharedPreferences
-                (ApplicationStaticValue.AppConfig.APPLICATION_CONFIG_FILE_NAME, Context
-                        .MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(Global
+                .getContext()).edit();
         editor.putString(DEVICE_ID, deviceId);
         editor.apply();
     }

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cwk.android.library.BuildConfig;
@@ -31,7 +32,7 @@ public class Global {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "Global.";
+    private static final String TAG = "Global";
 
     /**
      * 自身静态全局实例
@@ -145,7 +146,7 @@ public class Global {
             userAgentBuilder.append(".");
 
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(LOG_TAG + "initOkHttpClient", "PackageManager error", e);
+            Log.e(TAG, "initOkHttpClient PackageManager error", e);
         }
 
         okHttpClient = new OkHttpClient.Builder()
@@ -164,7 +165,7 @@ public class Global {
                     private static final String USER_AGENT_HEADER_NAME = "User-Agent";
 
                     @Override
-                    public Response intercept(Chain chain) throws IOException {
+                    public Response intercept(@NonNull Chain chain) throws IOException {
                         final Request originalRequest = chain.request();
                         final Request requestWithUserAgent = originalRequest.newBuilder()
                                 .removeHeader(USER_AGENT_HEADER_NAME).addHeader

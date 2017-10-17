@@ -1,4 +1,4 @@
-package org.cwk.android.library.common.function;
+package org.cwk.android.library.common;
 
 import android.util.Log;
 
@@ -21,7 +21,7 @@ public class ParserUrlFileName {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "ParserUrlFileName.";
+    private static final String TAG = "ParserUrlFileName";
 
     public static String getReallyFileName(String url) {
         String filename = null;
@@ -38,12 +38,12 @@ public class ParserUrlFileName {
             conn.getResponseCode();
             // 获得真实Url
             URL absUrl = conn.getURL();
-            Log.v(LOG_TAG + "getReallyFileName", "H3C x: " + absUrl);
+            Log.v(TAG, "H3C x: " + absUrl);
             // 打印输出服务器Header信息
             Map<String, List<String>> map = conn.getHeaderFields();
             for (String str : map.keySet()) {
                 if (str != null) {
-                    Log.v(LOG_TAG + "getReallyFileName", "H3C " + str + " : " + map.get(str));
+                    Log.v(TAG, "H3C " + str + " : " + map.get(str));
                 }
             }
 
@@ -53,7 +53,7 @@ public class ParserUrlFileName {
                 filename = absUrl.getFile();
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG + "getReallyFileName", e.getMessage());
+            Log.e(TAG, "getReallyFileName error", e);
         } finally {
             if (conn != null) {
                 conn.disconnect();

@@ -24,7 +24,7 @@ public abstract class StandardDataModel<Handle, Response, Value> implements
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "StandardDataModel.";
+    private static final String TAG = "StandardDataModel";
 
     /**
      * 标识本次服务请求是否成功
@@ -62,18 +62,17 @@ public abstract class StandardDataModel<Handle, Response, Value> implements
 
     @Override
     public final Map<String, Value> serialization() {
-        Log.v(LOG_TAG + "serialization", "serialization start");
+        Log.v(TAG, "serialization start");
         // 序列化后的参数集
         Map<String, Value> dataMap = new HashMap<>();
-        Log.v(LOG_TAG + "serialization", "onFillRequestParameters(Map<String, String>) is invoked");
+        Log.v(TAG, "onFillRequestParameters invoked");
         // 调用填充方法
         onFillRequestParameters(dataMap);
-        Log.v(LOG_TAG + "serialization", "serialization end");
 
         // 对参数进行签名
-        Log.v(LOG_TAG + "serialization", "parameters sign");
+        Log.v(TAG, "onRequestParametersSign invoked");
         onRequestParametersSign(dataMap);
-
+        Log.v(TAG, "serialization end");
         return dataMap;
     }
 
@@ -87,49 +86,49 @@ public abstract class StandardDataModel<Handle, Response, Value> implements
 
     @Override
     public final boolean parse(Response response) {
-        Log.v(LOG_TAG + "parse", "parse start");
-        Log.v(LOG_TAG + "parse", "result is " + response);
+        Log.v(TAG, "parse start");
+        Log.v(TAG, "response " + response);
         if (!onCheckResponse(response)) {
             // 通信异常
-            Log.d(LOG_TAG + "parse", "response is error");
+            Log.d(TAG, "response error");
+            Log.v(TAG, "onParseFailed invoked");
+            onParseFailed();
             return false;
         }
 
         try {
             // 将结果转换为Handle对象
+            Log.v(TAG, "onCreateHandle invoked");
             Handle handle = onCreateHandle(response);
 
-            Log.v(LOG_TAG + "parse", "onRequestResult(Object) is invoked");
+            Log.v(TAG, "onRequestResult invoked");
             // 提取服务执行结果
             this.success = onRequestResult(handle);
-            Log.v(LOG_TAG + "parse", "request result is " + this.success);
-            Log.v(LOG_TAG + "parse", "onRequestResult(Object) is end");
+            Log.v(TAG, "request result is " + this.success);
 
-            Log.v(LOG_TAG + "parse", "onRequestMessage(boolean) is invoked");
+            Log.v(TAG, "onRequestMessage invoked");
             // 提取服务返回的消息
             this.message = onRequestMessage(this.success, handle);
-            Log.v(LOG_TAG + "parse", "request message is " + this.message);
-            Log.v(LOG_TAG + "parse", "onRequestMessage(boolean) is end");
+            Log.v(TAG, "request message is " + this.message);
 
             if (this.success) {
                 // 服务请求成功回调
-                Log.v(LOG_TAG + "parse", "onRequestSuccess(Object) is invoked");
+                Log.v(TAG, "onRequestSuccess invoked");
                 onRequestSuccess(handle);
-                Log.v(LOG_TAG + "parse", "onRequestSuccess(Object) is end");
             } else {
                 // 服务请求失败回调
-                Log.v(LOG_TAG + "parse", "onRequestFailed(Object) is invoked");
+                Log.v(TAG, "onRequestFailed invoked");
                 onRequestFailed(handle);
-                Log.v(LOG_TAG + "parse", "onRequestFailed(Object) is end");
             }
 
             return true;
         } catch (Exception e) {
-            Log.e(LOG_TAG + "parse", "exception type is " + e);
-            Log.e(LOG_TAG + "parse", "exception message is " + e.getMessage());
+            Log.e(TAG, "parse error", e);
+            Log.v(TAG, "onParseFailed invoked");
+            onParseFailed();
             return false;
         } finally {
-            Log.v(LOG_TAG + "parse", "parse end");
+            Log.v(TAG, "parse end");
         }
     }
 
@@ -141,6 +140,12 @@ public abstract class StandardDataModel<Handle, Response, Value> implements
      * @return 检测结果
      */
     protected abstract boolean onCheckResponse(Response response);
+
+    /**
+     * 解析失败时调用，即{@link #parse}出现异常时调用
+     */
+    protected void onParseFailed() {
+    }
 
     /**
      * 对响应结果数据进行二次处理

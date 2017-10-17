@@ -60,7 +60,7 @@ public abstract class IntegratedDataModel<Parameters, Result, Handle, Response, 
 
     @Override
     protected final void onRequestSuccess(Handle handleResult) throws Exception {
-        result = onSuccess(handleResult);
+        result = onSuccessResult(handleResult);
     }
 
     /**
@@ -75,26 +75,5 @@ public abstract class IntegratedDataModel<Parameters, Result, Handle, Response, 
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected abstract Result onSuccess(Handle handleResult) throws Exception;
-
-    @Override
-    protected final void onRequestFailed(Handle handleResult) throws Exception {
-        result = onFailed(handleResult);
-    }
-
-    /**
-     * 提取服务反馈的结果数据<br>
-     * 在服务请求失败后调用，
-     * 即{@link #onRequestResult(Object)}返回值为false时，
-     * 在{@link #onRequestMessage(boolean , Object)}之后被调用，
-     *
-     * @param handleResult 二次处理结果集
-     *
-     * @return 处理后的任务传出结果
-     *
-     * @throws Exception 处理过程中可能出现的异常
-     */
-    protected Result onFailed(Handle handleResult) throws Exception {
-        return null;
-    }
+    protected abstract Result onSuccessResult(Handle handleResult) throws Exception;
 }

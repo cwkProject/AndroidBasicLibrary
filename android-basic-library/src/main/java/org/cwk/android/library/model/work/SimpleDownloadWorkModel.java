@@ -21,7 +21,7 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
     protected IIntegratedDataModel<Parameters, Result, ?, ?> onCreateDataModel() {
         return new SimpleDownloadDataModel<Parameters, Result>() {
             @Override
-            protected Result onSuccess(InputStream handleResult) throws Exception {
+            protected Result onSuccessResult(InputStream handleResult) throws Exception {
                 return onSuccessExtract(handleResult);
             }
 
@@ -63,21 +63,10 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
      */
     protected abstract Result onSuccessExtract(InputStream inputStream) throws Exception;
 
-    /**
-     * 提取服务反馈的结果数据<br>
-     * 在服务请求失败或数据流写入失败后调用，
-     * 即网络访问失败或{@link #onSuccessExtract}处理数据出错时被调用
-     *
-     * @return 处理后的任务传出结果
-     */
-    protected Result onFailedExtract() {
-        return null;
-    }
-
     @Override
     @Download
     protected final String onTaskUri() {
-        return onTaskUri(getParameters());
+        return onTaskUri(mParameters);
     }
 
     /**
@@ -89,33 +78,4 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
      */
     @SuppressWarnings("unchecked")
     protected abstract String onTaskUri(Parameters... parameters);
-
-    @Override
-    protected final String onParseSuccessSetMessage(boolean state,
-                                                    IIntegratedDataModel<Parameters, Result, ?,
-                                                            ?> data) {
-        return super.onParseSuccessSetMessage(state, data);
-    }
-
-    @Override
-    protected final Result onParseFailedSetResult(IIntegratedDataModel<Parameters, Result, ?, ?>
-                                                              data) {
-        return onFailedExtract();
-    }
-
-    @Override
-    protected final String onParseFailedSetMessage(IIntegratedDataModel<Parameters, Result, ?, ?>
-                                                               data) {
-        return super.onParseFailedSetMessage(data);
-    }
-
-    @Override
-    protected final void onParseSuccess(IIntegratedDataModel<Parameters, Result, ?, ?> data) {
-        super.onParseSuccess(data);
-    }
-
-    @Override
-    protected final void onParseFailed(IIntegratedDataModel<Parameters, Result, ?, ?> data) {
-        super.onParseFailed(data);
-    }
 }

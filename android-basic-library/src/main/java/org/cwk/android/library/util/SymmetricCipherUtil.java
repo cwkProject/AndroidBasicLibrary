@@ -26,7 +26,7 @@ public class SymmetricCipherUtil {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "SymmetricCipherUtil.";
+    private static final String TAG = "SymmetricCipherUtil";
 
     /**
      * 加密器
@@ -53,7 +53,7 @@ public class SymmetricCipherUtil {
         try {
             this.cipher = Cipher.getInstance(algorithm);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            Log.e(LOG_TAG + "SymmetricCipherUtil", "create cipher error", e);
+            Log.e(TAG, "create cipher error", e);
         }
         this.algorithm = algorithm;
         this.key = key;
@@ -86,7 +86,7 @@ public class SymmetricCipherUtil {
                 cipherText = cipher.doFinal(sourceText);
             } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException |
                     InvalidAlgorithmParameterException e) {
-                Log.e(LOG_TAG + "encrypt", "encrypt error", e);
+                Log.e(TAG, "encrypt error", e);
             }
         }
 
@@ -109,7 +109,7 @@ public class SymmetricCipherUtil {
                 sourceText = cipher.doFinal(cipherText);
             } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException |
                     InvalidAlgorithmParameterException e) {
-                Log.e(LOG_TAG + "decrypt", "decrypt error", e);
+                Log.e(TAG, "decrypt error", e);
             }
         }
 
@@ -132,7 +132,7 @@ public class SymmetricCipherUtil {
             keyGenerator.init(length);
             key = keyGenerator.generateKey();
         } catch (NoSuchAlgorithmException e) {
-            Log.e(LOG_TAG + "createKey", "create key error", e);
+            Log.e(TAG, "create key error", e);
         }
 
         return key;
@@ -154,7 +154,7 @@ public class SymmetricCipherUtil {
             key = cipher.unwrap(keyByte, algorithm, Cipher.SECRET_KEY);
         } catch (InvalidKeyException | NoSuchAlgorithmException |
                 InvalidAlgorithmParameterException e) {
-            Log.e(LOG_TAG + "getKey", "convert key error", e);
+            Log.e(TAG, "getKey error", e);
         }
 
         return key;
@@ -174,7 +174,7 @@ public class SymmetricCipherUtil {
             bk = cipher.wrap(key);
         } catch (IllegalBlockSizeException | InvalidKeyException |
                 InvalidAlgorithmParameterException e) {
-            Log.e(LOG_TAG + "getBinaryKey", "convert key error", e);
+            Log.e(TAG, "getBinaryKey error", e);
         }
         return bk;
     }

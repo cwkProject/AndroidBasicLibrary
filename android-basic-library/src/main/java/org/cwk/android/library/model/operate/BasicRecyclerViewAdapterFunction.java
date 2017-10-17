@@ -91,6 +91,14 @@ public interface BasicRecyclerViewAdapterFunction<SourceType> {
     void swap(int fromPosition, int toPosition);
 
     /**
+     * 移动数据
+     *
+     * @param fromPosition 起始位置
+     * @param toPosition   目标位置
+     */
+    void move(int fromPosition, int toPosition);
+
+    /**
      * 清空数据
      */
     void clear();

@@ -8,7 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
-import org.cwk.android.library.common.function.ImageCompression;
+import org.cwk.android.library.common.ImageCompression;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;

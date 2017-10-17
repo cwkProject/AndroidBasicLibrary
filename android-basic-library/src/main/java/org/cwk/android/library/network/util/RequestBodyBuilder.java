@@ -9,6 +9,7 @@ import org.cwk.android.library.util.MIMEUtil;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 import okhttp3.FormBody;
@@ -28,7 +29,12 @@ public class RequestBodyBuilder {
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "RequestBodyBuilder.";
+    private static final String TAG = "RequestBodyBuilder";
+
+    /**
+     * 默认编码
+     */
+    private static final String CHARSET = "UTF-8";
 
     /**
      * 拼接参数字符串，用于get请求参数，默认utf-8编码
@@ -46,14 +52,13 @@ public class RequestBodyBuilder {
         try {
             // 遍历sendData集合并加入请求参数对象
             if (sendData != null && !sendData.isEmpty()) {
-                Log.v(LOG_TAG + "onBuildParameter", "sendData count is " + sendData.size());
+                int count = sendData.size();
+                Log.v(TAG, "onBuildParameter sendData count is " + count);
 
                 // 遍历并追加参数
                 for (Map.Entry<String, String> dataEntry : sendData.entrySet()) {
 
-                    Log.v(LOG_TAG + "onBuildParameter", "parameter is " + dataEntry.getKey() + " " +
-                            "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "= " + dataEntry
-                            .getValue());
+                    Log.v(TAG, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
 
                     if (dataEntry.getValue() != null) {
                         params.append(dataEntry.getKey());
@@ -68,7 +73,7 @@ public class RequestBodyBuilder {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            Log.e(LOG_TAG + "onBuildParameter", "URLEncoder error", e);
+            Log.e(TAG, "URLEncoder error", e);
         }
         return params.toString();
     }
@@ -82,7 +87,7 @@ public class RequestBodyBuilder {
      */
     @NonNull
     public static String onBuildParameter(Map<String, String> sendData) {
-        return onBuildParameter(sendData, "utf-8");
+        return onBuildParameter(sendData, CHARSET);
     }
 
     /**
@@ -94,25 +99,20 @@ public class RequestBodyBuilder {
      * @return 装配好的表单
      */
     public static RequestBody onBuildPostForm(Map<String, String> sendData, String encoded) {
-        FormBody.Builder builder = new FormBody.Builder();
+        FormBody.Builder builder = new FormBody.Builder(Charset.forName(encoded));
 
         // 遍历sendData集合并加入请求参数对象
         if (sendData != null && !sendData.isEmpty()) {
-            Log.v(LOG_TAG + "onBuildForm", "sendData count is " + sendData.size());
+            int count = sendData.size();
+            Log.v(TAG, "onBuildPostForm sendData count is " + count);
 
-            try {
-                // 遍历并追加参数
-                for (Map.Entry<String, String> dataEntry : sendData.entrySet()) {
-                    Log.v(LOG_TAG + "onBuildForm", "parameter is " + dataEntry.getKey() + " = " +
-                            dataEntry.getValue());
-                    if (dataEntry.getValue() != null) {
-                        // 加入表单
-                        builder.addEncoded(dataEntry.getKey(), URLEncoder.encode(dataEntry
-                                .getValue(), encoded));
-                    }
+            // 遍历并追加参数
+            for (Map.Entry<String, String> dataEntry : sendData.entrySet()) {
+                Log.v(TAG, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
+                if (dataEntry.getValue() != null) {
+                    // 加入表单
+                    builder.add(dataEntry.getKey(), dataEntry.getValue());
                 }
-            } catch (UnsupportedEncodingException e) {
-                Log.e(LOG_TAG + "onBuildParameter", "URLEncoder error", e);
             }
         }
 
@@ -127,24 +127,7 @@ public class RequestBodyBuilder {
      * @return 装配好的表单
      */
     public static RequestBody onBuildPostForm(Map<String, String> sendData) {
-        FormBody.Builder builder = new FormBody.Builder();
-
-        // 遍历sendData集合并加入请求参数对象
-        if (sendData != null && !sendData.isEmpty()) {
-            Log.v(LOG_TAG + "onBuildForm", "sendData count is " + sendData.size());
-
-            // 遍历并追加参数
-            for (Map.Entry<String, String> dataEntry : sendData.entrySet()) {
-                Log.v(LOG_TAG + "onBuildForm", "parameter is " + dataEntry.getKey() + " = " +
-                        dataEntry.getValue());
-                if (dataEntry.getValue() != null) {
-                    // 加入表单
-                    builder.add(dataEntry.getKey(), dataEntry.getValue());
-                }
-            }
-        }
-
-        return builder.build();
+        return onBuildPostForm(sendData, CHARSET);
     }
 
     /**
@@ -159,11 +142,12 @@ public class RequestBodyBuilder {
 
         // 遍历sendData集合并加入请求参数对象
         if (sendData != null && !sendData.isEmpty()) {
-            Log.v(LOG_TAG + "onBuildForm", "sendData count is " + sendData.size());
+            int count = sendData.size();
+            Log.v(TAG, "onBuildUploadForm sendData count is " + count);
+
             // 遍历并追加参数
             for (Map.Entry<String, Object> dataEntry : sendData.entrySet()) {
-                Log.v(LOG_TAG + "onBuildForm", "parameter is " + dataEntry.getKey() + " = " +
-                        dataEntry.getValue());
+                Log.v(TAG, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
 
                 if (dataEntry.getValue() instanceof FileInfo) {
                     // 参数是文件包装类型
@@ -208,10 +192,10 @@ public class RequestBodyBuilder {
             File file = new File(path);
 
             if (file.exists()) {
-                Log.v(LOG_TAG + "onBuildUploadStream", "sendStream is " + path);
+                Log.v(TAG, "onBuildUploadStream sendStream is " + path);
                 return RequestBody.create(MediaType.parse("application/octet-stream"), file);
             } else {
-                Log.d(LOG_TAG + "onBuildUploadStream", "no file " + path);
+                Log.d(TAG, "no file " + path);
             }
         }
 
