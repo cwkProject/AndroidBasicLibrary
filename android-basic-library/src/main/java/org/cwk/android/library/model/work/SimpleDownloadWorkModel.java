@@ -1,7 +1,6 @@
 package org.cwk.android.library.model.work;
 
 import org.cwk.android.library.annotation.Download;
-import org.cwk.android.library.model.data.IIntegratedDataModel;
 import org.cwk.android.library.model.data.base.SimpleDownloadDataModel;
 
 import java.io.InputStream;
@@ -16,9 +15,9 @@ import java.util.Map;
  * @since 1.0 2017/2/15
  **/
 public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
-        IntegratedWorkModel<Parameters, Result> {
+        IntegratedWorkModel<Parameters, Result, SimpleDownloadDataModel<Parameters, Result>> {
     @Override
-    protected IIntegratedDataModel<Parameters, Result, ?, ?> onCreateDataModel() {
+    protected SimpleDownloadDataModel<Parameters, Result> onCreateDataModel() {
         return new SimpleDownloadDataModel<Parameters, Result>() {
             @Override
             protected Result onSuccessResult(InputStream handleResult) throws Exception {

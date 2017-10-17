@@ -1,7 +1,6 @@
 package org.cwk.android.library.model.work;
 
 import org.cwk.android.library.annotation.Upload;
-import org.cwk.android.library.model.data.IIntegratedDataModel;
 import org.cwk.android.library.model.data.base.SimpleUploadDataModel;
 import org.json.JSONObject;
 
@@ -16,7 +15,7 @@ import java.util.Map;
  * @since 1.0 2017/2/15
  **/
 public abstract class SimpleUploadWorkModel<Parameters, Result> extends
-        IntegratedWorkModel<Parameters, Result> {
+        IntegratedWorkModel<Parameters, Result, SimpleUploadDataModel<Parameters, Result>> {
 
     /**
      * 服务响应的业务数据的参数默认取值标签
@@ -24,7 +23,7 @@ public abstract class SimpleUploadWorkModel<Parameters, Result> extends
     protected static final String RESULT = "result";
 
     @Override
-    protected IIntegratedDataModel<Parameters, Result, ?, ?> onCreateDataModel() {
+    protected SimpleUploadDataModel<Parameters, Result> onCreateDataModel() {
         return new SimpleUploadDataModel<Parameters, Result>() {
             @Override
             protected Result onExtractData(JSONObject jsonResult) throws Exception {

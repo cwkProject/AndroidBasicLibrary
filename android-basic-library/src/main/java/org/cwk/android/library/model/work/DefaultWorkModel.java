@@ -210,7 +210,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
         if (!cancelMark) {
             // 执行前导任务
-            next = onStartWork();
+            next = onStartWork(parameters);
         }
 
         if (!cancelMark && next) {
@@ -238,7 +238,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
         if (!cancelMark) {
             // 执行前导任务
-            next = onStartWork();
+            next = onStartWork(parameters);
         }
 
         if (!cancelMark && next) {

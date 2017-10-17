@@ -1,12 +1,7 @@
 package org.cwk.android.library.model.work;
-/**
- * Created by 超悟空 on 2016/7/23.
- */
 
-
-import org.json.JSONObject;
-import org.cwk.android.library.model.data.IIntegratedDataModel;
 import org.cwk.android.library.model.data.base.SimpleDataModel;
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -19,7 +14,7 @@ import java.util.Map;
  * @since 1.0
  */
 public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWorkModel<Parameters,
-        Result> {
+        Result, SimpleDataModel<Parameters, Result>> {
 
     /**
      * 服务响应的业务数据的参数默认取值标签
@@ -27,7 +22,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
     protected static final String RESULT = "result";
 
     @Override
-    protected IIntegratedDataModel<Parameters, Result, ?, ?> onCreateDataModel() {
+    protected SimpleDataModel<Parameters, Result> onCreateDataModel() {
         return new SimpleDataModel<Parameters, Result>() {
             @Override
             protected Result onExtractData(JSONObject jsonResult) throws Exception {

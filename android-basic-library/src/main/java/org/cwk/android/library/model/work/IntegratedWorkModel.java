@@ -12,14 +12,14 @@ import org.cwk.android.library.network.communication.Communication;
  * @version 1.0 2016/7/23
  * @since 1.0
  */
-public abstract class IntegratedWorkModel<Parameters, Result> extends
-        DefaultWorkModel<Parameters, Result, IIntegratedDataModel<Parameters, Result, ?, ?>> {
+public abstract class IntegratedWorkModel<Parameters, Result, DataModel extends
+        IIntegratedDataModel<Parameters, Result, ?, ?>> extends DefaultWorkModel<Parameters,
+        Result, DataModel> {
 
     @SafeVarargs
     @Override
-    protected final IIntegratedDataModel<Parameters, Result, ?, ?> onCreateDataModel
-            (Parameters... parameters) {
-        IIntegratedDataModel<Parameters, Result, ?, ?> data = onCreateDataModel();
+    protected final DataModel onCreateDataModel(Parameters... parameters) {
+        DataModel data = onCreateDataModel();
         data.setParameters(parameters);
         return data;
     }
@@ -29,5 +29,5 @@ public abstract class IntegratedWorkModel<Parameters, Result> extends
      *
      * @return 参数设置完毕后的数据模型对象
      */
-    protected abstract IIntegratedDataModel<Parameters, Result, ?, ?> onCreateDataModel();
+    protected abstract DataModel onCreateDataModel();
 }
