@@ -1,9 +1,7 @@
 package org.cwk.android.library.util;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
 
 import org.cwk.android.library.global.Global;
 
@@ -39,25 +37,14 @@ public class DeviceID {
             return deviceId;
         }
 
-        // 先从配置文件读取
+        // 从配置文件读取
         readConfig();
 
-        if (deviceId != null) {
+        if (deviceId == null) {
+            // 通过uuid生成
+            fromUUID();
             writeConfig();
-            return deviceId;
         }
-
-        // 再通过IMEI生成
-        fromIMEI();
-
-        if (deviceId != null) {
-            writeConfig();
-            return deviceId;
-        }
-
-        // 再通过uuid生成
-        fromUUID();
-        writeConfig();
 
         return deviceId;
     }
@@ -73,18 +60,9 @@ public class DeviceID {
     }
 
     /**
-     * 通过IMEI生成
-     */
-    private static void fromIMEI() {
-        TelephonyManager tm = (TelephonyManager) Global.getContext().getSystemService(Context
-                .TELEPHONY_SERVICE);
-        deviceId = tm.getDeviceId();
-    }
-
-    /**
      * 通过uuid生成
      */
-    public static void fromUUID() {
+    private static void fromUUID() {
         deviceId = UUID.randomUUID().toString();
     }
 

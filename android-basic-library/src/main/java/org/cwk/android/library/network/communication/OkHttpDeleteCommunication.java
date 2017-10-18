@@ -27,7 +27,7 @@ public class OkHttpDeleteCommunication extends Communication<Map<String, String>
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "OkHttpDeleteCommunication.";
+    private static final String TAG = "OkHttpDeleteCommunication";
 
     @Override
     protected Request onCreateRequest(Map<String, String> sendData) {
@@ -47,10 +47,7 @@ public class OkHttpDeleteCommunication extends Communication<Map<String, String>
     @Override
     protected void onAsyncSuccess(ResponseBody body, NetworkCallback<String> callback) throws
             IOException {
-
-        String responseString = body.string();
-        Log.v(LOG_TAG + "request", "response is " + responseString);
-        callback.onFinish(true, responseString);
+        callback.onFinish(true, body.string());
     }
 
     @Override
@@ -58,7 +55,7 @@ public class OkHttpDeleteCommunication extends Communication<Map<String, String>
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(LOG_TAG + "response", "error", e);
+            Log.e(TAG, "response error", e);
 
             return null;
         }

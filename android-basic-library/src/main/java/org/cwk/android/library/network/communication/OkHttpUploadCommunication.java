@@ -53,9 +53,7 @@ public class OkHttpUploadCommunication extends Communication<Map<String, Object>
     @Override
     protected void onAsyncSuccess(ResponseBody body, NetworkCallback<String> callback) throws
             IOException {
-        String responseString = body.string();
-        Log.v(TAG, "response is " + responseString);
-        callback.onFinish(true, responseString);
+        callback.onFinish(true, body.string());
     }
 
     @Override

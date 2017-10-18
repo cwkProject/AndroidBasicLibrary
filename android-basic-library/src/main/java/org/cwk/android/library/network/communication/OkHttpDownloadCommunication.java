@@ -32,7 +32,7 @@ public class OkHttpDownloadCommunication extends Communication<Map<String, Strin
     /**
      * 日志标签前缀
      */
-    private static final String LOG_TAG = "OkHttpDownloadCommunication.";
+    private static final String TAG = "OkHttpDownloadCommunication";
 
     /**
      * 下载进度监听器
@@ -75,7 +75,7 @@ public class OkHttpDownloadCommunication extends Communication<Map<String, Strin
 
         // 最终请求地址
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
-        Log.v(LOG_TAG + "request", "final url is " + finalUrl);
+        Log.v(TAG, "final url is " + finalUrl);
 
         return new Request.Builder().url(finalUrl).build();
     }

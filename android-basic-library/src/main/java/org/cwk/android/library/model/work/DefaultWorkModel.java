@@ -114,7 +114,6 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     protected final boolean onDoWork() {
         if (!cancelMark) {
             Log.v(TAG, "onDoWork invoked");
-            Log.v(TAG, "onDoWork task request url is " + onTaskUri());
 
             // 设置请求地址
             communication.setTaskName(onTaskUri());
