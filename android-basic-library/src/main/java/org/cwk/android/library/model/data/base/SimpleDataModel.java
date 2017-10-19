@@ -32,7 +32,7 @@ public abstract class SimpleDataModel<Parameters, Result> extends
 
     @Override
     protected String onRequestMessage(boolean result, JSONObject handleResult) throws Exception {
-        return handleResult.getString("message");
+        return handleResult.optString("message");
     }
 
     @Override

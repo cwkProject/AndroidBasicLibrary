@@ -129,7 +129,7 @@ public abstract class WorkProcessModel<Parameters, DataModel extends IDataModel>
      *
      * @return 数据处理器
      */
-    public DataModel getResult() {
+    public DataModel getData() {
         return mData;
     }
 }

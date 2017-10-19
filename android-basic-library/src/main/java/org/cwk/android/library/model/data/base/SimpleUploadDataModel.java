@@ -1,5 +1,7 @@
 package org.cwk.android.library.model.data.base;
 
+import android.support.annotation.CallSuper;
+
 import org.json.JSONObject;
 
 /**
@@ -32,6 +34,11 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
      */
     protected static final String RESULT = "result";
 
+    /**
+     * 服务响应的errorCode，0为默认值，大于0为错误代码
+     */
+    private int code = 0;
+
     @Override
     protected boolean onRequestResult(JSONObject handleResult) throws Exception {
         // 得到执行结果
@@ -40,7 +47,7 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
 
     @Override
     protected String onRequestMessage(boolean result, JSONObject handleResult) throws Exception {
-        return handleResult.getString("message");
+        return handleResult.optString("message");
     }
 
     @Override
@@ -49,6 +56,14 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
             return onExtractData(handleResult);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    @CallSuper
+    protected void onRequestFailed(JSONObject handleResult) throws Exception {
+        if (handleResult != null && !handleResult.isNull("errorCode")) {
+            code = handleResult.getInt("errorCode");
         }
     }
 
@@ -63,4 +78,13 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
      * @throws Exception 处理过程抛出的异常
      */
     protected abstract Result onExtractData(JSONObject jsonData) throws Exception;
+
+    /**
+     * 获取服务响应的errorCode，0为默认值，大于0为错误代码
+     *
+     * @return 成功时为0，错误时大于0
+     */
+    public int getCode() {
+        return code;
+    }
 }
