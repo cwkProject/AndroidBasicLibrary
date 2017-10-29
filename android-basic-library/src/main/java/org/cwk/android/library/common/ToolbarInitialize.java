@@ -31,7 +31,7 @@ public class ToolbarInitialize {
     @SuppressWarnings("ConstantConditions")
     public static Toolbar initToolbar(final AppCompatActivity activity, @StringRes int titleId,
                                       boolean center, boolean back) {
-        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        Toolbar toolbar = activity.findViewById(R.id.toolbar);
 
         if (toolbar == null) {
             return null;
@@ -41,7 +41,7 @@ public class ToolbarInitialize {
         activity.setTitle(titleId);
 
         if (center) {
-            TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
+            TextView title = toolbar.findViewById(R.id.toolbar_title);
 
             if (title != null) {
                 title.setVisibility(View.VISIBLE);
@@ -52,12 +52,7 @@ public class ToolbarInitialize {
 
         if (back) {
             activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    activity.onBackPressed();
-                }
-            });
+            toolbar.setNavigationOnClickListener(v -> activity.onBackPressed());
         }
 
         return toolbar;

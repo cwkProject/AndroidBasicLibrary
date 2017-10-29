@@ -3,8 +3,8 @@ package org.cwk.android.library.network.communication;
 import android.util.Log;
 
 import org.cwk.android.library.network.util.NetworkCallback;
-import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
+import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.ProgressResponseBody;
 import org.cwk.android.library.network.util.RequestBodyBuilder;
 
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -50,13 +49,10 @@ public class OkHttpDownloadCommunication extends Communication<Map<String, Strin
 
         if (onNetworkProgressListener != null) {
             // 增加拦截器监听下载进度
-            builder.networkInterceptors().add(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Response originalResponse = chain.proceed(chain.request());
-                    return originalResponse.newBuilder().body(new ProgressResponseBody
-                            (originalResponse.body(), onNetworkProgressListener)).build();
-                }
+            builder.networkInterceptors().add(chain -> {
+                Response originalResponse = chain.proceed(chain.request());
+                return originalResponse.newBuilder().body(new ProgressResponseBody
+                        (originalResponse.body(), onNetworkProgressListener)).build();
             });
         }
 

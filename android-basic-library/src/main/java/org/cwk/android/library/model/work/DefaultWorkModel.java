@@ -1,6 +1,5 @@
 package org.cwk.android.library.model.work;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cwk.android.library.annotation.Delete;
@@ -13,33 +12,21 @@ import org.cwk.android.library.annotation.UploadStream;
 import org.cwk.android.library.global.Global;
 import org.cwk.android.library.model.data.IDataModel;
 import org.cwk.android.library.model.data.IDefaultDataModel;
-import org.cwk.android.library.model.operate.AsyncExecute;
 import org.cwk.android.library.model.operate.Cancelable;
 import org.cwk.android.library.model.operate.CreateRxObservable;
-import org.cwk.android.library.model.operate.SyncExecute;
 import org.cwk.android.library.network.communication.Communication;
 import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.cwk.android.library.network.factory.NetworkType;
 import org.cwk.android.library.network.util.AsyncCommunication;
-import org.cwk.android.library.network.util.NetworkCallback;
 import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.SyncCommunication;
 
 import java.lang.reflect.Method;
 
 import io.reactivex.Completable;
-import io.reactivex.CompletableEmitter;
-import io.reactivex.CompletableOnSubscribe;
 import io.reactivex.Maybe;
-import io.reactivex.MaybeEmitter;
-import io.reactivex.MaybeOnSubscribe;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
-import io.reactivex.functions.Cancellable;
 
 /**
  * 默认实现的网络任务模型基类<br>
@@ -57,8 +44,9 @@ import io.reactivex.functions.Cancellable;
  * @since 1.0 2014/11/2
  */
 public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends IDataModel>
-        extends WorkProcessModel<Parameters, DataModelType> implements SyncExecute<Parameters>,
-        AsyncExecute<Parameters>, Cancelable, CreateRxObservable<Parameters, DataModelType> {
+        extends WorkProcessModel<Parameters, DataModelType> implements SyncExecute<Parameters,
+        DataModelType>, AsyncExecute<Parameters>, Cancelable, CreateRxObservable<Parameters,
+        DataModelType> {
 
     /**
      * 日志标签前缀
@@ -124,16 +112,13 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
                 // 发送请求
                 //noinspection unchecked
-                communication.Request(mData.serialization(), new NetworkCallback() {
-                    @Override
-                    public void onFinish(boolean result, Object response) {
-                        if (!cancelMark) {
-                            // 解析响应数据
-                            onParseResult(result, response);
+                communication.Request(mData.serialization(), (result, response) -> {
+                    if (!cancelMark) {
+                        // 解析响应数据
+                        onParseResult(result, response);
 
-                            // 执行后继任务
-                            onStopWork();
-                        }
+                        // 执行后继任务
+                        onStopWork();
                     }
                 });
 
@@ -224,13 +209,10 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
     @SafeVarargs
     @Override
-    public final boolean execute(Parameters... parameters) {
+    public final DataModelType execute(Parameters... parameters) {
         Log.v(TAG, "execute start");
         cancelMark = false;
         isAsync = false;
-
-        // 保留执行结果
-        boolean state = false;
 
         // 是否继续执行
         boolean next = true;
@@ -242,7 +224,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
         if (!cancelMark && next) {
             // 执行核心任务
-            state = onDoWork();
+            onDoWork();
         }
 
         if (!cancelMark && next) {
@@ -250,7 +232,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
             onStopWork();
         }
 
-        return state;
+        return mData;
     }
 
     @Override
@@ -268,12 +250,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
             Log.v(TAG, "onWorkCanceledListener invoked");
             if (isCancelUiThread) {
                 // 发送到UI线程
-                Global.getUiHandler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onWorkCanceledListener.onCanceled(mParameters);
-                    }
-                });
+                Global.getUiHandler().post(() -> onWorkCanceledListener.onCanceled(mParameters));
             } else {
                 // 发送到当前线程
                 this.onWorkCanceledListener.onCanceled(mParameters);
@@ -314,18 +291,8 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
             if (isProgressUiThread) {
                 // 发送到UI线程
-                return new OnNetworkProgressListener() {
-                    @Override
-                    public void onRefreshProgress(final long current, final long total, final
-                    boolean done) {
-                        Global.getUiHandler().post(new Runnable() {
-                            @Override
-                            public void run() {
-                                onNetworkProgressListener.onRefreshProgress(current, total, done);
-                            }
-                        });
-                    }
-                };
+                return (current, total, done) -> Global.getUiHandler().post(() ->
+                        onNetworkProgressListener.onRefreshProgress(current, total, done));
             } else {
                 // 在当前线程
                 // 直接绑定
@@ -355,12 +322,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
             Log.v(TAG, "onWorkFinishListener invoked");
             if (isEndUiThread) {
                 // 发送到UI线程
-                Global.getUiHandler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onWorkFinishListener.onFinish(mData);
-                    }
-                });
+                Global.getUiHandler().post(() -> onWorkFinishListener.onFinish(mData));
             } else {
                 // 发送到当前线程
                 this.onWorkFinishListener.onFinish(mData);
@@ -600,113 +562,63 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     @SafeVarargs
     @Override
     public final Observable<DataModelType> observable(final Parameters... parameters) {
-        return Observable.create(new ObservableOnSubscribe<DataModelType>() {
-            @Override
-            public void subscribe(@NonNull final ObservableEmitter<DataModelType> e) throws
-                    Exception {
+        return Observable.create(e -> {
 
-                // 设置需要任务监听
-                e.setCancellable(new Cancellable() {
-                    @Override
-                    public void cancel() throws Exception {
-                        DefaultWorkModel.this.cancel();
-                    }
-                });
+            // 设置需要任务监听
+            e.setCancellable(DefaultWorkModel.this::cancel);
 
-                setOnWorkFinishListener(false, new OnWorkFinishListener<DataModelType>() {
-                    @Override
-                    public void onFinish(DataModelType data) {
-                        e.onNext(data);
-                    }
-                }).beginExecute(parameters);
-            }
+            setOnWorkFinishListener(false, e::onNext).beginExecute(parameters);
         });
     }
 
     @SafeVarargs
     @Override
     public final Maybe<DataModelType> maybe(final Parameters... parameters) {
-        return Maybe.create(new MaybeOnSubscribe<DataModelType>() {
-            @Override
-            public void subscribe(final MaybeEmitter<DataModelType> maybeEmitter) throws Exception {
-                // 设置需要任务监听
-                maybeEmitter.setCancellable(new Cancellable() {
-                    @Override
-                    public void cancel() throws Exception {
-                        DefaultWorkModel.this.cancel();
-                    }
-                });
+        return Maybe.create(maybeEmitter -> {
+            // 设置需要任务监听
+            maybeEmitter.setCancellable(DefaultWorkModel.this::cancel);
 
-                setOnWorkFinishListener(false, new OnWorkFinishListener<DataModelType>() {
-                    @Override
-                    public void onFinish(DataModelType data) {
-                        if (data.isSuccess()) {
-                            maybeEmitter.onSuccess(data);
-                        } else {
-                            maybeEmitter.onComplete();
-                        }
-                    }
-                }).beginExecute(parameters);
-            }
+            setOnWorkFinishListener(false, data -> {
+                if (data.isSuccess()) {
+                    maybeEmitter.onSuccess(data);
+                } else {
+                    maybeEmitter.onComplete();
+                }
+            }).beginExecute(parameters);
         });
     }
 
     @SafeVarargs
     @Override
     public final Single<DataModelType> single(final Parameters... parameters) {
-        return Single.create(new SingleOnSubscribe<DataModelType>() {
-            @Override
-            public void subscribe(final SingleEmitter<DataModelType> singleEmitter) throws
-                    Exception {
+        return Single.create(singleEmitter -> {
+            // 设置需要任务监听
+            singleEmitter.setCancellable(DefaultWorkModel.this::cancel);
 
-                // 设置需要任务监听
-                singleEmitter.setCancellable(new Cancellable() {
-                    @Override
-                    public void cancel() throws Exception {
-                        DefaultWorkModel.this.cancel();
-                    }
-                });
-
-                setOnWorkFinishListener(false, new OnWorkFinishListener<DataModelType>() {
-                    @Override
-                    public void onFinish(DataModelType data) {
-                        if (data.isSuccess()) {
-                            singleEmitter.onSuccess(data);
-                        } else {
-                            singleEmitter.onError(new Throwable(data.getMessage()));
-                        }
-                    }
-                }).beginExecute(parameters);
-            }
+            setOnWorkFinishListener(false, data -> {
+                if (data.isSuccess()) {
+                    singleEmitter.onSuccess(data);
+                } else {
+                    singleEmitter.onError(new Throwable(data.getMessage()));
+                }
+            }).beginExecute(parameters);
         });
     }
 
     @SafeVarargs
     @Override
     public final Completable completable(final Parameters... parameters) {
-        return Completable.create(new CompletableOnSubscribe() {
-            @Override
-            public void subscribe(final CompletableEmitter completableEmitter) throws Exception {
+        return Completable.create(completableEmitter -> {
+            // 设置需要任务监听
+            completableEmitter.setCancellable(DefaultWorkModel.this::cancel);
 
-                // 设置需要任务监听
-                completableEmitter.setCancellable(new Cancellable() {
-                    @Override
-                    public void cancel() throws Exception {
-                        DefaultWorkModel.this.cancel();
-                    }
-                });
-
-                setOnWorkFinishListener(false, new OnWorkFinishListener<DataModelType>() {
-                    @Override
-                    public void onFinish(DataModelType data) {
-                        if (data.isSuccess()) {
-                            completableEmitter.onComplete();
-                        } else {
-                            completableEmitter.onError(new Throwable(data.getMessage()));
-                        }
-                    }
-                }).beginExecute(parameters);
-            }
+            setOnWorkFinishListener(false, data -> {
+                if (data.isSuccess()) {
+                    completableEmitter.onComplete();
+                } else {
+                    completableEmitter.onError(new Throwable(data.getMessage()));
+                }
+            }).beginExecute(parameters);
         });
     }
 }

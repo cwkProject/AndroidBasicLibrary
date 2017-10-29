@@ -23,7 +23,7 @@ public class InputMethodController {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context
                 .INPUT_METHOD_SERVICE);
 
-        if (imm.isActive() && activity.getCurrentFocus() != null) {
+        if (imm != null && imm.isActive() && activity.getCurrentFocus() != null) {
             //如果开启
             //关闭软键盘，开启方法相同，这个方法是切换开启与关闭状态的
             imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
