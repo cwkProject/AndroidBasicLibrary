@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 48
-        versionName "0.7.5"
+        versionCode 49
+        versionName "0.7.6"
 
         consumerProguardFiles 'proguard-rules.pro'
 
@@ -37,6 +37,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:13.0'
     implementation 'com.android.support:design:27.0.0'
     implementation 'com.android.support:recyclerview-v7:27.0.0'
+    implementation 'com.android.support:exifinterface:27.0.0'
 
     api 'com.squareup.okhttp3:okhttp:3.9.0'
 

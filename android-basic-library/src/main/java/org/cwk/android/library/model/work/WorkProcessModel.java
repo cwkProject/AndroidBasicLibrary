@@ -122,14 +122,4 @@ public abstract class WorkProcessModel<Parameters, DataModel extends IDataModel>
     protected void onCanceled() {
 
     }
-
-    /**
-     * 获取请求结果数据处理器，
-     * 包含响应结果数据
-     *
-     * @return 数据处理器
-     */
-    public DataModel getData() {
-        return mData;
-    }
 }
