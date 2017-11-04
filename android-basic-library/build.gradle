@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 49
-        versionName "0.7.6"
+        versionCode 50
+        versionName "0.7.7"
 
         consumerProguardFiles 'proguard-rules.pro'
 
@@ -34,13 +34,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation 'com.android.support:appcompat-v7:27.0.0'
-    implementation 'org.jetbrains:annotations:13.0'
     implementation 'com.android.support:design:27.0.0'
     implementation 'com.android.support:recyclerview-v7:27.0.0'
     implementation 'com.android.support:exifinterface:27.0.0'
+    implementation 'com.android.support:support-annotations:27.0.0'
 
     api 'com.squareup.okhttp3:okhttp:3.9.0'
-
     provided 'io.reactivex.rxjava2:rxandroid:2.0.1'
     provided 'io.reactivex.rxjava2:rxjava:2.1.0'
 }

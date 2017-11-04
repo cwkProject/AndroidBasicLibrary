@@ -1,5 +1,7 @@
 package org.cwk.android.library.model.data.base;
 
+import android.support.annotation.NonNull;
+
 import org.cwk.android.library.model.data.IIntegratedDataModel;
 
 import java.util.Map;
@@ -43,8 +45,7 @@ public abstract class IntegratedDataModel<Parameters, Result, Handle, Response, 
     }
 
     @Override
-    protected final void onFillRequestParameters(Map<String, Value> dataMap) {
-        //noinspection unchecked
+    protected final void onFillRequestParameters(@NonNull Map<String, Value> dataMap) {
         onFillRequestParameters(dataMap, parameters);
     }
 
@@ -54,9 +55,9 @@ public abstract class IntegratedDataModel<Parameters, Result, Handle, Response, 
      * @param dataMap    将要填充的参数数据集<参数名,参数值>
      * @param parameters 任务传入的参数
      */
-    @SuppressWarnings("unchecked")
-    protected abstract void onFillRequestParameters(Map<String, Value> dataMap, Parameters...
-            parameters);
+    @SuppressWarnings({"unchecked" , "NullableProblems"})
+    protected abstract void onFillRequestParameters(@NonNull Map<String, Value> dataMap, @NonNull
+            Parameters... parameters);
 
     @Override
     protected final void onRequestSuccess(Handle handleResult) throws Exception {
@@ -75,5 +76,6 @@ public abstract class IntegratedDataModel<Parameters, Result, Handle, Response, 
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected abstract Result onSuccessResult(Handle handleResult) throws Exception;
+    @SuppressWarnings("NullableProblems")
+    protected abstract Result onSuccessResult(@NonNull Handle handleResult) throws Exception;
 }

@@ -1,5 +1,7 @@
 package org.cwk.android.library.model.work;
 
+import android.support.annotation.NonNull;
+
 import org.cwk.android.library.model.data.base.SimpleDataModel;
 import org.json.JSONObject;
 
@@ -25,14 +27,14 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
     protected SimpleDataModel<Parameters, Result> onCreateDataModel() {
         return new SimpleDataModel<Parameters, Result>() {
             @Override
-            protected Result onExtractData(JSONObject jsonResult) throws Exception {
+            protected Result onExtractData(@NonNull JSONObject jsonResult) throws Exception {
                 return onSuccessExtract(jsonResult);
             }
 
             @SafeVarargs
             @Override
-            protected final void onFillRequestParameters(Map<String, String> dataMap,
-                                                         Parameters... parameters) {
+            protected final void onFillRequestParameters(@NonNull Map<String, String> dataMap,
+                                                         @NonNull Parameters... parameters) {
                 onFill(dataMap, parameters);
             }
         };
@@ -45,7 +47,8 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
      * @param parameters 任务传入的参数
      */
     @SuppressWarnings("unchecked")
-    protected abstract void onFill(Map<String, String> dataMap, Parameters... parameters);
+    protected abstract void onFill(@NonNull Map<String, String> dataMap, @NonNull Parameters...
+            parameters);
 
     /**
      * 当请求成功且返回结果中存在{@link #RESULT}标签的数据时被调用，
@@ -57,5 +60,5 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
      *
      * @throws Exception 处理过程抛出的异常
      */
-    protected abstract Result onSuccessExtract(JSONObject jsonResult) throws Exception;
+    protected abstract Result onSuccessExtract(@NonNull JSONObject jsonResult) throws Exception;
 }

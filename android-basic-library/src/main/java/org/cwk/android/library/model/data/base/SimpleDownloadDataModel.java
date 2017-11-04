@@ -1,5 +1,7 @@
 package org.cwk.android.library.model.data.base;
 
+import android.support.annotation.NonNull;
+
 import org.cwk.android.library.model.work.SimpleDownloadWorkModel;
 
 import java.io.InputStream;
@@ -34,14 +36,16 @@ public abstract class SimpleDownloadDataModel<Parameters, Result> extends
      *
      * @throws Exception
      */
+    @SuppressWarnings("NullableProblems")
     @Override
-    protected abstract Result onSuccessResult(InputStream handleResult) throws Exception;
+    protected abstract Result onSuccessResult(@NonNull InputStream handleResult) throws Exception;
 
     @Override
     protected final boolean onCheckResponse(InputStream inputStream) {
         return inputStream != null;
     }
 
+    @NonNull
     @Override
     protected final InputStream onCreateHandle(InputStream inputStream) throws Exception {
         return inputStream;

@@ -1,6 +1,6 @@
 package org.cwk.android.library.model.work;
 
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.Nullable;
 
 /**
  * 任务同步执行接口
@@ -23,5 +23,5 @@ public interface SyncExecute<Parameters, DataModel> {
      */
     @SuppressWarnings("unchecked")
     @Nullable
-    DataModel execute(Parameters... parameters);
+    DataModel execute(@Nullable Parameters... parameters);
 }

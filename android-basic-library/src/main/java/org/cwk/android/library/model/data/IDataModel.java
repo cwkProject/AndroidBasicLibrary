@@ -1,5 +1,7 @@
 package org.cwk.android.library.model.data;
 
+import android.support.annotation.Nullable;
+
 /**
  * 基础数据模型接口，用于网络传输协议和结构协议的解析处理
  *
@@ -39,5 +41,6 @@ public interface IDataModel<Response, Request> {
      *
      * @return 消息字符串
      */
+    @Nullable
     String getMessage();
 }

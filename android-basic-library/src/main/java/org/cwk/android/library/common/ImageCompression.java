@@ -3,10 +3,9 @@ package org.cwk.android.library.common;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.support.annotation.NonNull;
 import android.support.media.ExifInterface;
 import android.util.Log;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,7 +35,7 @@ public class ImageCompression {
      *
      * @return 1表示不缩放，大于1为计算后的缩放值
      */
-    public static int calculateLowSampleSize(@NotNull BitmapFactory.Options options, int
+    public static int calculateLowSampleSize(@NonNull BitmapFactory.Options options, int
             reqWidth, int reqHeight) {
         // 如果有0值则仅参考另一项
         if (reqHeight <= 0) {
@@ -89,7 +88,7 @@ public class ImageCompression {
      *
      * @return 1表示不缩放，大于1为计算后的缩放值
      */
-    public static int calculateHighSampleSize(@NotNull BitmapFactory.Options options, int
+    public static int calculateHighSampleSize(@NonNull BitmapFactory.Options options, int
             reqWidth, int reqHeight) {
 
         // 如果有0值则仅参考另一项
@@ -143,7 +142,7 @@ public class ImageCompression {
      *
      * @return 1表示不缩放，大于1为计算后的缩放值
      */
-    public static int calculateHeightSampleSize(@NotNull BitmapFactory.Options options, int
+    public static int calculateHeightSampleSize(@NonNull BitmapFactory.Options options, int
             reqHeight, boolean high) {
         // 原始高
         final int height = options.outHeight;
@@ -178,7 +177,7 @@ public class ImageCompression {
      *
      * @return 1表示不缩放，大于1为计算后的缩放值
      */
-    public static int calculateWidthSampleSize(@NotNull BitmapFactory.Options options, int
+    public static int calculateWidthSampleSize(@NonNull BitmapFactory.Options options, int
             reqWidth, boolean high) {
         // 原始宽
         final int width = options.outWidth;

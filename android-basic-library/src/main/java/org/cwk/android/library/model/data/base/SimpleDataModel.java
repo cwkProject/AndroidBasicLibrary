@@ -1,6 +1,7 @@
 package org.cwk.android.library.model.data.base;
 
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 
 import org.json.JSONObject;
 
@@ -36,7 +37,7 @@ public abstract class SimpleDataModel<Parameters, Result> extends
     }
 
     @Override
-    protected Result onSuccessResult(JSONObject handleResult) throws Exception {
+    protected Result onSuccessResult(@NonNull JSONObject handleResult) throws Exception {
         if (!handleResult.isNull(RESULT)) {
             return onExtractData(handleResult);
         } else {
@@ -62,7 +63,8 @@ public abstract class SimpleDataModel<Parameters, Result> extends
      *
      * @throws Exception 处理过程抛出的异常
      */
-    protected abstract Result onExtractData(JSONObject jsonData) throws Exception;
+    @SuppressWarnings("NullableProblems")
+    protected abstract Result onExtractData(@NonNull JSONObject jsonData) throws Exception;
 
     /**
      * 获取服务响应的errorCode，0为默认值，大于0为错误代码

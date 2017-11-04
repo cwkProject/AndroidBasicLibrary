@@ -1,5 +1,6 @@
 package org.cwk.android.library.model.data.base;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cwk.android.library.model.data.IDefaultDataModel;
@@ -156,6 +157,8 @@ public abstract class StandardDataModel<Handle, Response, Value> implements
      *
      * @throws Exception 处理过程中可能出现的异常
      */
+    @SuppressWarnings("NullableProblems")
+    @NonNull
     protected abstract Handle onCreateHandle(Response response) throws Exception;
 
     /**

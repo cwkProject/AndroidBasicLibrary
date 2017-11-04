@@ -1,5 +1,7 @@
 package org.cwk.android.library.model.work;
 
+import android.support.annotation.NonNull;
+
 import org.cwk.android.library.annotation.Download;
 import org.cwk.android.library.model.data.base.SimpleDownloadDataModel;
 
@@ -20,14 +22,14 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
     protected SimpleDownloadDataModel<Parameters, Result> onCreateDataModel() {
         return new SimpleDownloadDataModel<Parameters, Result>() {
             @Override
-            protected Result onSuccessResult(InputStream handleResult) throws Exception {
+            protected Result onSuccessResult(@NonNull InputStream handleResult) throws Exception {
                 return onSuccessExtract(handleResult);
             }
 
             @SafeVarargs
             @Override
-            protected final void onFillRequestParameters(Map<String, String> dataMap,
-                                                         Parameters... parameters) {
+            protected final void onFillRequestParameters(@NonNull Map<String, String> dataMap,
+                                                         @NonNull Parameters... parameters) {
                 onFill(dataMap, parameters);
             }
         };
@@ -40,7 +42,8 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
      * @param parameters 任务传入的参数
      */
     @SuppressWarnings("unchecked")
-    protected abstract void onFill(Map<String, String> dataMap, Parameters... parameters);
+    protected abstract void onFill(@NonNull Map<String, String> dataMap, @NonNull Parameters...
+            parameters);
 
     /**
      * 处理下载数据<br>
@@ -60,7 +63,7 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
      *
      * @throws Exception
      */
-    protected abstract Result onSuccessExtract(InputStream inputStream) throws Exception;
+    protected abstract Result onSuccessExtract(@NonNull InputStream inputStream) throws Exception;
 
     @Override
     @Download
@@ -76,5 +79,5 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
      * @return 下载地址
      */
     @SuppressWarnings("unchecked")
-    protected abstract String onTaskUri(Parameters... parameters);
+    protected abstract String onTaskUri(@NonNull Parameters... parameters);
 }
