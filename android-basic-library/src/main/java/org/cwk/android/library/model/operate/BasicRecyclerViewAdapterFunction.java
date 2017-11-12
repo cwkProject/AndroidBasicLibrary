@@ -115,7 +115,7 @@ public interface BasicRecyclerViewAdapterFunction<SourceType> {
      *
      * @return 数据集
      */
-    List<SourceType> getDataList();
+    List<SourceType> getList();
 
     /**
      * 获取指定位置的数据
@@ -124,5 +124,5 @@ public interface BasicRecyclerViewAdapterFunction<SourceType> {
      *
      * @return 数据，失败返回null
      */
-    SourceType getData(int position);
+    SourceType get(int position);
 }

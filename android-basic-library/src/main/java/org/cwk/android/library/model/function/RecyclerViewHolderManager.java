@@ -1,8 +1,10 @@
 package org.cwk.android.library.model.function;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.ViewGroup;
 
 import org.cwk.android.library.model.operate.BasicRecyclerViewAdapterFunction;
+import org.cwk.android.library.model.operate.OnGroupPositionToAdapterPosition;
 import org.cwk.android.library.model.operate.OnRecyclerViewItemListener;
 
 import java.util.ArrayList;
@@ -10,23 +12,34 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 增加基础功能实现的{@link android.support.v7.widget.RecyclerView.Adapter}实现
- *
- * @param <SourceType>     数据源类型
- * @param <ViewHolderType> Item控件管理器类型
+ * {@link android.support.v7.widget.RecyclerView.ViewHolder}和数据集管理器
  *
  * @author 超悟空
- * @version 1.0 2017/2/10
- * @since 1.0 2017/2/10
- **/
-public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType extends RecyclerView
-        .ViewHolder> extends RecyclerView.Adapter<ViewHolderType> implements
-        BasicRecyclerViewAdapterFunction<SourceType> {
+ * @version 1.0 2017/11/12
+ * @since 1.0
+ */
+public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType extends RecyclerView
+        .ViewHolder> implements BasicRecyclerViewAdapterFunction<SourceType> {
+
+    /**
+     * 当前数据集在依赖适配器中的分组索引
+     */
+    private int groupIndex = 0;
 
     /**
      * 数据源
      */
     protected final List<SourceType> dataList = new ArrayList<>();
+
+    /**
+     * 依赖的适配器
+     */
+    protected final RecyclerView.Adapter<RecyclerView.ViewHolder> adapter;
+
+    /**
+     * 索引转换器
+     */
+    protected final OnGroupPositionToAdapterPosition convertUnit;
 
     /**
      * Item点击事件监听器，需要子类在{@link #onCreateViewHolder}中手动绑定
@@ -37,6 +50,20 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
      * Item长按事件监听器，需要子类在{@link #onCreateViewHolder}中手动绑定
      */
     protected OnRecyclerViewItemListener<ViewHolderType, SourceType> onItemLongClickListener = null;
+
+    /**
+     * 构造函数
+     *
+     * @param adapter 依赖的适配器
+     */
+    public RecyclerViewHolderManager(RecyclerView.Adapter<RecyclerView.ViewHolder> adapter) {
+        this.adapter = adapter;
+        if (adapter instanceof OnGroupPositionToAdapterPosition) {
+            this.convertUnit = (OnGroupPositionToAdapterPosition) adapter;
+        } else {
+            this.convertUnit = null;
+        }
+    }
 
     /**
      * 设置Item点击事件
@@ -58,16 +85,71 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
-    @Override
-    public int getItemCount() {
+    /**
+     * 设置分组索引
+     *
+     * @param index 索引编号
+     */
+    final void setGroupIndex(int index) {
+        this.groupIndex = index;
+    }
+
+    /**
+     * 绑定数据到控件
+     *
+     * @param holder   控件管理器
+     * @param position 当前数据组中的位置
+     */
+    final void bindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        //noinspection unchecked
+        onBindViewHolder((ViewHolderType) holder, position);
+    }
+
+    /**
+     * 获取当前数据集总数
+     *
+     * @return 数据总数
+     */
+    public final int getCount() {
         return dataList.size();
+    }
+
+    /**
+     * 创建控件管理器
+     *
+     * @param parent 列表布局
+     *
+     * @return 控件管理器
+     */
+    public abstract ViewHolderType onCreateViewHolder(ViewGroup parent);
+
+    /**
+     * 绑定数据到控件
+     *
+     * @param holder   控件管理器
+     * @param position 当前数据组中的相对索引，与{@link RecyclerView.ViewHolder#getAdapterPosition()}不同
+     */
+    protected abstract void onBindViewHolder(ViewHolderType holder, int position);
+
+    /**
+     * 转换本组位置到适配器位置
+     *
+     * @param position 当前组中的位置
+     *
+     * @return 适配器中的位置
+     */
+    protected int convert(int position) {
+        //noinspection ConstantConditions
+        return convertUnit.convert(groupIndex, position);
     }
 
     @Override
     public void add(SourceType data) {
         if (data != null) {
             dataList.add(data);
-            notifyItemInserted(dataList.size() - 1);
+            if (convertUnit != null) {
+                adapter.notifyItemInserted(convert(dataList.size()) - 1);
+            }
         }
     }
 
@@ -75,7 +157,9 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
     public void add(int position, SourceType data) {
         if (position >= 0 && position <= dataList.size() && data != null) {
             dataList.add(position, data);
-            notifyItemInserted(position);
+            if (convertUnit != null) {
+                adapter.notifyItemInserted(convert(position));
+            }
         }
     }
 
@@ -83,7 +167,9 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
     public void add(List<SourceType> data) {
         if (data != null && !data.isEmpty()) {
             dataList.addAll(data);
-            notifyItemRangeInserted(dataList.size() - 1, data.size());
+            if (convertUnit != null) {
+                adapter.notifyItemRangeInserted(convert(dataList.size()) - 1, data.size());
+            }
         }
     }
 
@@ -91,7 +177,9 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
     public void add(int position, List<SourceType> data) {
         if (position >= 0 && position <= dataList.size() && data != null && !data.isEmpty()) {
             dataList.addAll(position, data);
-            notifyItemRangeInserted(position, data.size());
+            if (convertUnit != null) {
+                adapter.notifyItemRangeInserted(convert(position), data.size());
+            }
         }
     }
 
@@ -100,7 +188,9 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
         SourceType data = null;
         if (position >= 0 && position < dataList.size()) {
             data = dataList.remove(position);
-            notifyItemRemoved(position);
+            if (convertUnit != null) {
+                adapter.notifyItemRemoved(convert(position));
+            }
         }
         return data;
     }
@@ -116,7 +206,9 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
                 list.add(dataList.remove(start));
             }
 
-            notifyItemRangeRemoved(start, count);
+            if (convertUnit != null) {
+                adapter.notifyItemRangeRemoved(convert(start), count);
+            }
         }
 
         return list;
@@ -129,7 +221,9 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
         if (position >= 0 && position <= dataList.size() && data != null) {
             oldData = dataList.set(position, data);
 
-            notifyItemChanged(position);
+            if (convertUnit != null) {
+                adapter.notifyItemChanged(convert(position));
+            }
         }
 
         return oldData;
@@ -148,7 +242,9 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
                 list.add(dataList.set(i, data.get(i - position)));
             }
 
-            notifyItemRangeChanged(position, data.size());
+            if (convertUnit != null) {
+                adapter.notifyItemRangeChanged(convert(position), data.size());
+            }
         }
 
         return list;
@@ -160,8 +256,10 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
         if (fromPosition >= 0 && toPosition >= 0 && fromPosition < dataList.size() && toPosition
                 < dataList.size()) {
             Collections.swap(dataList, fromPosition, toPosition);
-            notifyItemChanged(fromPosition);
-            notifyItemChanged(toPosition);
+            if (convertUnit != null) {
+                adapter.notifyItemChanged(convert(fromPosition));
+                adapter.notifyItemChanged(convert(toPosition));
+            }
         }
     }
 
@@ -170,7 +268,10 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
         if (fromPosition >= 0 && toPosition >= 0 && fromPosition < dataList.size() && toPosition
                 < dataList.size()) {
             dataList.add(toPosition, dataList.remove(fromPosition));
-            notifyItemMoved(fromPosition, toPosition);
+
+            if (convertUnit != null) {
+                adapter.notifyItemMoved(convert(fromPosition), convert(toPosition));
+            }
         }
     }
 
@@ -178,7 +279,9 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
     public void clear() {
         int count = dataList.size();
         dataList.clear();
-        notifyItemRangeRemoved(0, count);
+        if (convertUnit != null) {
+            adapter.notifyItemRangeRemoved(convert(0), count);
+        }
     }
 
     @Override
@@ -190,7 +293,9 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
                 dataList.remove(position);
             }
 
-            notifyItemRangeRemoved(position, count - position);
+            if (convertUnit != null) {
+                adapter.notifyItemRangeRemoved(convert(position), count - position);
+            }
         }
     }
 
