@@ -1,7 +1,6 @@
 package org.cwk.android.library.global;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -61,7 +60,7 @@ public class Global {
      *
      * @return 返回Application对象
      */
-    public static Context getApplication() {
+    public static Application getApplication() {
         return global.application;
     }
 
