@@ -1,6 +1,7 @@
 package org.cwk.android.library.network.factory;
 
 import org.cwk.android.library.network.communication.Communication;
+import org.cwk.android.library.network.communication.ICommunication;
 import org.cwk.android.library.network.communication.OkHttpDeleteCommunication;
 import org.cwk.android.library.network.communication.OkHttpDownloadCommunication;
 import org.cwk.android.library.network.communication.OkHttpGetCommunication;
@@ -8,17 +9,23 @@ import org.cwk.android.library.network.communication.OkHttpPostCommunication;
 import org.cwk.android.library.network.communication.OkHttpPutCommunication;
 import org.cwk.android.library.network.communication.OkHttpStreamUploadCommunication;
 import org.cwk.android.library.network.communication.OkHttpUploadCommunication;
-import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
 import org.cwk.android.library.network.util.NetworkTimeout;
+import org.cwk.android.library.network.util.OnNetworkProgressListener;
 
-import static org.cwk.android.library.network.factory.NetworkType.*;
+import static org.cwk.android.library.network.factory.NetworkType.DELETE;
+import static org.cwk.android.library.network.factory.NetworkType.DOWNLOAD;
+import static org.cwk.android.library.network.factory.NetworkType.GET;
+import static org.cwk.android.library.network.factory.NetworkType.POST;
+import static org.cwk.android.library.network.factory.NetworkType.PUT;
+import static org.cwk.android.library.network.factory.NetworkType.UPLOAD;
+import static org.cwk.android.library.network.factory.NetworkType.UPLOAD_STREAM;
 
 /**
  * 通讯对象构造器
  *
  * @author 超悟空
- * @version 3.0 2016/8/4
+ * @version 4.0 2017/11/13
  * @since 1.0
  */
 public class CommunicationBuilder {
@@ -151,7 +158,7 @@ public class CommunicationBuilder {
      *
      * @return OKHttp网络请求工具
      */
-    public Communication build() {
+    public ICommunication build() {
 
         Communication communication;
 

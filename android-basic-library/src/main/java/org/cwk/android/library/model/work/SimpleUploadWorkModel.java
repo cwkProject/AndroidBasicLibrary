@@ -2,8 +2,12 @@ package org.cwk.android.library.model.work;
 
 import android.support.annotation.NonNull;
 
+import org.cwk.android.library.R;
 import org.cwk.android.library.annotation.Upload;
+import org.cwk.android.library.global.Global;
 import org.cwk.android.library.model.data.base.SimpleUploadDataModel;
+import org.cwk.android.library.network.communication.ICommunication;
+import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -45,6 +49,13 @@ public abstract class SimpleUploadWorkModel<Parameters, Result> extends
     @Upload
     protected final String onTaskUri() {
         return onTaskUri(mParameters);
+    }
+
+    @Override
+    protected ICommunication onCreateCommunication(CommunicationBuilder builder) {
+        builder.writeTimeout(Global.getApplication().getResources().getInteger(R.integer
+                .http_upload_write_timeout));
+        return super.onCreateCommunication(builder);
     }
 
     /**

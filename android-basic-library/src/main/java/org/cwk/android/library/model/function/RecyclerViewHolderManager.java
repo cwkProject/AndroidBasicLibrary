@@ -1,5 +1,6 @@
 package org.cwk.android.library.model.function;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -121,7 +122,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      *
      * @return 控件管理器
      */
-    public abstract ViewHolderType onCreateViewHolder(ViewGroup parent);
+    public abstract ViewHolderType onCreateViewHolder(@NonNull ViewGroup parent);
 
     /**
      * 绑定数据到控件
@@ -129,7 +130,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      * @param holder   控件管理器
      * @param position 当前数据组中的相对索引，与{@link RecyclerView.ViewHolder#getAdapterPosition()}不同
      */
-    protected abstract void onBindViewHolder(ViewHolderType holder, int position);
+    protected abstract void onBindViewHolder(@NonNull ViewHolderType holder, int position);
 
     /**
      * 转换本组位置到适配器位置
@@ -140,7 +141,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      */
     protected int convert(int position) {
         //noinspection ConstantConditions
-        return convertUnit.convert(groupIndex, position);
+        return convertUnit.convertToAdapterPosition(groupIndex, position);
     }
 
     @Override

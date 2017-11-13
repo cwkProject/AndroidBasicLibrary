@@ -1,5 +1,7 @@
 package org.cwk.android.library.model.function;
 
+import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -17,7 +19,7 @@ import java.util.List;
  *      RecyclerViewHolderManager<String, SampleViewHolder>(this) {
  *          @Override
  *              public SampleViewHolder onCreateViewHolder(ViewGroup parent) {
- *                  return new SampleViewHolder(LayoutInflater.from(parent.getContext()).inflate
+ *                  return new SampleViewHolder(LayoutInflater.from(parent.getApplication()).inflate
  *                  (R.layout
  *                      .sample_layout, parent, false));
  *              }
@@ -31,7 +33,7 @@ import java.util.List;
  *      RecyclerViewHolderManager<String, SampleViewHolder>(this) {
  *          @Override
  *          public SampleViewHolder onCreateViewHolder(ViewGroup parent) {
- *              return new SampleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R
+ *              return new SampleViewHolder(LayoutInflater.from(parent.getApplication()).inflate(R
  *              .layout
  *                  .sample_layout, parent, false));
  *          }
@@ -64,15 +66,9 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
             managerList = new ArrayList<>();
 
     /**
-     * 构造方法
+     * 是否第一次执行
      */
-    public MultipleRecyclerViewAdapter() {
-        onBindManagers(managerList);
-
-        for (int i = 0; i < managerList.size(); i++) {
-            managerList.get(i).setGroupIndex(i);
-        }
-    }
+    private boolean isFirst = true;
 
     /**
      * 装配数据集管理器，在这里将{@link RecyclerViewHolderManager}加入到{@link #managerList}中,
@@ -80,8 +76,21 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
      *
      * @param managerList 数据集管理器
      */
-    protected abstract void onBindManagers(List<RecyclerViewHolderManager<?, ? extends
+    protected abstract void onBindManagers(@NonNull List<RecyclerViewHolderManager<?, ? extends
             RecyclerView.ViewHolder>> managerList);
+
+    @CallSuper
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        if (isFirst) {
+            isFirst = false;
+            onBindManagers(managerList);
+
+            for (int i = 0; i < managerList.size(); i++) {
+                managerList.get(i).setGroupIndex(i);
+            }
+        }
+    }
 
     @Override
     public final int getItemViewType(int position) {
@@ -102,13 +111,8 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
 
     @Override
     public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        int groupPosition = position;
-
-        for (int i = 0; i < holder.getItemViewType(); i++) {
-            groupPosition -= managerList.get(i).getCount();
-        }
-
-        managerList.get(holder.getItemViewType()).bindViewHolder(holder, groupPosition);
+        managerList.get(holder.getItemViewType()).bindViewHolder(holder, convertToGroupPosition
+                (holder.getItemViewType(), position));
     }
 
     @Override
@@ -131,12 +135,13 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
      * @return 管理器对象
      */
     @SuppressWarnings("unchecked")
+    @NonNull
     public <T extends RecyclerViewHolderManager> T getHolderManager(int groupIndex) {
         return (T) managerList.get(groupIndex);
     }
 
     @Override
-    public int convert(int groupIndex, int groupPosition) {
+    public int convertToAdapterPosition(int groupIndex, int groupPosition) {
 
         int position = 0;
 
@@ -145,5 +150,16 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
         }
 
         return position + groupPosition;
+    }
+
+    @Override
+    public int convertToGroupPosition(int groupIndex, int adapterPosition) {
+        int groupPosition = adapterPosition;
+
+        for (int i = 0; i < groupIndex; i++) {
+            groupPosition -= managerList.get(i).getCount();
+        }
+
+        return groupPosition;
     }
 }

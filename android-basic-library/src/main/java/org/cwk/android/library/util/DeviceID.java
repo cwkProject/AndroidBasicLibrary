@@ -54,7 +54,7 @@ public class DeviceID {
      */
     private static void readConfig() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences
-                (Global.getContext());
+                (Global.getApplication());
 
         deviceId = sharedPreferences.getString(DEVICE_ID, null);
     }
@@ -71,7 +71,7 @@ public class DeviceID {
      */
     private static void writeConfig() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(Global
-                .getContext()).edit();
+                .getApplication()).edit();
         editor.putString(DEVICE_ID, deviceId);
         editor.apply();
     }

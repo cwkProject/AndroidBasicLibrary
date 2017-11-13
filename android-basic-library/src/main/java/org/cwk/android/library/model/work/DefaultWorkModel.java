@@ -14,7 +14,7 @@ import org.cwk.android.library.model.data.IDataModel;
 import org.cwk.android.library.model.data.IDefaultDataModel;
 import org.cwk.android.library.model.operate.Cancelable;
 import org.cwk.android.library.model.operate.CreateRxObservable;
-import org.cwk.android.library.network.communication.Communication;
+import org.cwk.android.library.network.communication.ICommunication;
 import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.cwk.android.library.network.factory.NetworkType;
 import org.cwk.android.library.network.util.AsyncCommunication;
@@ -71,7 +71,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     /**
      * 网络请求工具
      */
-    private Communication communication = null;
+    private ICommunication communication = null;
 
     /**
      * 指示是否将取消回调接口在UI线程执行，默认为发送到UI线程
@@ -272,8 +272,13 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
         // 创建网络请求工具
         if (next && communication == null) {
-            communication = onCreateCommunication(new CommunicationBuilder(onNetworkType())
-                    .networkRefreshProgressListener(onCreateProgressListener()));
+
+            communication = onInterceptCreateCommunication();
+
+            if (communication == null) {
+                communication = onCreateCommunication(new CommunicationBuilder(onNetworkType())
+                        .networkRefreshProgressListener(onCreateProgressListener()));
+            }
         }
 
         return next;
@@ -375,7 +380,6 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      *
      * @return 地址字符串
      */
-    @Get
     protected abstract String onTaskUri();
 
     /**
@@ -428,6 +432,18 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     }
 
     /**
+     * 拦截创建网络请求工具<br>
+     * 用于创建完全自定义实现的网络请求工具。
+     * 此方法如果返回非空实例则默认的创建方法{@link #onCreateCommunication(CommunicationBuilder)}不再执行，
+     * {@link #onTaskUri()}设置的请求类型注解也不再生效
+     *
+     * @return 网络请求工具实例
+     */
+    protected ICommunication onInterceptCreateCommunication() {
+        return null;
+    }
+
+    /**
      * 创建网络请求工具<br>
      * 用于发送网络请求，
      * 使用{@link CommunicationBuilder}工具进行创建，
@@ -437,7 +453,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      *
      * @return 网络请求工具实例，调用{@link CommunicationBuilder#build()}创建
      */
-    protected Communication onCreateCommunication(CommunicationBuilder builder) {
+    protected ICommunication onCreateCommunication(CommunicationBuilder builder) {
         return builder.build();
     }
 

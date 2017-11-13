@@ -2,8 +2,12 @@ package org.cwk.android.library.model.work;
 
 import android.support.annotation.NonNull;
 
+import org.cwk.android.library.R;
 import org.cwk.android.library.annotation.Download;
+import org.cwk.android.library.global.Global;
 import org.cwk.android.library.model.data.base.SimpleDownloadDataModel;
+import org.cwk.android.library.network.communication.ICommunication;
+import org.cwk.android.library.network.factory.CommunicationBuilder;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -69,6 +73,13 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
     @Download
     protected final String onTaskUri() {
         return onTaskUri(mParameters);
+    }
+
+    @Override
+    protected ICommunication onCreateCommunication(CommunicationBuilder builder) {
+        builder.readTimeout(Global.getApplication().getResources().getInteger(R.integer
+                .http_download_read_timeout));
+        return super.onCreateCommunication(builder);
     }
 
     /**

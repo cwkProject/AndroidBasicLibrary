@@ -1,30 +1,27 @@
 package org.cwk.android.library.global;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cwk.android.library.BuildConfig;
 import org.cwk.android.library.R;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * 全局对象，用于在任意位置使用应用程序资源
  *
  * @author 超悟空
- * @version 3.0 2016/3/7
+ * @version 4.0 2017/11/13
  * @since 1.0
  */
 public class Global {
@@ -35,14 +32,19 @@ public class Global {
     private static final String TAG = "Global";
 
     /**
+     * 用户代理
+     */
+    private static final String USER_AGENT_HEADER_NAME = "User-Agent";
+
+    /**
      * 自身静态全局实例
      */
     private static Global global = null;
 
     /**
-     * 全局上下文实例
+     * Application实例
      */
-    private Context context = null;
+    private Application application = null;
 
     /**
      * 全局网络请求工具
@@ -55,12 +57,12 @@ public class Global {
     private Handler handler = null;
 
     /**
-     * 获取全局Context对象
+     * 获取应用的Application对象
      *
-     * @return 返回Context对象
+     * @return 返回Application对象
      */
-    public static Context getContext() {
-        return global.context;
+    public static Context getApplication() {
+        return global.application;
     }
 
     /**
@@ -82,16 +84,25 @@ public class Global {
     }
 
     /**
-     * 初始化
+     * 设置网络工具
      *
-     * @param context 上下文
+     * @param okHttpClient 带默认设置的OkHttpClient对象
      */
-    public static void init(Context context) {
-        global = new Global(context);
+    public static void setOkHttpClient(OkHttpClient okHttpClient) {
+        global.okHttpClient = okHttpClient;
     }
 
-    private Global(Context context) {
-        this.context = context;
+    /**
+     * 初始化
+     *
+     * @param application 应用Application
+     */
+    public static void init(Application application) {
+        global = new Global(application);
+    }
+
+    private Global(Application application) {
+        this.application = application;
         handler = new Handler(Looper.getMainLooper());
 
         initOkHttpClient();
@@ -132,10 +143,10 @@ public class Global {
 
         try {
             // 包信息
-            PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName
-                    (), 0);
+            PackageInfo info = application.getPackageManager().getPackageInfo(application
+                    .getPackageName(), 0);
             // 应用id
-            userAgentBuilder.append(context.getPackageName());
+            userAgentBuilder.append(application.getPackageName());
             userAgentBuilder.append("/");
 
             // 应用版本
@@ -151,28 +162,21 @@ public class Global {
 
         okHttpClient = new OkHttpClient.Builder()
                 // 设置默认连接超时时间
-                .connectTimeout(context.getResources().getInteger(R.integer
+                .connectTimeout(application.getResources().getInteger(R.integer
                         .http_default_connect_timeout), TimeUnit.MILLISECONDS)
                 // 设置默认读取超时时间
-                .readTimeout(context.getResources().getInteger(R.integer
+                .readTimeout(application.getResources().getInteger(R.integer
                         .http_default_read_timeout), TimeUnit.MILLISECONDS)
                 // 设置默认写入超时时间
-                .writeTimeout(context.getResources().getInteger(R.integer
+                .writeTimeout(application.getResources().getInteger(R.integer
                         .http_default_write_timeout), TimeUnit.MILLISECONDS)
                 // 设置用户代理信息拦截器
-                .addNetworkInterceptor(new Interceptor() {
-
-                    private static final String USER_AGENT_HEADER_NAME = "User-Agent";
-
-                    @Override
-                    public Response intercept(@NonNull Chain chain) throws IOException {
-                        final Request originalRequest = chain.request();
-                        final Request requestWithUserAgent = originalRequest.newBuilder()
-                                .removeHeader(USER_AGENT_HEADER_NAME).addHeader
-                                        (USER_AGENT_HEADER_NAME, userAgentBuilder.toString())
-                                .build();
-                        return chain.proceed(requestWithUserAgent);
-                    }
+                .addNetworkInterceptor(chain -> {
+                    final Request originalRequest = chain.request();
+                    final Request requestWithUserAgent = originalRequest.newBuilder()
+                            .removeHeader(USER_AGENT_HEADER_NAME).addHeader
+                                    (USER_AGENT_HEADER_NAME, userAgentBuilder.toString()).build();
+                    return chain.proceed(requestWithUserAgent);
                 }).build();
     }
 }

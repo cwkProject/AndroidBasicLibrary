@@ -52,7 +52,7 @@ public class CheckNetwork {
      * @return true可用，false不可用
      */
     public static boolean isOpenNetwork() {
-        ConnectivityManager manager = (ConnectivityManager) Global.getContext().getSystemService
+        ConnectivityManager manager = (ConnectivityManager) Global.getApplication().getSystemService
                 (Context.CONNECTIVITY_SERVICE);
         if (manager != null) {
             NetworkInfo networkInfo = manager.getActiveNetworkInfo();
@@ -70,7 +70,7 @@ public class CheckNetwork {
     public static int getNetWorkType() {
         int netWorkType = NETWORK_UNKNOWN;
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) Global.getContext()
+        ConnectivityManager connectivityManager = (ConnectivityManager) Global.getApplication()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager != null ? connectivityManager
                 .getActiveNetworkInfo() : null;

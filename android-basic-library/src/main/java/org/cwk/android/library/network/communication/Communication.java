@@ -3,12 +3,9 @@ package org.cwk.android.library.network.communication;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.cwk.android.library.network.util.AsyncCommunication;
+import org.cwk.android.library.global.Global;
 import org.cwk.android.library.network.util.NetworkCallback;
-import org.cwk.android.library.network.util.NetworkClient;
 import org.cwk.android.library.network.util.NetworkTimeout;
-import org.cwk.android.library.network.util.NetworkTimeoutHandler;
-import org.cwk.android.library.network.util.SyncCommunication;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -24,12 +21,11 @@ import okhttp3.ResponseBody;
  * 基于OkHttp的网络请求基类
  *
  * @author 超悟空
- * @version 1.0 2016/3/7
+ * @version 2.0 2017/11/13
  * @since 1.0
  */
 public abstract class Communication<RequestType, ResponseType> implements
-        AsyncCommunication<RequestType, ResponseType>, SyncCommunication<RequestType,
-        ResponseType>, NetworkTimeoutHandler {
+        ICommunication<RequestType, ResponseType> {
     /**
      * 日志标签前缀
      */
@@ -147,7 +143,7 @@ public abstract class Communication<RequestType, ResponseType> implements
      */
     private OkHttpClient onConfigOkHttpClient() {
         // 得到okHttpClient对象
-        OkHttpClient okHttpClient = NetworkClient.getOkHttpClient();
+        OkHttpClient okHttpClient = Global.getOkHttpClient();
 
         OkHttpClient.Builder builder = onRebuildClient(okHttpClient);
 

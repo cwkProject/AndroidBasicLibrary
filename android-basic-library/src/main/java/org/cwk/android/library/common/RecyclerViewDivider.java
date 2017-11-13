@@ -67,7 +67,7 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
      * @param orientation 列表方向
      */
     public RecyclerViewDivider(int orientation) {
-        this(orientation, Global.getContext().getResources().getColor(android.R.color.darker_gray));
+        this(orientation, Global.getApplication().getResources().getColor(android.R.color.darker_gray));
     }
 
     /**
@@ -78,7 +78,7 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
      * @param endPadding   距结束位置距离
      */
     public RecyclerViewDivider(int orientation, int startPadding, int endPadding) {
-        this(orientation, Global.getContext().getResources().getColor(android.R.color
+        this(orientation, Global.getApplication().getResources().getColor(android.R.color
                 .darker_gray), startPadding, endPadding);
     }
 
