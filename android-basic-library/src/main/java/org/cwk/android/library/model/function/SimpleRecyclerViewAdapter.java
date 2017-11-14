@@ -1,5 +1,6 @@
 package org.cwk.android.library.model.function;
 
+import android.support.annotation.CallSuper;
 import android.support.v7.widget.RecyclerView;
 
 import org.cwk.android.library.model.operate.BasicRecyclerViewAdapterFunction;
@@ -16,7 +17,7 @@ import java.util.List;
  * @param <ViewHolderType> Item控件管理器类型
  *
  * @author 超悟空
- * @version 1.0 2017/2/10
+ * @version 2.0 2017/11/14
  * @since 1.0 2017/2/10
  **/
 public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType extends RecyclerView
@@ -29,12 +30,12 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
     protected final List<SourceType> dataList = new ArrayList<>();
 
     /**
-     * Item点击事件监听器，需要子类在{@link #onCreateViewHolder}中手动绑定
+     * Item点击事件监听器
      */
     protected OnRecyclerViewItemListener<ViewHolderType, SourceType> onItemClickListener = null;
 
     /**
-     * Item长按事件监听器，需要子类在{@link #onCreateViewHolder}中手动绑定
+     * Item长按事件监听器
      */
     protected OnRecyclerViewItemListener<ViewHolderType, SourceType> onItemLongClickListener = null;
 
@@ -56,6 +57,40 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
     public void setOnItemLongClickListener(OnRecyclerViewItemListener<ViewHolderType, SourceType>
                                                    onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
+    }
+
+    @CallSuper
+    @Override
+    public void onBindViewHolder(ViewHolderType holder, int position, List<Object> payloads) {
+        onBindListener(holder);
+        super.onBindViewHolder(holder, position, payloads);
+    }
+
+    /**
+     * 绑定事件监听器
+     *
+     * @param holder 控件管理器
+     */
+    protected void onBindListener(ViewHolderType holder) {
+        if (onItemClickListener != null && !holder.itemView.hasOnClickListeners()) {
+            holder.itemView.setOnClickListener(v -> {
+                int adapterPosition = holder.getAdapterPosition();
+                if (adapterPosition > -1) {
+                    onItemClickListener.onInvoke(holder, dataList.get(adapterPosition));
+                }
+            });
+        }
+
+        if (onItemLongClickListener != null && !holder.itemView.isLongClickable()) {
+            holder.itemView.setOnLongClickListener(v -> {
+                int adapterPosition = holder.getAdapterPosition();
+                if (adapterPosition > -1) {
+                    onItemLongClickListener.onInvoke(holder, dataList.get(adapterPosition));
+                }
+
+                return true;
+            });
+        }
     }
 
     @Override

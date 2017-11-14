@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import org.cwk.android.library.model.operate.BasicRecyclerViewAdapterFunction;
 import org.cwk.android.library.model.operate.OnGroupPositionToAdapterPosition;
-import org.cwk.android.library.model.operate.OnRecyclerViewItemListener;
+import org.cwk.android.library.model.operate.OnRecyclerViewGroupItemListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,14 +43,15 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
     protected final OnGroupPositionToAdapterPosition convertUnit;
 
     /**
-     * Item点击事件监听器，需要子类在{@link #onCreateViewHolder}中手动绑定
+     * Item点击事件监听器
      */
-    protected OnRecyclerViewItemListener<ViewHolderType, SourceType> onItemClickListener = null;
+    private OnRecyclerViewGroupItemListener<ViewHolderType, SourceType> onItemClickListener = null;
 
     /**
-     * Item长按事件监听器，需要子类在{@link #onCreateViewHolder}中手动绑定
+     * Item长按事件监听器
      */
-    protected OnRecyclerViewItemListener<ViewHolderType, SourceType> onItemLongClickListener = null;
+    private OnRecyclerViewGroupItemListener<ViewHolderType, SourceType> onItemLongClickListener =
+            null;
 
     /**
      * 构造函数
@@ -71,8 +72,8 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      *
      * @param onItemClickListener Item点击事件监听器
      */
-    public void setOnItemClickListener(OnRecyclerViewItemListener<ViewHolderType, SourceType>
-                                               onItemClickListener) {
+    public void setOnItemClickListener(OnRecyclerViewGroupItemListener<ViewHolderType,
+            SourceType> onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -81,8 +82,8 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      *
      * @param onItemLongClickListener Item长按事件监听器
      */
-    public void setOnItemLongClickListener(OnRecyclerViewItemListener<ViewHolderType, SourceType>
-                                                   onItemLongClickListener) {
+    public void setOnItemLongClickListener(OnRecyclerViewGroupItemListener<ViewHolderType,
+            SourceType> onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
@@ -104,6 +105,55 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
     final void bindViewHolder(RecyclerView.ViewHolder holder, int position) {
         //noinspection unchecked
         onBindViewHolder((ViewHolderType) holder, position);
+    }
+
+    /**
+     * 创建控件管理器
+     *
+     * @param parent 列表布局
+     *
+     * @return 控件管理器
+     */
+    final ViewHolderType createViewHolder(ViewGroup parent) {
+
+        final ViewHolderType holder = onCreateViewHolder(parent);
+
+        onBindListener(holder);
+
+        return holder;
+    }
+
+    /**
+     * 绑定事件监听器
+     *
+     * @param holder 控件管理器
+     */
+    protected void onBindListener(ViewHolderType holder) {
+        if (onItemClickListener != null && convertUnit != null) {
+            holder.itemView.setOnClickListener(v -> {
+                int position = holder.getAdapterPosition();
+
+                if (position > -1) {
+                    position = convertUnit.convertToGroupPosition(groupIndex, position);
+
+                    onItemClickListener.onInvoke(holder, dataList.get(position), position);
+                }
+            });
+        }
+
+        if (onItemLongClickListener != null && convertUnit != null) {
+            holder.itemView.setOnLongClickListener(v -> {
+                int position = holder.getAdapterPosition();
+
+                if (position > -1) {
+                    position = convertUnit.convertToGroupPosition(groupIndex, position);
+
+                    onItemLongClickListener.onInvoke(holder, dataList.get(position), position);
+                }
+
+                return true;
+            });
+        }
     }
 
     /**

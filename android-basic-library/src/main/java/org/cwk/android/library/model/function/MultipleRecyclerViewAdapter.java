@@ -106,7 +106,7 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
 
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return managerList.get(viewType).onCreateViewHolder(parent);
+        return managerList.get(viewType).createViewHolder(parent);
     }
 
     @Override
