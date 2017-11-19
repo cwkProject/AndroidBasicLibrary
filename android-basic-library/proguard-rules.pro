@@ -23,12 +23,10 @@
 -keepclassmembernames class * extends org.cwk.android.library.model.config.PersistenceConfigModel {*;}
 
 # okhttp3
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
 -dontwarn okio.**
--dontwarn javax.annotation.Nullable
--dontwarn javax.annotation.ParametersAreNonnullByDefault
+-dontwarn javax.annotation.**
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # rxjava2
 -dontwarn io.reactivex.**
