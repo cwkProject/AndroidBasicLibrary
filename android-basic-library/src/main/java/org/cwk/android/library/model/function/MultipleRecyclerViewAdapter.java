@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import org.cwk.android.library.model.operate.OnGroupPositionToAdapterPosition;
+import org.cwk.android.library.model.operate.OnRecyclerAdapterTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ import java.util.List;
  * @since 1.0
  */
 public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
-        .ViewHolder> implements OnGroupPositionToAdapterPosition {
+        .ViewHolder> implements OnGroupPositionToAdapterPosition, OnRecyclerAdapterTransaction {
 
     /**
      * 存放数据集管理器的集合
@@ -69,6 +70,11 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
      * 是否第一次执行
      */
     private boolean isFirst = true;
+
+    /**
+     * 是否开始了事务操作
+     */
+    private boolean isTransaction = false;
 
     /**
      * 装配数据集管理器，在这里将{@link RecyclerViewHolderManager}加入到{@link #managerList}中,
@@ -161,5 +167,21 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
         }
 
         return groupPosition;
+    }
+
+    @Override
+    public void beginTransaction() {
+        isTransaction = true;
+    }
+
+    @Override
+    public void commit() {
+        isTransaction = false;
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean isTransaction() {
+        return isTransaction;
     }
 }
