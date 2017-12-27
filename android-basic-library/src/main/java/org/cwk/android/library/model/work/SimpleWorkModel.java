@@ -37,6 +37,11 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
                                                          @NonNull Parameters... parameters) {
                 onFill(dataMap, parameters);
             }
+
+            @Override
+            protected Result onDefaultData() throws Exception {
+                return onSuccessDefault();
+            }
         };
     }
 
@@ -61,4 +66,16 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
      * @throws Exception 处理过程抛出的异常
      */
     protected abstract Result onSuccessExtract(@NonNull JSONObject jsonResult) throws Exception;
+
+    /**
+     * 当请求成功且返回结果不存在{@link #RESULT}标签的数据时被调用，
+     * 即{@link #RESULT}为null时此方法用于装配默认结果数据，默认实现为null
+     *
+     * @return 处理后的任务传出结果
+     *
+     * @throws Exception 处理过程抛出的异常
+     */
+    protected Result onSuccessDefault() throws Exception {
+        return null;
+    }
 }

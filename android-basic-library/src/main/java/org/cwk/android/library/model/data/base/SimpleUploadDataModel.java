@@ -56,7 +56,7 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
         if (!handleResult.isNull(RESULT)) {
             return onExtractData(handleResult);
         } else {
-            return null;
+            return onDefaultData();
         }
     }
 
@@ -80,6 +80,18 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
      */
     @SuppressWarnings("NullableProblems")
     protected abstract Result onExtractData(@NonNull JSONObject jsonData) throws Exception;
+
+    /**
+     * 当请求成功且返回结果不存在{@link #RESULT}标签的数据时被调用，
+     * 即{@link #RESULT}为null时此方法用于装配默认结果数据，默认实现为null
+     *
+     * @return 处理后的任务传出结果
+     *
+     * @throws Exception 处理过程抛出的异常
+     */
+    protected Result onDefaultData() throws Exception {
+        return null;
+    }
 
     /**
      * 获取服务响应的errorCode，0为默认值，大于0为错误代码
