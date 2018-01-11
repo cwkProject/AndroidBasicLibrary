@@ -25,21 +25,19 @@ import okhttp3.ResponseBody;
 public class OkHttpDeleteCommunication extends Communication<Map<String, String>, String> {
 
     /**
-     * 日志标签前缀
+     * 构造函数
+     *
+     * @param tag 标签，用于跟踪日志
      */
-    private static final String TAG = "OkHttpDeleteCommunication";
+    public OkHttpDeleteCommunication(String tag) {
+        super(tag);
+    }
 
     @Override
     protected Request onCreateRequest(Map<String, String> sendData) {
 
         // 拼接参数
-        RequestBody body;
-
-        if (encoded != null) {
-            body = RequestBodyBuilder.onBuildPostForm(sendData, encoded);
-        } else {
-            body = RequestBodyBuilder.onBuildPostForm(sendData);
-        }
+        RequestBody body = RequestBodyBuilder.onBuildPostForm(logTag, sendData, encoded);
 
         return new Request.Builder().url(url).delete(body).build();
     }
@@ -55,7 +53,7 @@ public class OkHttpDeleteCommunication extends Communication<Map<String, String>
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(TAG, "response error", e);
+            Log.e(logTag, "response error", e);
 
             return null;
         }

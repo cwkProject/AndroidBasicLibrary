@@ -20,7 +20,7 @@ public abstract class WorkProcessModel<Parameters, DataModel extends IDataModel>
     /**
      * 日志标签前缀
      */
-    private static final String TAG = "WorkProcessModel";
+    protected final String TAG = this.getClass().getSimpleName();
 
     /**
      * 协议数据处理器

@@ -26,11 +26,6 @@ public class OkHttpStreamUploadCommunication extends Communication<Map<String, S
         implements NetworkRefreshProgressHandler {
 
     /**
-     * 日志标签前缀
-     */
-    private static final String TAG = "OkHttpUploadCommunication";
-
-    /**
      * 文件标签
      */
     private static final String FILE_TAG = "file";
@@ -39,6 +34,15 @@ public class OkHttpStreamUploadCommunication extends Communication<Map<String, S
      * 上传进度监听器
      */
     private OnNetworkProgressListener onNetworkProgressListener = null;
+
+    /**
+     * 构造函数
+     *
+     * @param tag 标签，用于跟踪日志
+     */
+    public OkHttpStreamUploadCommunication(String tag) {
+        super(tag);
+    }
 
     @Override
     protected Request onCreateRequest(Map<String, String> sendData) {
@@ -49,15 +53,10 @@ public class OkHttpStreamUploadCommunication extends Communication<Map<String, S
         }
 
         // 拼接参数
-        RequestBody body = RequestBodyBuilder.onBuildUploadStream(data);
+        RequestBody body = RequestBodyBuilder.onBuildUploadStream(logTag, data);
 
         // 拼接参数
-        String params;
-        if (encoded != null) {
-            params = RequestBodyBuilder.onBuildParameter(sendData, encoded);
-        } else {
-            params = RequestBodyBuilder.onBuildParameter(sendData);
-        }
+        String params = RequestBodyBuilder.onBuildParameter(logTag, sendData, encoded);
 
         // 最终请求地址
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
@@ -81,7 +80,7 @@ public class OkHttpStreamUploadCommunication extends Communication<Map<String, S
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(TAG, "response error", e);
+            Log.e(logTag, "response error", e);
 
             return null;
         }

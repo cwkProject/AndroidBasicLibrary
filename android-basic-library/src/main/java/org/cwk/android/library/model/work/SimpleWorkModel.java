@@ -25,7 +25,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
 
     @Override
     protected SimpleDataModel<Parameters, Result> onCreateDataModel() {
-        return new SimpleDataModel<Parameters, Result>() {
+        return new SimpleDataModel<Parameters, Result>(TAG) {
             @Override
             protected Result onExtractData(@NonNull JSONObject jsonResult) throws Exception {
                 return onSuccessExtract(jsonResult);

@@ -24,7 +24,7 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
         IntegratedWorkModel<Parameters, Result, SimpleDownloadDataModel<Parameters, Result>> {
     @Override
     protected SimpleDownloadDataModel<Parameters, Result> onCreateDataModel() {
-        return new SimpleDownloadDataModel<Parameters, Result>() {
+        return new SimpleDownloadDataModel<Parameters, Result>(TAG) {
             @Override
             protected Result onSuccessResult(@NonNull InputStream handleResult) throws Exception {
                 return onSuccessExtract(handleResult);

@@ -20,6 +20,15 @@ import org.json.JSONObject;
  **/
 public abstract class SimpleUploadDataModel<Parameters, Result> extends
         IntegratedDataModel<Parameters, Result, JSONObject, String, Object> {
+    /**
+     * 构造函数
+     *
+     * @param tag 标签，用于跟踪日志
+     */
+    public SimpleUploadDataModel(String tag) {
+        super(tag);
+    }
+
     @Override
     protected final boolean onCheckResponse(String response) {
         return response != null;

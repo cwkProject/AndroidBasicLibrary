@@ -49,11 +49,6 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
         DataModelType> {
 
     /**
-     * 日志标签前缀
-     */
-    private static final String TAG = "DefaultWorkModel";
-
-    /**
      * 任务完成回调接口
      */
     private OnWorkFinishListener<DataModelType> onWorkFinishListener = null;
@@ -97,6 +92,11 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 标识是否异步启动任务
      */
     private boolean isAsync = true;
+
+    /**
+     * 任务请求重试次数
+     */
+    private int retryTimes = 0;
 
     @Override
     protected final boolean onDoWork() {
@@ -276,8 +276,9 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
             communication = onInterceptCreateCommunication();
 
             if (communication == null) {
-                communication = onCreateCommunication(new CommunicationBuilder(onNetworkType())
-                        .networkRefreshProgressListener(onCreateProgressListener()));
+                communication = onCreateCommunication(new CommunicationBuilder(TAG, onNetworkType
+                        ()).retryTimes(retryTimes).networkRefreshProgressListener
+                        (onCreateProgressListener()));
             }
         }
 
@@ -384,7 +385,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
 
     /**
      * 设置网络请求类型<br>
-     * 用于{@link CommunicationBuilder#CommunicationBuilder(int)}生产网络请求实例，
+     * 用于{@link CommunicationBuilder#CommunicationBuilder(String , int)}生产网络请求实例，
      * 默认为{@link NetworkType#GET}
      *
      * @return 网络请求类型枚举
@@ -572,6 +573,19 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
     (boolean isUiThread, OnWorkCanceledListener<Parameters> onWorkCanceledListener) {
         this.onWorkCanceledListener = onWorkCanceledListener;
         this.isCancelUiThread = isUiThread;
+        return this;
+    }
+
+    /**
+     * 设置任务的请求重试次数<br>
+     * 任务实际请求最少一次
+     *
+     * @param times 重试次数，默认为0，表示不重试即只执行一次请求。例如设为5则总共执行6次请求
+     *
+     * @return 当前任务实例
+     */
+    public final DefaultWorkModel<Parameters, Result, DataModelType> setRetryTimes(int times) {
+        this.retryTimes = times;
         return this;
     }
 

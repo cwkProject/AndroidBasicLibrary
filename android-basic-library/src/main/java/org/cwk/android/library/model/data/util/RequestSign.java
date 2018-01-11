@@ -22,11 +22,6 @@ import java.util.Map;
 public class RequestSign {
 
     /**
-     * 日志标签前缀
-     */
-    private static final String LOG_TAG = "RequestSign.";
-
-    /**
      * 应用编号
      */
     private static final String APP_CODE = "AppName";
@@ -39,13 +34,13 @@ public class RequestSign {
     /**
      * 参数签名
      *
+     * @param logTag   标签，用于跟踪日志
      * @param sendData 要发送的参数
      */
-    public static void sign(Map<String, Object> sendData) {
+    public static void sign(String logTag, Map<String, Object> sendData) {
         // 遍历sendData集合并加入请求参数对象
-        if (ApplicationAttribute.isRequestSign() && sendData != null &&
-                ApplicationAttribute.getAppCode() != null && ApplicationAttribute.getAppToken()
-                != null) {
+        if (ApplicationAttribute.isRequestSign() && sendData != null && ApplicationAttribute
+                .getAppCode() != null && ApplicationAttribute.getAppToken() != null) {
 
             // key数组
             List<String> keyList = new ArrayList<>();
@@ -87,23 +82,22 @@ public class RequestSign {
             // 加入签名串
             sendData.put(SIGN, sign);
 
-            Log.v(LOG_TAG + "sign", "app code:" + ApplicationAttribute.getAppCode() + " sign:" +
-                    sign);
+            Log.v(logTag, "sign app code:" + ApplicationAttribute.getAppCode() + " sign:" + sign);
         } else {
-            Log.v(LOG_TAG + "sign", "parameters has null");
+            Log.v(logTag, "sign parameters has null");
         }
     }
 
     /**
      * 参数签名，针对纯文本参数优化
      *
+     * @param logTag   标签，用于跟踪日志
      * @param sendData 要发送的参数
      */
-    public static void signForText(Map<String, String> sendData) {
+    public static void signForText(String logTag, Map<String, String> sendData) {
         // 遍历sendData集合并加入请求参数对象
-        if (ApplicationAttribute.isRequestSign() && sendData != null &&
-                ApplicationAttribute.getAppCode() != null && ApplicationAttribute.getAppToken()
-                != null) {
+        if (ApplicationAttribute.isRequestSign() && sendData != null && ApplicationAttribute
+                .getAppCode() != null && ApplicationAttribute.getAppToken() != null) {
 
             // key数组
             List<String> keyList = new ArrayList<>();
@@ -138,10 +132,10 @@ public class RequestSign {
             // 加入签名串
             sendData.put(SIGN, sign);
 
-            Log.v(LOG_TAG + "signForText", "app code:" + ApplicationAttribute.getAppCode() + " " +
+            Log.v(logTag, "signForText app code:" + ApplicationAttribute.getAppCode() + " " +
                     "sign:" + sign);
         } else {
-            Log.v(LOG_TAG + "signForText", "parameters has null");
+            Log.v(logTag, "signForText parameters has null");
         }
     }
 }

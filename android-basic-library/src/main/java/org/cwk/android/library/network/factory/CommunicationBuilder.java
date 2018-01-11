@@ -41,6 +41,11 @@ public class CommunicationBuilder {
     private OnNetworkProgressListener progressListener = null;
 
     /**
+     * 请求重试次数
+     */
+    protected int retryTimes = 0;
+
+    /**
      * 请求超时时间
      */
     private int connectTimeout = -1;
@@ -66,17 +71,27 @@ public class CommunicationBuilder {
     private String url = null;
 
     /**
-     * 新建网络工具构造器，默认为GET请求工具
+     * 跟踪日志
      */
-    public CommunicationBuilder() {
+    private final String logTag;
+
+    /**
+     * 新建网络工具构造器，默认为GET请求工具
+     *
+     * @param tag 标签，用于跟踪日志
+     */
+    public CommunicationBuilder(String tag) {
+        this(tag, GET);
     }
 
     /**
      * 新建网络工具构造器
      *
+     * @param tag         标签，用于跟踪日志
      * @param networkType 网络请求类型
      */
-    public CommunicationBuilder(int networkType) {
+    public CommunicationBuilder(String tag, int networkType) {
+        this.logTag = tag;
         this.networkType = networkType;
     }
 
@@ -130,6 +145,18 @@ public class CommunicationBuilder {
     }
 
     /**
+     * 设置重试次数
+     *
+     * @param times 重试次数，默认为0即不重试
+     *
+     * @return 构造器
+     */
+    public CommunicationBuilder retryTimes(int times) {
+        this.retryTimes = times;
+        return this;
+    }
+
+    /**
      * 设置请求编码，默认为utf-8
      *
      * @param encoded 编码
@@ -164,25 +191,25 @@ public class CommunicationBuilder {
 
         switch (networkType) {
             case GET:
-                communication = new OkHttpGetCommunication();
+                communication = new OkHttpGetCommunication(logTag);
                 break;
             case POST:
-                communication = new OkHttpPostCommunication();
+                communication = new OkHttpPostCommunication(logTag);
                 break;
             case UPLOAD:
-                communication = new OkHttpUploadCommunication();
+                communication = new OkHttpUploadCommunication(logTag);
                 break;
             case DOWNLOAD:
-                communication = new OkHttpDownloadCommunication();
+                communication = new OkHttpDownloadCommunication(logTag);
                 break;
             case PUT:
-                communication = new OkHttpPutCommunication();
+                communication = new OkHttpPutCommunication(logTag);
                 break;
             case DELETE:
-                communication = new OkHttpDeleteCommunication();
+                communication = new OkHttpDeleteCommunication(logTag);
                 break;
             case UPLOAD_STREAM:
-                communication = new OkHttpStreamUploadCommunication();
+                communication = new OkHttpStreamUploadCommunication(logTag);
                 break;
             default:
                 throw new IllegalArgumentException("error networkType");
@@ -198,6 +225,11 @@ public class CommunicationBuilder {
             networkTimeout.setWriteTimeout(writeTimeout);
 
             communication.setNetworkTimeout(networkTimeout);
+        }
+
+        if (retryTimes > 0) {
+            // 需要设置请求重试
+            communication.setRetryTimes(retryTimes);
         }
 
         if (progressListener != null && communication instanceof NetworkRefreshProgressHandler) {

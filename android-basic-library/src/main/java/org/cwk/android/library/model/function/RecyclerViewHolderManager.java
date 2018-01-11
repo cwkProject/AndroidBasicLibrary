@@ -215,6 +215,17 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
         return (transaction == null || !transaction.isTransaction()) && convertUnit != null;
     }
 
+    /**
+     * 通知指定位置的Item刷新
+     *
+     * @param position 索引
+     */
+    public void notifyItemChanged(int position) {
+        if (position >= 0 && position <= dataList.size()) {
+            adapter.notifyItemInserted(convert(position));
+        }
+    }
+
     @Override
     public void add(SourceType data) {
         if (data != null) {

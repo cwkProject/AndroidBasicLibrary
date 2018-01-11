@@ -33,6 +33,15 @@ public abstract class IntegratedDataModel<Parameters, Result, Handle, Response, 
      */
     private Result result = null;
 
+    /**
+     * 构造函数
+     *
+     * @param tag 标签，用于跟踪日志
+     */
+    public IntegratedDataModel(String tag) {
+        super(tag);
+    }
+
     @SafeVarargs
     @Override
     public final void setParameters(Parameters... parameters) {

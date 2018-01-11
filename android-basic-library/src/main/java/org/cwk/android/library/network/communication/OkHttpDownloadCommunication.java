@@ -28,15 +28,20 @@ import okhttp3.ResponseBody;
  */
 public class OkHttpDownloadCommunication extends Communication<Map<String, String>, InputStream>
         implements NetworkRefreshProgressHandler {
-    /**
-     * 日志标签前缀
-     */
-    private static final String TAG = "OkHttpDownloadCommunication";
 
     /**
      * 下载进度监听器
      */
     private OnNetworkProgressListener onNetworkProgressListener = null;
+
+    /**
+     * 构造函数
+     *
+     * @param tag 标签，用于跟踪日志
+     */
+    public OkHttpDownloadCommunication(String tag) {
+        super(tag);
+    }
 
     @Override
     public void setNetworkProgressListener(OnNetworkProgressListener onNetworkProgressListener) {
@@ -62,16 +67,11 @@ public class OkHttpDownloadCommunication extends Communication<Map<String, Strin
     @Override
     protected Request onCreateRequest(Map<String, String> sendData) {
         // 拼接参数
-        String params;
-        if (encoded != null) {
-            params = RequestBodyBuilder.onBuildParameter(sendData, encoded);
-        } else {
-            params = RequestBodyBuilder.onBuildParameter(sendData);
-        }
+        String params = RequestBodyBuilder.onBuildParameter(logTag, sendData, encoded);
 
         // 最终请求地址
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
-        Log.v(TAG, "final url is " + finalUrl);
+        Log.v(logTag, "final url is " + finalUrl);
 
         return new Request.Builder().url(finalUrl).build();
     }

@@ -1,6 +1,7 @@
 package org.cwk.android.library.network.communication;
 
 import org.cwk.android.library.network.util.AsyncCommunication;
+import org.cwk.android.library.network.util.NetworkRetryHandler;
 import org.cwk.android.library.network.util.NetworkTimeoutHandler;
 import org.cwk.android.library.network.util.SyncCommunication;
 
@@ -13,5 +14,5 @@ import org.cwk.android.library.network.util.SyncCommunication;
  **/
 public interface ICommunication<RequestType, ResponseType> extends
         AsyncCommunication<RequestType, ResponseType>, SyncCommunication<RequestType,
-        ResponseType>, NetworkTimeoutHandler {
+        ResponseType>, NetworkTimeoutHandler, NetworkRetryHandler {
 }

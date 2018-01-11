@@ -27,20 +27,25 @@ import okhttp3.ResponseBody;
  */
 public class OkHttpUploadCommunication extends Communication<Map<String, Object>, String>
         implements NetworkRefreshProgressHandler {
-    /**
-     * 日志标签前缀
-     */
-    private static final String TAG = "OkHttpUploadCommunication";
 
     /**
      * 上传进度监听器
      */
     private OnNetworkProgressListener onNetworkProgressListener = null;
 
+    /**
+     * 构造函数
+     *
+     * @param tag 标签，用于跟踪日志
+     */
+    public OkHttpUploadCommunication(String tag) {
+        super(tag);
+    }
+
     @Override
     protected Request onCreateRequest(Map<String, Object> sendData) {
         // 拼接参数
-        RequestBody body = RequestBodyBuilder.onBuildUploadForm(sendData);
+        RequestBody body = RequestBodyBuilder.onBuildUploadForm(logTag, sendData);
 
         // 考虑是否包装上传进度
         if (onNetworkProgressListener != null) {
@@ -61,7 +66,7 @@ public class OkHttpUploadCommunication extends Communication<Map<String, Object>
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(TAG, "response error", e);
+            Log.e(logTag, "response error", e);
 
             return null;
         }

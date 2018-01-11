@@ -21,6 +21,15 @@ import java.util.Map;
 public abstract class IntegratedJsonDataModel<Parameters, Result> extends
         IntegratedDataModel<Parameters, Result, JSONObject, String, String> {
 
+    /**
+     * 构造函数
+     *
+     * @param tag 标签，用于跟踪日志
+     */
+    public IntegratedJsonDataModel(String tag) {
+        super(tag);
+    }
+
     @Override
     protected boolean onCheckResponse(String response) {
         return response != null;
@@ -40,6 +49,6 @@ public abstract class IntegratedJsonDataModel<Parameters, Result> extends
      */
     @Override
     protected void onRequestParametersSign(Map<String, String> dataMap) {
-        RequestSign.signForText(dataMap);
+        RequestSign.signForText(logTag, dataMap);
     }
 }

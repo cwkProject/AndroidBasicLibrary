@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="http_default_connect_timeout">10000</integer>
-    <integer name="http_default_read_timeout">10000</integer>
-    <integer name="http_default_write_timeout">10000</integer>
+    <integer name="http_default_connect_timeout">30000</integer>
+    <integer name="http_default_read_timeout">30000</integer>
+    <integer name="http_default_write_timeout">30000</integer>
 
     <integer name="http_download_read_timeout">30000</integer>
     <integer name="http_upload_write_timeout">30000</integer>

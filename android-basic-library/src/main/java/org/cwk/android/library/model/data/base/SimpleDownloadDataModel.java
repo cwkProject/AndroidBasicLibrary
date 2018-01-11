@@ -19,6 +19,15 @@ public abstract class SimpleDownloadDataModel<Parameters, Result> extends
         IntegratedDataModel<Parameters, Result, InputStream, InputStream, String> {
 
     /**
+     * 构造函数
+     *
+     * @param tag 标签，用于跟踪日志
+     */
+    public SimpleDownloadDataModel(String tag) {
+        super(tag);
+    }
+
+    /**
      * 处理下载数据<br>
      * 仅网络请求成功建立连接时该方法才会被调用，
      * 在这里应该将{@code handleResult}写入到文件或内存中，

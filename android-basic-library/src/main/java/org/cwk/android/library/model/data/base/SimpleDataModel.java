@@ -25,6 +25,15 @@ public abstract class SimpleDataModel<Parameters, Result> extends
      */
     private int code = 0;
 
+    /**
+     * 构造函数
+     *
+     * @param tag 标签，用于跟踪日志
+     */
+    public SimpleDataModel(String tag) {
+        super(tag);
+    }
+
     @Override
     protected boolean onRequestResult(JSONObject handleResult) throws Exception {
         // 得到执行结果

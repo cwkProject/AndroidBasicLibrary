@@ -27,11 +27,6 @@ import okhttp3.RequestBody;
 public class RequestBodyBuilder {
 
     /**
-     * 日志标签前缀
-     */
-    private static final String TAG = "RequestBodyBuilder";
-
-    /**
      * 默认编码
      */
     private static final String CHARSET = "UTF-8";
@@ -39,13 +34,19 @@ public class RequestBodyBuilder {
     /**
      * 拼接参数字符串，用于get请求参数，默认utf-8编码
      *
+     * @param logTag   标签，用于跟踪日志
      * @param sendData 请求参数对
      * @param encoded  编码方式
      *
      * @return 拼接完成的字符串
      */
     @NonNull
-    public static String onBuildParameter(Map<String, String> sendData, String encoded) {
+    public static String onBuildParameter(String logTag, Map<String, String> sendData, String
+            encoded) {
+        if (encoded == null) {
+            encoded = CHARSET;
+        }
+
         // 请求参数装配器参数
         StringBuilder params = new StringBuilder();
 
@@ -53,12 +54,13 @@ public class RequestBodyBuilder {
             // 遍历sendData集合并加入请求参数对象
             if (sendData != null && !sendData.isEmpty()) {
                 int count = sendData.size();
-                Log.v(TAG, "onBuildParameter sendData count is " + count);
+                Log.v(logTag, "onBuildParameter sendData count is " + count);
 
                 // 遍历并追加参数
                 for (Map.Entry<String, String> dataEntry : sendData.entrySet()) {
 
-                    Log.v(TAG, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
+                    Log.v(logTag, "parameter is " + dataEntry.getKey() + " = " + dataEntry
+                            .getValue());
 
                     if (dataEntry.getValue() != null) {
                         params.append(dataEntry.getKey());
@@ -73,42 +75,36 @@ public class RequestBodyBuilder {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "URLEncoder error", e);
+            Log.e(logTag, "URLEncoder error", e);
         }
         return params.toString();
     }
 
     /**
-     * 拼接参数字符串，用于get请求参数
-     *
-     * @param sendData 请求参数对
-     *
-     * @return 拼接完成的字符串
-     */
-    @NonNull
-    public static String onBuildParameter(Map<String, String> sendData) {
-        return onBuildParameter(sendData, CHARSET);
-    }
-
-    /**
      * 创建文本post表单
      *
+     * @param logTag   标签，用于跟踪日志
      * @param sendData 要发送的参数对
      * @param encoded  编码方式
      *
      * @return 装配好的表单
      */
-    public static RequestBody onBuildPostForm(Map<String, String> sendData, String encoded) {
+    public static RequestBody onBuildPostForm(String logTag, Map<String, String> sendData, String
+            encoded) {
+        if (encoded == null) {
+            encoded = CHARSET;
+        }
+
         FormBody.Builder builder = new FormBody.Builder(Charset.forName(encoded));
 
         // 遍历sendData集合并加入请求参数对象
         if (sendData != null && !sendData.isEmpty()) {
             int count = sendData.size();
-            Log.v(TAG, "onBuildPostForm sendData count is " + count);
+            Log.v(logTag, "onBuildPostForm sendData count is " + count);
 
             // 遍历并追加参数
             for (Map.Entry<String, String> dataEntry : sendData.entrySet()) {
-                Log.v(TAG, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
+                Log.v(logTag, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
                 if (dataEntry.getValue() != null) {
                     // 加入表单
                     builder.add(dataEntry.getKey(), dataEntry.getValue());
@@ -120,34 +116,24 @@ public class RequestBodyBuilder {
     }
 
     /**
-     * 创建文本post表单，默认utf-8编码
-     *
-     * @param sendData 要发送的参数对
-     *
-     * @return 装配好的表单
-     */
-    public static RequestBody onBuildPostForm(Map<String, String> sendData) {
-        return onBuildPostForm(sendData, CHARSET);
-    }
-
-    /**
      * 创建上传post表单
      *
+     * @param logTag   标签，用于跟踪日志
      * @param sendData 要发送的参数对
      *
      * @return 装配好的表单
      */
-    public static RequestBody onBuildUploadForm(Map<String, Object> sendData) {
+    public static RequestBody onBuildUploadForm(String logTag, Map<String, Object> sendData) {
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
         // 遍历sendData集合并加入请求参数对象
         if (sendData != null && !sendData.isEmpty()) {
             int count = sendData.size();
-            Log.v(TAG, "onBuildUploadForm sendData count is " + count);
+            Log.v(logTag, "onBuildUploadForm sendData count is " + count);
 
             // 遍历并追加参数
             for (Map.Entry<String, Object> dataEntry : sendData.entrySet()) {
-                Log.v(TAG, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
+                Log.v(logTag, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
 
                 if (dataEntry.getValue() instanceof FileInfo) {
                     // 参数是文件包装类型
@@ -183,19 +169,20 @@ public class RequestBodyBuilder {
     /**
      * 创建上传流
      *
-     * @param path 要上传的文件路径
+     * @param logTag 标签，用于跟踪日志
+     * @param path   要上传的文件路径
      *
      * @return 装配好的表单
      */
-    public static RequestBody onBuildUploadStream(String path) {
+    public static RequestBody onBuildUploadStream(String logTag, String path) {
         if (path != null) {
             File file = new File(path);
 
             if (file.exists()) {
-                Log.v(TAG, "onBuildUploadStream sendStream is " + path);
+                Log.v(logTag, "onBuildUploadStream sendStream is " + path);
                 return RequestBody.create(MediaType.parse("application/octet-stream"), file);
             } else {
-                Log.d(TAG, "no file " + path);
+                Log.d(logTag, "no file " + path);
             }
         }
 

@@ -30,7 +30,7 @@ public abstract class SimpleUploadWorkModel<Parameters, Result> extends
 
     @Override
     protected SimpleUploadDataModel<Parameters, Result> onCreateDataModel() {
-        return new SimpleUploadDataModel<Parameters, Result>() {
+        return new SimpleUploadDataModel<Parameters, Result>(TAG) {
             @Override
             protected Result onExtractData(@NonNull JSONObject jsonResult) throws Exception {
                 return onSuccessExtract(jsonResult);
