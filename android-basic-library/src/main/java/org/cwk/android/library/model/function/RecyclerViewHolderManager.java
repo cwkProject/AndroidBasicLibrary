@@ -221,7 +221,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      * @param position 索引
      */
     public void notifyItemChanged(int position) {
-        if (position >= 0 && position <= dataList.size()) {
+        if (position >= 0 && position <= dataList.size() && convertUnit != null) {
             adapter.notifyItemInserted(convert(position));
         }
     }
