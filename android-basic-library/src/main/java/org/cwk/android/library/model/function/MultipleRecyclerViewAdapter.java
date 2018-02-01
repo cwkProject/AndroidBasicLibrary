@@ -19,13 +19,14 @@ import java.util.List;
  *  public RecyclerViewHolderManager<String, SampleViewHolder> mainGroup = new
  *      RecyclerViewHolderManager<String, SampleViewHolder>(this) {
  *          @Override
- *              public SampleViewHolder onCreateViewHolder(ViewGroup parent) {
+ *              public SampleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
  *                  return new SampleViewHolder(LayoutInflater.from(parent.getApplication()).inflate
  *                  (R.layout
  *                      .sample_layout, parent, false));
  *              }
  *          @Override
- *              protected void onBindViewHolder(SampleViewHolder holder, int position) {
+ *              protected void onBindViewHolder(SampleViewHolder holder, int position, int
+ *              viewType) {
  *                  String data = dataList.get(position);
  *                  // holder set data
  *              }
@@ -33,13 +34,13 @@ import java.util.List;
  *  public RecyclerViewHolderManager<String, SampleViewHolder> headGroup = new
  *      RecyclerViewHolderManager<String, SampleViewHolder>(this) {
  *          @Override
- *          public SampleViewHolder onCreateViewHolder(ViewGroup parent) {
+ *          public SampleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
  *              return new SampleViewHolder(LayoutInflater.from(parent.getApplication()).inflate(R
  *              .layout
  *                  .sample_layout, parent, false));
  *          }
  *          @Override
- *          protected void onBindViewHolder(SampleViewHolder holder, int position) {
+ *          protected void onBindViewHolder(SampleViewHolder holder, int position, int viewType) {
  *              String data = dataList.get(position);
  *              // holder set data
  *          }
@@ -59,6 +60,11 @@ import java.util.List;
  */
 public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         .ViewHolder> implements OnGroupPositionToAdapterPosition, OnRecyclerAdapterTransaction {
+
+    /**
+     * getItemViewType值加权
+     */
+    private static final int VIEW_TYPE_WEIGHT = 1000;
 
     /**
      * 存放数据集管理器的集合
@@ -103,7 +109,8 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
         for (int i = 0, count = 0; i < managerList.size(); i++) {
             count += managerList.get(i).getCount();
             if (position < count) {
-                return i;
+                return i * VIEW_TYPE_WEIGHT + managerList.get(i).getItemViewType
+                        (convertToGroupPosition(i, position));
             }
         }
 
@@ -112,13 +119,15 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
 
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return managerList.get(viewType).createViewHolder(parent);
+        return managerList.get(viewType / VIEW_TYPE_WEIGHT).createViewHolder(parent, viewType %
+                VIEW_TYPE_WEIGHT);
     }
 
     @Override
     public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        managerList.get(holder.getItemViewType()).bindViewHolder(holder, convertToGroupPosition
-                (holder.getItemViewType(), position));
+        int viewType = holder.getItemViewType() / VIEW_TYPE_WEIGHT;
+        managerList.get(viewType).bindViewHolder(holder, convertToGroupPosition(viewType,
+                position), holder.getItemViewType() % VIEW_TYPE_WEIGHT);
     }
 
     @Override

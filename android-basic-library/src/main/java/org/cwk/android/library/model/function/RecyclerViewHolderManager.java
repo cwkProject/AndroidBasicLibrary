@@ -1,5 +1,6 @@
 package org.cwk.android.library.model.function;
 
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
@@ -113,22 +114,25 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      *
      * @param holder   控件管理器
      * @param position 当前数据组中的位置
+     * @param viewType 当前数据组中的布局类型，与{@link RecyclerView.ViewHolder#getItemViewType()}值不同，
+     *                 且{@link RecyclerView.ViewHolder#getItemViewType()}不应该再被使用
      */
-    final void bindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    final void bindViewHolder(RecyclerView.ViewHolder holder, int position, int viewType) {
         //noinspection unchecked
-        onBindViewHolder((ViewHolderType) holder, position);
+        onBindViewHolder((ViewHolderType) holder, position, viewType);
     }
 
     /**
      * 创建控件管理器
      *
-     * @param parent 列表布局
+     * @param parent   列表布局
+     * @param viewType 当前数据组中的布局类型，与{@link RecyclerView.ViewHolder#getItemViewType()}不同
      *
      * @return 控件管理器
      */
-    final ViewHolderType createViewHolder(ViewGroup parent) {
+    final ViewHolderType createViewHolder(ViewGroup parent, int viewType) {
 
-        final ViewHolderType holder = onCreateViewHolder(parent);
+        final ViewHolderType holder = onCreateViewHolder(parent, viewType);
 
         onBindListener(holder);
 
@@ -178,21 +182,38 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
     }
 
     /**
+     * 获取布局类型
+     *
+     * @param position 当前数据组中的相对索引，与{@link RecyclerView.ViewHolder#getAdapterPosition()}不同
+     *
+     * @return 布局类型，只能为0-999的整数
+     */
+    @IntRange(from = 0, to = 999)
+    public int getItemViewType(int position) {
+        return 0;
+    }
+
+    /**
      * 创建控件管理器
      *
-     * @param parent 列表布局
+     * @param parent   列表布局
+     * @param viewType 当前数据组中的布局类型，与{@link RecyclerView.ViewHolder#getItemViewType()}值不同，
+     *                 且{@link RecyclerView.ViewHolder#getItemViewType()}不应该再被使用
      *
      * @return 控件管理器
      */
-    public abstract ViewHolderType onCreateViewHolder(@NonNull ViewGroup parent);
+    public abstract ViewHolderType onCreateViewHolder(@NonNull ViewGroup parent, int viewType);
 
     /**
      * 绑定数据到控件
      *
      * @param holder   控件管理器
      * @param position 当前数据组中的相对索引，与{@link RecyclerView.ViewHolder#getAdapterPosition()}不同
+     * @param viewType 当前数据组中的布局类型，与{@link RecyclerView.ViewHolder#getItemViewType()}值不同，
+     *                 且{@link RecyclerView.ViewHolder#getItemViewType()}不应该再被使用
      */
-    protected abstract void onBindViewHolder(@NonNull ViewHolderType holder, int position);
+    protected abstract void onBindViewHolder(@NonNull ViewHolderType holder, int position, int
+            viewType);
 
     /**
      * 转换本组位置到适配器位置
