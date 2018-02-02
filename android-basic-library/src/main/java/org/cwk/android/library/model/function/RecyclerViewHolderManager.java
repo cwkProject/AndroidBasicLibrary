@@ -243,7 +243,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      */
     public void notifyItemChanged(int position) {
         if (position >= 0 && position <= dataList.size() && convertUnit != null) {
-            adapter.notifyItemInserted(convert(position));
+            adapter.notifyItemChanged(convert(position));
         }
     }
 
