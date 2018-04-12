@@ -1,11 +1,11 @@
-package org.cwk.android.library.model.work;
+package org.cwk.android.library.work;
 
 import android.support.annotation.NonNull;
 
 import org.cwk.android.library.R;
 import org.cwk.android.library.annotation.Download;
 import org.cwk.android.library.global.Global;
-import org.cwk.android.library.model.data.base.SimpleDownloadDataModel;
+import org.cwk.android.library.data.base.SimpleDownloadDataModel;
 import org.cwk.android.library.network.communication.ICommunication;
 import org.cwk.android.library.network.factory.CommunicationBuilder;
 

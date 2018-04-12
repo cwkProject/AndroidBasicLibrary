@@ -1,6 +1,6 @@
 package org.cwk.android.library.network.util;
 
-import org.cwk.android.library.model.operate.Cancelable;
+import org.cwk.android.library.work.Cancelable;
 
 /**
  * 与服务器通讯同步模式执行接口

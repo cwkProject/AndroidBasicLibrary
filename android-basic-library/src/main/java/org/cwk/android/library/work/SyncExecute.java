@@ -1,4 +1,4 @@
-package org.cwk.android.library.model.work;
+package org.cwk.android.library.work;
 
 import android.support.annotation.Nullable;
 

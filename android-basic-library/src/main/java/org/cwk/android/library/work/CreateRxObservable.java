@@ -1,6 +1,6 @@
-package org.cwk.android.library.model.operate;
+package org.cwk.android.library.work;
 
-import org.cwk.android.library.model.data.IDataModel;
+import org.cwk.android.library.data.IDataModel;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;

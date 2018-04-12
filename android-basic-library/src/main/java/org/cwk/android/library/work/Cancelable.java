@@ -1,4 +1,4 @@
-package org.cwk.android.library.model.operate;
+package org.cwk.android.library.work;
 
 /**
  * 取消接口

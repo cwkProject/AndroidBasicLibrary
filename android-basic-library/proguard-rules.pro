@@ -17,7 +17,7 @@
 #}
 
 # 自己的库
--keepclassmembernames class * extends org.cwk.android.library.model.work.DefaultWorkModel {
+-keepclassmembernames class * extends org.cwk.android.library.work.DefaultWorkModel {
     protected ** onTaskUri();
 }
 -keepclassmembernames class * extends org.cwk.android.library.model.config.PersistenceConfigModel {*;}
@@ -26,6 +26,7 @@
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # rxjava2

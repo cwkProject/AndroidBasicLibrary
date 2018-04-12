@@ -1,9 +1,9 @@
-package org.cwk.android.library.model.data.base;
+package org.cwk.android.library.data.base;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.cwk.android.library.model.data.IDefaultDataModel;
+import org.cwk.android.library.data.IDefaultDataModel;
 
 import java.util.HashMap;
 import java.util.Map;

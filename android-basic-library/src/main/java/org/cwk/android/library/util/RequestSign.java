@@ -1,10 +1,9 @@
-package org.cwk.android.library.model.data.util;
+package org.cwk.android.library.util;
 
 import android.util.Log;
 
 import org.cwk.android.library.global.ApplicationAttribute;
 import org.cwk.android.library.struct.FileInfo;
-import org.cwk.android.library.util.HashMD5;
 
 import java.io.File;
 import java.util.ArrayList;

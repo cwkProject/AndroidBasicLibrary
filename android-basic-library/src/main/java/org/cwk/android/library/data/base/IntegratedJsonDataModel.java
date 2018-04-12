@@ -1,8 +1,8 @@
-package org.cwk.android.library.model.data.base;
+package org.cwk.android.library.data.base;
 
 import org.json.JSONObject;
 import org.cwk.android.library.global.ApplicationAttribute;
-import org.cwk.android.library.model.data.util.RequestSign;
+import org.cwk.android.library.util.RequestSign;
 
 import java.util.Map;
 

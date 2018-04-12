@@ -1,4 +1,4 @@
-package org.cwk.android.library.model.work;
+package org.cwk.android.library.work;
 
 import android.util.Log;
 
@@ -10,10 +10,8 @@ import org.cwk.android.library.annotation.Put;
 import org.cwk.android.library.annotation.Upload;
 import org.cwk.android.library.annotation.UploadStream;
 import org.cwk.android.library.global.Global;
-import org.cwk.android.library.model.data.IDataModel;
-import org.cwk.android.library.model.data.IDefaultDataModel;
-import org.cwk.android.library.model.operate.Cancelable;
-import org.cwk.android.library.model.operate.CreateRxObservable;
+import org.cwk.android.library.data.IDataModel;
+import org.cwk.android.library.data.IDefaultDataModel;
 import org.cwk.android.library.network.communication.ICommunication;
 import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.cwk.android.library.network.factory.NetworkType;
@@ -373,7 +371,7 @@ public abstract class DefaultWorkModel<Parameters, Result, DataModelType extends
      * 设置任务请求地址，同时标记请求协议，默认使用http get发送请求<br>
      * 或使用{@link NetworkType}中支持的其他请求类型，使用时标记同名注解。<br>
      * 如果项目使用混淆，请加入<br>
-     * {@code -keepclassmembers class * extends org.cwk.android.library.model.work
+     * {@code -keepclassmembers class * extends org.cwk.android.library.work
      * .DefaultWorkModel {
      * protected ** onTaskUri();
      * }

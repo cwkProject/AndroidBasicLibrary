@@ -1,4 +1,4 @@
-package org.cwk.android.library.model.data;
+package org.cwk.android.library.data;
 
 import android.support.annotation.Nullable;
 

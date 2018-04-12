@@ -1,6 +1,6 @@
-package org.cwk.android.library.model.work;
+package org.cwk.android.library.work;
 
-import org.cwk.android.library.model.data.IIntegratedDataModel;
+import org.cwk.android.library.data.IIntegratedDataModel;
 import org.cwk.android.library.network.communication.Communication;
 
 /**

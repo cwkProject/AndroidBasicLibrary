@@ -1,6 +1,6 @@
 package org.cwk.android.library.annotation;
 
-import org.cwk.android.library.model.work.DefaultWorkModel;
+import org.cwk.android.library.work.DefaultWorkModel;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

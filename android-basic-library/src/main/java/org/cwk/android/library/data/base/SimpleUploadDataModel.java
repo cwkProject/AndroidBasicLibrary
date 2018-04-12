@@ -1,4 +1,4 @@
-package org.cwk.android.library.model.data.base;
+package org.cwk.android.library.data.base;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;

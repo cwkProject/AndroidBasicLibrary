@@ -1,9 +1,9 @@
-package org.cwk.android.library.model.work;
+package org.cwk.android.library.work;
 
 import android.support.annotation.CallSuper;
 import android.util.Log;
 
-import org.cwk.android.library.model.data.IDataModel;
+import org.cwk.android.library.data.IDataModel;
 
 /**
  * 任务流程的基本模型

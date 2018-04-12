@@ -1,6 +1,6 @@
-package org.cwk.android.library.model.work;
+package org.cwk.android.library.work;
 
-import org.cwk.android.library.model.data.IDataModel;
+import org.cwk.android.library.data.IDataModel;
 
 /**
  * 任务结束回调接口

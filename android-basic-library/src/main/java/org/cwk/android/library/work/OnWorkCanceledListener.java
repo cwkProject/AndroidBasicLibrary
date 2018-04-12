@@ -1,4 +1,4 @@
-package org.cwk.android.library.model.work;
+package org.cwk.android.library.work;
 
 /**
  * 任务被取消的回调接口
