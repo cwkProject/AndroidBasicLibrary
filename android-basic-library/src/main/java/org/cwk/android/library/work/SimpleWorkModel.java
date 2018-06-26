@@ -2,7 +2,7 @@ package org.cwk.android.library.work;
 
 import android.support.annotation.NonNull;
 
-import org.cwk.android.library.data.base.SimpleDataModel;
+import org.cwk.android.library.data.SimpleDataModel;
 import org.json.JSONObject;
 
 import java.util.Map;

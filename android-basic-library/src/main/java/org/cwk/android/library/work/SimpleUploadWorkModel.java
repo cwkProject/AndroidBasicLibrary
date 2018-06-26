@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import org.cwk.android.library.R;
 import org.cwk.android.library.annotation.Upload;
 import org.cwk.android.library.global.Global;
-import org.cwk.android.library.data.base.SimpleUploadDataModel;
+import org.cwk.android.library.data.SimpleUploadDataModel;
 import org.cwk.android.library.network.communication.ICommunication;
 import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.json.JSONObject;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * 极简的一体化集成式网络下载任务模型基类，
- * 内置{@link org.cwk.android.library.data.base.SimpleUploadDataModel}的默认实现
+ * 内置{@link SimpleUploadDataModel}的默认实现
  *
  * @author 超悟空
  * @version 1.0 2017/2/15

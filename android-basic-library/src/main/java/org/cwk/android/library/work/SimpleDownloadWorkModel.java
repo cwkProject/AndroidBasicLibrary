@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import org.cwk.android.library.R;
 import org.cwk.android.library.annotation.Download;
 import org.cwk.android.library.global.Global;
-import org.cwk.android.library.data.base.SimpleDownloadDataModel;
+import org.cwk.android.library.data.SimpleDownloadDataModel;
 import org.cwk.android.library.network.communication.ICommunication;
 import org.cwk.android.library.network.factory.CommunicationBuilder;
 

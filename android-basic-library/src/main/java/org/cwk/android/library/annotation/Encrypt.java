@@ -1,6 +1,6 @@
 package org.cwk.android.library.annotation;
 
-import org.cwk.android.library.util.PreferencesUtil;
+import org.cwk.android.library.architecture.preferences.PreferencesUtil;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

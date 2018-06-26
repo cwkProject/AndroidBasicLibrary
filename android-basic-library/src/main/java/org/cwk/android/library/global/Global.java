@@ -96,8 +96,10 @@ public class Global {
      *
      * @param application 应用Application
      */
-    public static void init(Application application) {
-        global = new Global(application);
+    public synchronized static void init(Application application) {
+        if (global == null) {
+            global = new Global(application);
+        }
     }
 
     private Global(Application application) {
@@ -143,7 +145,7 @@ public class Global {
         try {
             // 包信息
             PackageInfo info = application.getPackageManager().getPackageInfo(application
-                    .getPackageName(), 0);
+                    .getPackageName() , 0);
             // 应用id
             userAgentBuilder.append(application.getPackageName());
             userAgentBuilder.append("/");
@@ -156,25 +158,25 @@ public class Global {
             userAgentBuilder.append(".");
 
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "initOkHttpClient PackageManager error", e);
+            Log.e(TAG , "initOkHttpClient PackageManager error" , e);
         }
 
         okHttpClient = new OkHttpClient.Builder()
                 // 设置默认连接超时时间
                 .connectTimeout(application.getResources().getInteger(R.integer
-                        .http_default_connect_timeout), TimeUnit.MILLISECONDS)
+                        .http_default_connect_timeout) , TimeUnit.MILLISECONDS)
                 // 设置默认读取超时时间
                 .readTimeout(application.getResources().getInteger(R.integer
-                        .http_default_read_timeout), TimeUnit.MILLISECONDS)
+                        .http_default_read_timeout) , TimeUnit.MILLISECONDS)
                 // 设置默认写入超时时间
                 .writeTimeout(application.getResources().getInteger(R.integer
-                        .http_default_write_timeout), TimeUnit.MILLISECONDS)
+                        .http_default_write_timeout) , TimeUnit.MILLISECONDS)
                 // 设置用户代理信息拦截器
                 .addNetworkInterceptor(chain -> {
                     final Request originalRequest = chain.request();
                     final Request requestWithUserAgent = originalRequest.newBuilder()
                             .removeHeader(USER_AGENT_HEADER_NAME).addHeader
-                                    (USER_AGENT_HEADER_NAME, userAgentBuilder.toString()).build();
+                                    (USER_AGENT_HEADER_NAME , userAgentBuilder.toString()).build();
                     return chain.proceed(requestWithUserAgent);
                 }).build();
     }

@@ -20,7 +20,7 @@
 -keepclassmembernames class * extends org.cwk.android.library.work.DefaultWorkModel {
     protected ** onTaskUri();
 }
--keepclassmembernames class * extends org.cwk.android.library.model.config.PersistenceConfigModel {*;}
+-keepclassmembernames class * extends org.cwk.android.library.architecture.preferences.PersistenceConfigModel {*;}
 
 # okhttp3
 -dontwarn okhttp3.**
