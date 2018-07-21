@@ -22,7 +22,7 @@ public interface AsyncCommunication<RequestType, ResponseType> extends Cancelabl
     void setTaskName(String uri);
 
     /**
-     * 向服发送请求
+     * 向服务器发送请求
      *
      * @param sendData 向服务器发送的数据
      * @param callback 结果回调

@@ -6,7 +6,7 @@ import org.cwk.android.library.global.ApplicationAttribute;
 import java.util.Map;
 
 /**
- * 集成化Json数据模型基类<br>
+ * 通过Json方式处理响应数据模型基类<br>
  * 解析响应结果为Json字符串的数据模型基类<br>
  * 请求参数为纯文本内容
  *
@@ -17,15 +17,15 @@ import java.util.Map;
  * @version 1.0 2016/7/23
  * @since 1.0
  */
-public abstract class IntegratedJsonDataModel<Parameters, Result> extends
-        IntegratedDataModel<Parameters, Result, JSONObject, String, String> {
+public abstract class JsonDataModel<Parameters, Result> extends StandardDataModel<String, String,
+        JSONObject, Parameters, Result> {
 
     /**
      * 构造函数
      *
      * @param tag 标签，用于跟踪日志
      */
-    public IntegratedJsonDataModel(String tag) {
+    public JsonDataModel(String tag) {
         super(tag);
     }
 
@@ -48,6 +48,6 @@ public abstract class IntegratedJsonDataModel<Parameters, Result> extends
      */
     @Override
     protected void onRequestParametersSign(Map<String, String> dataMap) {
-        RequestSign.signForText(logTag, dataMap);
+        RequestSign.signForText(logTag , dataMap);
     }
 }

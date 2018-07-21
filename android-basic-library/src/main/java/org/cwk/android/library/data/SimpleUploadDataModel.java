@@ -6,8 +6,7 @@ import android.support.annotation.NonNull;
 import org.json.JSONObject;
 
 /**
- * 基于集成化任务架构，
- * 用于上传任务的数据模型基类<br>
+ * 用于上传任务的简单任务数据模型基类<br>
  * 请求参数Map集合的值包含文件类型，
  * 支持的文件类型为{@link java.io.File}，{@link org.cwk.android.library.struct.FileInfo}两种，
  * {@link org.cwk.android.library.struct.FileInfo}为文件的包装类型，
@@ -18,8 +17,14 @@ import org.json.JSONObject;
  * @version 1.0 2017/2/15
  * @since 1.0 2017/2/15
  **/
-public abstract class SimpleUploadDataModel<Parameters, Result> extends
-        IntegratedDataModel<Parameters, Result, JSONObject, String, Object> {
+public abstract class SimpleUploadDataModel<Parameters, Result> extends StandardDataModel<Object,
+        String, JSONObject, Parameters, Result> {
+
+    /**
+     * 服务响应的业务数据的参数默认取值标签
+     */
+    protected static final String RESULT = "result";
+
     /**
      * 构造函数
      *
@@ -40,14 +45,9 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
     }
 
     /**
-     * 服务响应的业务数据的参数默认取值标签
-     */
-    protected static final String RESULT = "result";
-
-    /**
      * 服务响应的errorCode，0为默认值，大于0为错误代码
      */
-    private int code = 0;
+    private int errorCode = 0;
 
     @Override
     protected boolean onRequestResult(JSONObject handleResult) throws Exception {
@@ -56,12 +56,12 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
     }
 
     @Override
-    protected String onRequestMessage(boolean result, JSONObject handleResult) throws Exception {
+    protected String onRequestMessage(boolean result , JSONObject handleResult) throws Exception {
         return handleResult.optString("message");
     }
 
     @Override
-    protected Result onSuccessResult(@NonNull JSONObject handleResult) throws Exception {
+    protected Result onRequestSuccess(JSONObject handleResult) throws Exception {
         if (!handleResult.isNull(RESULT)) {
             return onExtractData(handleResult);
         } else {
@@ -71,10 +71,12 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
 
     @Override
     @CallSuper
-    protected void onRequestFailed(JSONObject handleResult) throws Exception {
+    protected Result onRequestFailed(JSONObject handleResult) throws Exception {
         if (handleResult != null && !handleResult.isNull("errorCode")) {
-            code = handleResult.getInt("errorCode");
+            errorCode = handleResult.getInt("errorCode");
         }
+
+        return super.onRequestFailed(handleResult);
     }
 
     /**
@@ -107,7 +109,7 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends
      *
      * @return 成功时为0，错误时大于0
      */
-    public int getCode() {
-        return code;
+    public int getErrorCode() {
+        return errorCode;
     }
 }

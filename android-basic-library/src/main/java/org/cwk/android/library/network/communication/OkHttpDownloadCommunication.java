@@ -57,7 +57,7 @@ public class OkHttpDownloadCommunication extends Communication<Map<String, Strin
             builder.networkInterceptors().add(chain -> {
                 Response originalResponse = chain.proceed(chain.request());
                 return originalResponse.newBuilder().body(new ProgressResponseBody
-                        (originalResponse.body(), onNetworkProgressListener)).build();
+                        (originalResponse.body() , onNetworkProgressListener)).build();
             });
         }
 
@@ -67,19 +67,19 @@ public class OkHttpDownloadCommunication extends Communication<Map<String, Strin
     @Override
     protected Request onCreateRequest(Map<String, String> sendData) {
         // 拼接参数
-        String params = RequestBodyBuilder.onBuildParameter(logTag, sendData, encoded);
+        String params = RequestBodyBuilder.onBuildParameter(logTag , sendData , encoded);
 
         // 最终请求地址
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
-        Log.v(logTag, "final url is " + finalUrl);
+        Log.v(logTag , "final url is " + finalUrl);
 
         return new Request.Builder().url(finalUrl).build();
     }
 
     @Override
-    protected void onAsyncSuccess(ResponseBody body, NetworkCallback<InputStream> callback)
+    protected void onAsyncSuccess(ResponseBody body , NetworkCallback<InputStream> callback)
             throws IOException {
-        callback.onFinish(true, body.byteStream());
+        callback.onFinish(true , code , body.byteStream());
     }
 
     @Override

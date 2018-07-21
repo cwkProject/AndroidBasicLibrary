@@ -61,7 +61,8 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
 
     @CallSuper
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderType holder , int position , @NonNull List<Object> payloads) {
+    public void onBindViewHolder(@NonNull ViewHolderType holder , int position , @NonNull
+            List<Object> payloads) {
         onBindListener(holder);
         super.onBindViewHolder(holder , position , payloads);
     }

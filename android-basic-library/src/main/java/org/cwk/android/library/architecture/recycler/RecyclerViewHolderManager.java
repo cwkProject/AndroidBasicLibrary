@@ -24,7 +24,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
     /**
      * 当前数据集在依赖适配器中的分组索引
      */
-    private int groupIndex = 0;
+    protected int groupIndex = 0;
 
     /**
      * 数据源
@@ -202,6 +202,14 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
     public abstract ViewHolderType onCreateViewHolder(@NonNull ViewGroup parent , int viewType);
 
     /**
+     * 本组中的控件管理器回收，与{@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}相同
+     *
+     * @param holder 仅本组的控件管理器
+     */
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+    }
+
+    /**
      * 绑定数据到控件
      *
      * @param holder   控件管理器
@@ -219,9 +227,21 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      *
      * @return 适配器中的位置
      */
-    protected int convert(int position) {
+    public int toAdapterPosition(int position) {
         //noinspection ConstantConditions
         return convertUnit.convertToAdapterPosition(groupIndex , position);
+    }
+
+    /**
+     * 转换适配器位置到本组位置
+     *
+     * @param position 适配器位置
+     *
+     * @return 本组中的位置
+     */
+    public int toSelfPosition(int position) {
+        //noinspection ConstantConditions
+        return convertUnit.convertToGroupPosition(groupIndex , position);
     }
 
     /**
@@ -240,7 +260,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
      */
     public void notifyItemChanged(int position) {
         if (position >= 0 && position <= dataList.size() && convertUnit != null) {
-            adapter.notifyItemChanged(convert(position));
+            adapter.notifyItemChanged(toAdapterPosition(position));
         }
     }
 
@@ -249,7 +269,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
         if (data != null) {
             dataList.add(data);
             if (isNeedNotify()) {
-                adapter.notifyItemInserted(convert(dataList.size()) - 1);
+                adapter.notifyItemInserted(toAdapterPosition(dataList.size()) - 1);
             }
         }
     }
@@ -259,7 +279,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
         if (position >= 0 && position <= dataList.size() && data != null) {
             dataList.add(position , data);
             if (isNeedNotify()) {
-                adapter.notifyItemInserted(convert(position));
+                adapter.notifyItemInserted(toAdapterPosition(position));
             }
         }
     }
@@ -269,7 +289,8 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
         if (data != null && !data.isEmpty()) {
             dataList.addAll(data);
             if (isNeedNotify()) {
-                adapter.notifyItemRangeInserted(convert(dataList.size()) - 1 , data.size());
+                adapter.notifyItemRangeInserted(toAdapterPosition(dataList.size()) - 1 , data
+                        .size());
             }
         }
     }
@@ -279,7 +300,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
         if (position >= 0 && position <= dataList.size() && data != null && !data.isEmpty()) {
             dataList.addAll(position , data);
             if (isNeedNotify()) {
-                adapter.notifyItemRangeInserted(convert(position) , data.size());
+                adapter.notifyItemRangeInserted(toAdapterPosition(position) , data.size());
             }
         }
     }
@@ -290,7 +311,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
         if (position >= 0 && position < dataList.size()) {
             data = dataList.remove(position);
             if (isNeedNotify()) {
-                adapter.notifyItemRemoved(convert(position));
+                adapter.notifyItemRemoved(toAdapterPosition(position));
             }
         }
         return data;
@@ -308,7 +329,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
             }
 
             if (isNeedNotify()) {
-                adapter.notifyItemRangeRemoved(convert(start) , count);
+                adapter.notifyItemRangeRemoved(toAdapterPosition(start) , count);
             }
         }
 
@@ -323,7 +344,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
             oldData = dataList.set(position , data);
 
             if (isNeedNotify()) {
-                adapter.notifyItemChanged(convert(position));
+                adapter.notifyItemChanged(toAdapterPosition(position));
             }
         }
 
@@ -349,7 +370,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
             }
 
             if (isNeedNotify()) {
-                adapter.notifyItemRangeChanged(convert(position) , data.size());
+                adapter.notifyItemRangeChanged(toAdapterPosition(position) , data.size());
             }
         }
 
@@ -363,8 +384,8 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
                 < dataList.size()) {
             Collections.swap(dataList , fromPosition , toPosition);
             if (isNeedNotify()) {
-                adapter.notifyItemChanged(convert(fromPosition));
-                adapter.notifyItemChanged(convert(toPosition));
+                adapter.notifyItemChanged(toAdapterPosition(fromPosition));
+                adapter.notifyItemChanged(toAdapterPosition(toPosition));
             }
         }
     }
@@ -376,7 +397,8 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
             dataList.add(toPosition , dataList.remove(fromPosition));
 
             if (isNeedNotify()) {
-                adapter.notifyItemMoved(convert(fromPosition) , convert(toPosition));
+                adapter.notifyItemMoved(toAdapterPosition(fromPosition) , toAdapterPosition
+                        (toPosition));
             }
         }
     }
@@ -386,7 +408,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
         int count = dataList.size();
         dataList.clear();
         if (isNeedNotify()) {
-            adapter.notifyItemRangeRemoved(convert(0) , count);
+            adapter.notifyItemRangeRemoved(toAdapterPosition(0) , count);
         }
     }
 
@@ -400,7 +422,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
             }
 
             if (isNeedNotify()) {
-                adapter.notifyItemRangeRemoved(convert(position) , count - position);
+                adapter.notifyItemRangeRemoved(toAdapterPosition(position) , count - position);
             }
         }
     }

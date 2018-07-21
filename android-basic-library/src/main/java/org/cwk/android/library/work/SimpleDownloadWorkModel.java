@@ -2,12 +2,8 @@ package org.cwk.android.library.work;
 
 import android.support.annotation.NonNull;
 
-import org.cwk.android.library.R;
 import org.cwk.android.library.annotation.Download;
-import org.cwk.android.library.global.Global;
 import org.cwk.android.library.data.SimpleDownloadDataModel;
-import org.cwk.android.library.network.communication.ICommunication;
-import org.cwk.android.library.network.factory.CommunicationBuilder;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -21,20 +17,21 @@ import java.util.Map;
  * @since 1.0 2017/2/15
  **/
 public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
-        IntegratedWorkModel<Parameters, Result, SimpleDownloadDataModel<Parameters, Result>> {
+        StandardWorkModel<Parameters, SimpleDownloadDataModel<Parameters, Result>> {
     @Override
     protected SimpleDownloadDataModel<Parameters, Result> onCreateDataModel() {
         return new SimpleDownloadDataModel<Parameters, Result>(TAG) {
+
             @Override
-            protected Result onSuccessResult(@NonNull InputStream handleResult) throws Exception {
+            protected Result onRequestSuccess(@NonNull InputStream handleResult) throws Exception {
                 return onSuccessExtract(handleResult);
             }
 
             @SafeVarargs
             @Override
-            protected final void onFillRequestParameters(@NonNull Map<String, String> dataMap,
+            protected final void onFillRequestParameters(@NonNull Map<String, String> dataMap ,
                                                          @NonNull Parameters... parameters) {
-                onFill(dataMap, parameters);
+                onFill(dataMap , parameters);
             }
         };
     }
@@ -46,7 +43,7 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
      * @param parameters 任务传入的参数
      */
     @SuppressWarnings("unchecked")
-    protected abstract void onFill(@NonNull Map<String, String> dataMap, @NonNull Parameters...
+    protected abstract void onFill(@NonNull Map<String, String> dataMap , @NonNull Parameters...
             parameters);
 
     /**
@@ -65,7 +62,7 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
      *
      * @param inputStream 响应的下载数据流
      *
-     * @throws Exception
+     * @throws Exception 数据处理过程中的异常
      */
     protected abstract Result onSuccessExtract(@NonNull InputStream inputStream) throws Exception;
 
@@ -73,13 +70,6 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
     @Download
     protected final String onTaskUri() {
         return onTaskUri(mParameters);
-    }
-
-    @Override
-    protected ICommunication onCreateCommunication(CommunicationBuilder builder) {
-        builder.readTimeout(Global.getApplication().getResources().getInteger(R.integer
-                .http_download_read_timeout));
-        return super.onCreateCommunication(builder);
     }
 
     /**

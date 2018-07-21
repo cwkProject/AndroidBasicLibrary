@@ -15,8 +15,8 @@ import java.util.Map;
  * @version 1.0 2016/7/23
  * @since 1.0
  */
-public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWorkModel<Parameters,
-        Result, SimpleDataModel<Parameters, Result>> {
+public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkModel<Parameters,
+        SimpleDataModel<Parameters, Result>> {
 
     /**
      * 服务响应的业务数据的参数默认取值标签
@@ -33,9 +33,9 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
 
             @SafeVarargs
             @Override
-            protected final void onFillRequestParameters(@NonNull Map<String, String> dataMap,
+            protected final void onFillRequestParameters(@NonNull Map<String, String> dataMap ,
                                                          @NonNull Parameters... parameters) {
-                onFill(dataMap, parameters);
+                onFill(dataMap , parameters);
             }
 
             @Override
@@ -52,7 +52,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends IntegratedWork
      * @param parameters 任务传入的参数
      */
     @SuppressWarnings("unchecked")
-    protected abstract void onFill(@NonNull Map<String, String> dataMap, @NonNull Parameters...
+    protected abstract void onFill(@NonNull Map<String, String> dataMap , @NonNull Parameters...
             parameters);
 
     /**

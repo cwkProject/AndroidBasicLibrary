@@ -1,6 +1,6 @@
 package org.cwk.android.library.annotation;
 
-import org.cwk.android.library.work.DefaultWorkModel;
+import org.cwk.android.library.work.StandardWorkModel;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 /**
  * 标注网络请求为http post方式{@link org.cwk.android.library.network.factory.NetworkType#POST
- * }，用于标记{@link DefaultWorkModel#onTaskUri()}
+ * }，用于标记{@link StandardWorkModel#onTaskUri()}
  *
  * @author 超悟空
  * @version 1.0 2017/2/10

@@ -37,15 +37,15 @@ public class OkHttpPutCommunication extends Communication<Map<String, String>, S
     protected Request onCreateRequest(Map<String, String> sendData) {
 
         // 拼接参数
-        RequestBody body = RequestBodyBuilder.onBuildPostForm(logTag, sendData, encoded);
+        RequestBody body = RequestBodyBuilder.onBuildPostForm(logTag , sendData , encoded);
 
         return new Request.Builder().url(url).put(body).build();
     }
 
     @Override
-    protected void onAsyncSuccess(ResponseBody body, NetworkCallback<String> callback) throws
+    protected void onAsyncSuccess(ResponseBody body , NetworkCallback<String> callback) throws
             IOException {
-        callback.onFinish(true, body.string());
+        callback.onFinish(true , code , body.string());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class OkHttpPutCommunication extends Communication<Map<String, String>, S
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(logTag, "response error", e);
+            Log.e(logTag , "response error" , e);
 
             return null;
         }

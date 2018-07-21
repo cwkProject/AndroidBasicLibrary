@@ -1,5 +1,12 @@
 package org.cwk.android.library.network.factory;
 
+import org.cwk.android.library.annotation.Delete;
+import org.cwk.android.library.annotation.Download;
+import org.cwk.android.library.annotation.Get;
+import org.cwk.android.library.annotation.Post;
+import org.cwk.android.library.annotation.Put;
+import org.cwk.android.library.annotation.Upload;
+import org.cwk.android.library.annotation.UploadStream;
 import org.cwk.android.library.network.communication.Communication;
 import org.cwk.android.library.network.communication.ICommunication;
 import org.cwk.android.library.network.communication.OkHttpDeleteCommunication;
@@ -12,6 +19,8 @@ import org.cwk.android.library.network.communication.OkHttpUploadCommunication;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
 import org.cwk.android.library.network.util.NetworkTimeout;
 import org.cwk.android.library.network.util.OnNetworkProgressListener;
+
+import java.lang.reflect.Method;
 
 import static org.cwk.android.library.network.factory.NetworkType.DELETE;
 import static org.cwk.android.library.network.factory.NetworkType.DOWNLOAD;
@@ -66,23 +75,9 @@ public class CommunicationBuilder {
     private String encoded = null;
 
     /**
-     * 请求地址
-     */
-    private String url = null;
-
-    /**
      * 跟踪日志
      */
     private final String logTag;
-
-    /**
-     * 新建网络工具构造器，默认为GET请求工具
-     *
-     * @param tag 标签，用于跟踪日志
-     */
-    public CommunicationBuilder(String tag) {
-        this(tag, GET);
-    }
 
     /**
      * 新建网络工具构造器
@@ -90,9 +85,69 @@ public class CommunicationBuilder {
      * @param tag         标签，用于跟踪日志
      * @param networkType 网络请求类型
      */
-    public CommunicationBuilder(String tag, int networkType) {
+    public CommunicationBuilder(String tag , int networkType) {
         this.logTag = tag;
         this.networkType = networkType;
+    }
+
+    /**
+     * 新建网络工具构造器
+     *
+     * @param tag       标签，用于跟踪日志
+     * @param workClass 任务类
+     */
+    public CommunicationBuilder(String tag , Class<?> workClass) {
+        this.logTag = tag;
+        this.networkType = onNetworkType(workClass);
+    }
+
+    /**
+     * 设置网络请求类型<br>
+     * 用于{@link #CommunicationBuilder(String , Class)}生产网络请求实例，
+     * 默认为{@link NetworkType#GET}
+     *
+     * @return 网络请求类型枚举
+     */
+    private int onNetworkType(Class<?> workClass) {
+        Class<?> thisClass = workClass;
+
+        Method method = null;
+
+        while (method == null) {
+            for (Method name : thisClass.getDeclaredMethods()) {
+
+                if (name.getName().equals("onTaskUri") && name.getParameterTypes().length == 0) {
+                    method = name;
+                    break;
+                }
+            }
+
+            thisClass = thisClass.getSuperclass();
+        }
+
+        if (method.isAnnotationPresent(Get.class)) {
+            return NetworkType.GET;
+        }
+        if (method.isAnnotationPresent(Post.class)) {
+            return NetworkType.POST;
+        }
+        if (method.isAnnotationPresent(Download.class)) {
+            return NetworkType.DOWNLOAD;
+        }
+        if (method.isAnnotationPresent(Upload.class)) {
+            return NetworkType.UPLOAD;
+        }
+        if (method.isAnnotationPresent(Put.class)) {
+            return NetworkType.PUT;
+        }
+        if (method.isAnnotationPresent(Delete.class)) {
+            return NetworkType.DELETE;
+        }
+        if (method.isAnnotationPresent(UploadStream.class)) {
+            return NetworkType.UPLOAD_STREAM;
+        }
+
+        return NetworkType.GET;
     }
 
     /**
@@ -169,18 +224,6 @@ public class CommunicationBuilder {
     }
 
     /**
-     * 设置请求地址
-     *
-     * @param url 请求地址
-     *
-     * @return 构造器
-     */
-    public CommunicationBuilder url(String url) {
-        this.url = url;
-        return this;
-    }
-
-    /**
      * 构造网络请求工具
      *
      * @return OKHttp网络请求工具
@@ -242,7 +285,6 @@ public class CommunicationBuilder {
         }
 
         communication.setEncoded(encoded);
-        communication.setTaskName(url);
 
         return communication;
     }

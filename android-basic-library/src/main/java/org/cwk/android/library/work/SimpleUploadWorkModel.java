@@ -2,12 +2,8 @@ package org.cwk.android.library.work;
 
 import android.support.annotation.NonNull;
 
-import org.cwk.android.library.R;
 import org.cwk.android.library.annotation.Upload;
-import org.cwk.android.library.global.Global;
 import org.cwk.android.library.data.SimpleUploadDataModel;
-import org.cwk.android.library.network.communication.ICommunication;
-import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -21,7 +17,7 @@ import java.util.Map;
  * @since 1.0 2017/2/15
  **/
 public abstract class SimpleUploadWorkModel<Parameters, Result> extends
-        IntegratedWorkModel<Parameters, Result, SimpleUploadDataModel<Parameters, Result>> {
+        StandardWorkModel<Parameters, SimpleUploadDataModel<Parameters, Result>> {
 
     /**
      * 服务响应的业务数据的参数默认取值标签
@@ -38,9 +34,9 @@ public abstract class SimpleUploadWorkModel<Parameters, Result> extends
 
             @SafeVarargs
             @Override
-            protected final void onFillRequestParameters(@NonNull Map<String, Object> dataMap,
+            protected final void onFillRequestParameters(@NonNull Map<String, Object> dataMap ,
                                                          @NonNull Parameters... parameters) {
-                onFill(dataMap, parameters);
+                onFill(dataMap , parameters);
             }
 
             @Override
@@ -54,13 +50,6 @@ public abstract class SimpleUploadWorkModel<Parameters, Result> extends
     @Upload
     protected final String onTaskUri() {
         return onTaskUri(mParameters);
-    }
-
-    @Override
-    protected ICommunication onCreateCommunication(CommunicationBuilder builder) {
-        builder.writeTimeout(Global.getApplication().getResources().getInteger(R.integer
-                .http_upload_write_timeout));
-        return super.onCreateCommunication(builder);
     }
 
     /**
@@ -80,7 +69,7 @@ public abstract class SimpleUploadWorkModel<Parameters, Result> extends
      * @param parameters 任务传入的参数
      */
     @SuppressWarnings("unchecked")
-    protected abstract void onFill(@NonNull Map<String, Object> dataMap, @NonNull Parameters...
+    protected abstract void onFill(@NonNull Map<String, Object> dataMap , @NonNull Parameters...
             parameters);
 
     /**

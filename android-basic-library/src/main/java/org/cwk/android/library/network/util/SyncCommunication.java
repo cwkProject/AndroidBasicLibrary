@@ -36,6 +36,13 @@ public interface SyncCommunication<RequestType, ResponseType> extends Cancelable
     boolean isSuccessful();
 
     /**
+     * 接收http响应码
+     *
+     * @return http响应码，0表示网络未建立连接
+     */
+    int code();
+
+    /**
      * 接收服务器响应的数据
      *
      * @return 服务器返回的数据

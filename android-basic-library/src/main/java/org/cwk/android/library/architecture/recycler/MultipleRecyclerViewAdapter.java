@@ -124,8 +124,8 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
 
     @Override
     public final void onBindViewHolder(RecyclerView.ViewHolder holder , int position) {
-        int viewType = holder.getItemViewType() / VIEW_TYPE_WEIGHT;
-        managerList.get(viewType).bindViewHolder(holder , convertToGroupPosition(viewType ,
+        int groupIndex = holder.getItemViewType() / VIEW_TYPE_WEIGHT;
+        managerList.get(groupIndex).bindViewHolder(holder , convertToGroupPosition(groupIndex ,
                 position) , holder.getItemViewType() % VIEW_TYPE_WEIGHT);
     }
 
@@ -138,6 +138,12 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
         }
 
         return count;
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        int groupIndex = holder.getItemViewType() / VIEW_TYPE_WEIGHT;
+        managerList.get(groupIndex).onViewRecycled(holder);
     }
 
     /**

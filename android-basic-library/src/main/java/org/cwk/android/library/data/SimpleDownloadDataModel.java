@@ -7,8 +7,7 @@ import org.cwk.android.library.work.SimpleDownloadWorkModel;
 import java.io.InputStream;
 
 /**
- * 基于集成化任务架构，
- * 用于下载任务的数据模型基类<br>
+ * 用于下载任务的简单数据模型基类<br>
  * 请求参数为纯文本，响应数据为输入流
  *
  * @author 超悟空
@@ -16,7 +15,7 @@ import java.io.InputStream;
  * @since 1.0 2017/2/15
  **/
 public abstract class SimpleDownloadDataModel<Parameters, Result> extends
-        IntegratedDataModel<Parameters, Result, InputStream, InputStream, String> {
+        StandardDataModel<String, InputStream, InputStream, Parameters, Result> {
 
     /**
      * 构造函数
@@ -43,11 +42,11 @@ public abstract class SimpleDownloadDataModel<Parameters, Result> extends
      *
      * @param handleResult 响应的下载数据流
      *
-     * @throws Exception
+     * @throws Exception 处理过程抛出的异常
      */
     @SuppressWarnings("NullableProblems")
     @Override
-    protected abstract Result onSuccessResult(@NonNull InputStream handleResult) throws Exception;
+    protected abstract Result onRequestSuccess(@NonNull InputStream handleResult) throws Exception;
 
     @Override
     protected final boolean onCheckResponse(InputStream inputStream) {
@@ -66,7 +65,7 @@ public abstract class SimpleDownloadDataModel<Parameters, Result> extends
     }
 
     @Override
-    protected final String onRequestMessage(boolean result, InputStream handleResult) throws
+    protected final String onRequestMessage(boolean result , InputStream handleResult) throws
             Exception {
         return null;
     }

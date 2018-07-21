@@ -3,7 +3,7 @@ package org.cwk.android.library.network.communication;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.cwk.android.library.global.Global;
+import org.cwk.android.library.network.util.GlobalOkHttpClient;
 import org.cwk.android.library.network.util.NetworkCallback;
 import org.cwk.android.library.network.util.NetworkTimeout;
 import org.cwk.android.library.network.util.RetryInterceptor;
@@ -64,6 +64,11 @@ public abstract class Communication<RequestType, ResponseType> implements
     protected boolean success = false;
 
     /**
+     * 响应码
+     */
+    protected int code = 0;
+
+    /**
      * 请求重试次数
      */
     protected int retryTimes = 0;
@@ -88,7 +93,7 @@ public abstract class Communication<RequestType, ResponseType> implements
      * @param encoded 编码字符串，默认为UTF-8
      */
     public void setEncoded(String encoded) {
-        Log.v(logTag, "encoded is " + encoded);
+        Log.v(logTag , "encoded is " + encoded);
         this.encoded = encoded;
     }
 
@@ -100,18 +105,18 @@ public abstract class Communication<RequestType, ResponseType> implements
     @Override
     public void setTaskName(String url) {
         this.url = url;
-        Log.v(logTag, "url is " + url);
+        Log.v(logTag , "url is " + url);
     }
 
     @Override
     public void setRetryTimes(int times) {
         this.retryTimes = times;
-        Log.v(logTag, "retryTimes is " + times);
+        Log.v(logTag , "retryTimes is " + times);
     }
 
     @Override
     public void request(RequestType sendData) {
-        Log.v(logTag, "request start");
+        Log.v(logTag , "request start");
 
         this.success = false;
         response = null;
@@ -119,7 +124,7 @@ public abstract class Communication<RequestType, ResponseType> implements
         if (url == null || (!url.trim().toLowerCase().startsWith("http://") && !url.trim()
                 .toLowerCase().startsWith("https://"))) {
             // 地址不合法
-            Log.d(logTag, "url is error");
+            Log.d(logTag , "url is error");
             return;
         }
 
@@ -134,24 +139,22 @@ public abstract class Communication<RequestType, ResponseType> implements
             call = okHttpClient.newCall(request);
             Response response = call.execute();
 
-            int code = response.code();
+            this.success = response.isSuccessful();
+            this.code = response.code();
             String message = response.message();
 
-            Log.v(logTag, "response code is " + code);
-            Log.v(logTag, "response message is " + message);
+            Log.v(logTag , "response code is " + code);
+            Log.v(logTag , "response message is " + message);
 
             if (response.isSuccessful()) {
-                Log.v(logTag, "request is success");
-                this.success = true;
+                Log.v(logTag , "request is success");
                 this.response = response.body();
             } else {
-                Log.v(logTag, "request is failed");
-                this.success = false;
+                Log.v(logTag , "request is failed");
                 this.response = null;
             }
-
         } catch (IOException e) {
-            Log.e(logTag, "call error", e);
+            Log.e(logTag , "call error" , e);
 
             this.success = false;
             response = null;
@@ -165,7 +168,7 @@ public abstract class Communication<RequestType, ResponseType> implements
      */
     private OkHttpClient onConfigOkHttpClient() {
         // 得到okHttpClient对象
-        OkHttpClient okHttpClient = Global.getOkHttpClient();
+        OkHttpClient okHttpClient = GlobalOkHttpClient.getOkHttpClient();
 
         OkHttpClient.Builder builder = onRebuildClient(okHttpClient);
 
@@ -177,15 +180,15 @@ public abstract class Communication<RequestType, ResponseType> implements
             }
 
             if (networkTimeout.getConnectTimeout() > -1) {
-                builder.connectTimeout(networkTimeout.getConnectTimeout(), TimeUnit.MILLISECONDS);
+                builder.connectTimeout(networkTimeout.getConnectTimeout() , TimeUnit.MILLISECONDS);
             }
 
             if (networkTimeout.getReadTimeout() > -1) {
-                builder.readTimeout(networkTimeout.getReadTimeout(), TimeUnit.MILLISECONDS);
+                builder.readTimeout(networkTimeout.getReadTimeout() , TimeUnit.MILLISECONDS);
             }
 
             if (networkTimeout.getWriteTimeout() > -1) {
-                builder.writeTimeout(networkTimeout.getWriteTimeout(), TimeUnit.MILLISECONDS);
+                builder.writeTimeout(networkTimeout.getWriteTimeout() , TimeUnit.MILLISECONDS);
             }
         }
 
@@ -195,7 +198,7 @@ public abstract class Communication<RequestType, ResponseType> implements
                 builder = okHttpClient.newBuilder();
             }
 
-            builder.addInterceptor(new RetryInterceptor(logTag, retryTimes));
+            builder.addInterceptor(new RetryInterceptor(logTag , retryTimes));
         }
 
         // 尝试构建新配置的请求工具
@@ -231,6 +234,11 @@ public abstract class Communication<RequestType, ResponseType> implements
     }
 
     @Override
+    public int code() {
+        return code;
+    }
+
+    @Override
     public void close() {
         if (response == null) {
             return;
@@ -240,16 +248,16 @@ public abstract class Communication<RequestType, ResponseType> implements
     }
 
     @Override
-    public void Request(RequestType sendData, final NetworkCallback<ResponseType> callback) {
-        Log.v(logTag + "request", "request start");
+    public void Request(RequestType sendData , final NetworkCallback<ResponseType> callback) {
+        Log.v(logTag + "request" , "request start");
 
         if (url == null || (!url.trim().toLowerCase().startsWith("http://") && !url.trim()
                 .toLowerCase().startsWith("https://"))) {
             // 地址不合法
-            Log.d(logTag, "url is error");
+            Log.d(logTag , "url is error");
 
             if (callback != null) {
-                callback.onFinish(false, null);
+                callback.onFinish(false , 0 , null);
             }
 
             return;
@@ -265,40 +273,39 @@ public abstract class Communication<RequestType, ResponseType> implements
         call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e(logTag, "call error", e);
+            public void onFailure(@NonNull Call call , @NonNull IOException e) {
+                Log.e(logTag , "call error" , e);
 
                 if (callback != null) {
-                    callback.onFinish(false, null);
+                    callback.onFinish(false , 0 , null);
                 }
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws
+            public void onResponse(@NonNull Call call , @NonNull Response response) throws
                     IOException {
-                int code = response.code();
+                code = response.code();
+                success = response.isSuccessful();
                 String message = response.message();
 
-                Log.v(logTag, "response code is " + code);
-                Log.v(logTag, "response message is " + message);
+                Log.v(logTag , "response code:" + code + " message:" + message);
 
                 if (callback != null) {
-
                     if (response.isSuccessful()) {
-                        Log.v(logTag, "request is success");
+                        Log.v(logTag , "request is success");
 
                         ResponseBody body = response.body();
 
                         // 处理结果
-                        onAsyncSuccess(body, callback);
+                        onAsyncSuccess(body , callback);
 
                         // 关闭流
                         if (body != null) {
                             body.close();
                         }
                     } else {
-                        Log.v(logTag, "request is failed");
-                        callback.onFinish(false, null);
+                        Log.v(logTag , "request is failed");
+                        callback.onFinish(false , 0 , null);
                     }
                 }
             }
@@ -311,7 +318,7 @@ public abstract class Communication<RequestType, ResponseType> implements
      * @param body     响应体
      * @param callback 回调
      */
-    protected abstract void onAsyncSuccess(ResponseBody body, NetworkCallback<ResponseType>
+    protected abstract void onAsyncSuccess(ResponseBody body , NetworkCallback<ResponseType>
             callback) throws IOException;
 
     @Override

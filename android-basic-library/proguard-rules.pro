@@ -17,7 +17,7 @@
 #}
 
 # 自己的库
--keepclassmembernames class * extends org.cwk.android.library.work.DefaultWorkModel {
+-keepclassmembernames class * extends org.cwk.android.library.work.WorkModel {
     protected ** onTaskUri();
 }
 -keepclassmembernames class * extends org.cwk.android.library.architecture.preferences.PersistenceConfigModel {*;}
@@ -38,4 +38,7 @@
     public static int v(...);
     public static int i(...);
     public static int d(...);
+}
+-assumenosideeffects class org.cwk.android.library.util.LogUtil {
+    public static void v(...);
 }

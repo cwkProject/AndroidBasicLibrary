@@ -33,19 +33,19 @@ public class OkHttpGetCommunication extends Communication<Map<String, String>, S
     protected Request onCreateRequest(Map<String, String> sendData) {
 
         // 拼接参数
-        String params = RequestBodyBuilder.onBuildParameter(logTag, sendData, encoded);
+        String params = RequestBodyBuilder.onBuildParameter(logTag , sendData , encoded);
 
         // 最终请求地址
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
-        Log.v(logTag, "final url is " + finalUrl);
+        Log.v(logTag , "final url is " + finalUrl);
 
         return new Request.Builder().url(finalUrl).build();
     }
 
     @Override
-    protected void onAsyncSuccess(ResponseBody body, NetworkCallback<String> callback) throws
+    protected void onAsyncSuccess(ResponseBody body , NetworkCallback<String> callback) throws
             IOException {
-        callback.onFinish(true, body.string());
+        callback.onFinish(true , code , body.string());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class OkHttpGetCommunication extends Communication<Map<String, String>, S
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(logTag, "response error", e);
+            Log.e(logTag , "response error" , e);
 
             return null;
         }

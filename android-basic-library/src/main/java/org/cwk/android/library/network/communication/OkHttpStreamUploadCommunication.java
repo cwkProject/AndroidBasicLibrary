@@ -53,26 +53,26 @@ public class OkHttpStreamUploadCommunication extends Communication<Map<String, S
         }
 
         // 拼接参数
-        RequestBody body = RequestBodyBuilder.onBuildUploadStream(logTag, data);
+        RequestBody body = RequestBodyBuilder.onBuildUploadStream(logTag , data);
 
         // 拼接参数
-        String params = RequestBodyBuilder.onBuildParameter(logTag, sendData, encoded);
+        String params = RequestBodyBuilder.onBuildParameter(logTag , sendData , encoded);
 
         // 最终请求地址
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
 
         // 考虑是否包装上传进度
         if (onNetworkProgressListener != null) {
-            body = new ProgressRequestBody(body, onNetworkProgressListener);
+            body = new ProgressRequestBody(body , onNetworkProgressListener);
         }
 
         return new Request.Builder().url(finalUrl).post(body).build();
     }
 
     @Override
-    protected void onAsyncSuccess(ResponseBody body, NetworkCallback<String> callback) throws
+    protected void onAsyncSuccess(ResponseBody body , NetworkCallback<String> callback) throws
             IOException {
-        callback.onFinish(true, body.string());
+        callback.onFinish(true , code , body.string());
     }
 
     @Override
@@ -80,7 +80,7 @@ public class OkHttpStreamUploadCommunication extends Communication<Map<String, S
         try {
             return response == null ? null : response.string();
         } catch (IOException e) {
-            Log.e(logTag, "response error", e);
+            Log.e(logTag , "response error" , e);
 
             return null;
         }

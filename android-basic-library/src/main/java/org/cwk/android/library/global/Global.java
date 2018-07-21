@@ -9,9 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import org.cwk.android.library.BuildConfig;
-import org.cwk.android.library.R;
-
-import java.util.concurrent.TimeUnit;
+import org.cwk.android.library.network.util.GlobalOkHttpClient;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -31,11 +29,6 @@ public class Global {
     private static final String TAG = "Global";
 
     /**
-     * 用户代理
-     */
-    private static final String USER_AGENT_HEADER_NAME = "User-Agent";
-
-    /**
      * 自身静态全局实例
      */
     private static Global global = null;
@@ -44,11 +37,6 @@ public class Global {
      * Application实例
      */
     private Application application = null;
-
-    /**
-     * 全局网络请求工具
-     */
-    private OkHttpClient okHttpClient = null;
 
     /**
      * 全局UI线程Handler
@@ -65,30 +53,12 @@ public class Global {
     }
 
     /**
-     * 获取全局网络连接对象
-     *
-     * @return 带默认设置的OkHttpClient对象
-     */
-    public static OkHttpClient getOkHttpClient() {
-        return global.okHttpClient;
-    }
-
-    /**
      * 获取全局UI线程Handler
      *
      * @return UI线程Handler
      */
     public static Handler getUiHandler() {
         return global.handler;
-    }
-
-    /**
-     * 设置网络工具
-     *
-     * @param okHttpClient 带默认设置的OkHttpClient对象
-     */
-    public static void setOkHttpClient(OkHttpClient okHttpClient) {
-        global.okHttpClient = okHttpClient;
     }
 
     /**
@@ -161,23 +131,19 @@ public class Global {
             Log.e(TAG , "initOkHttpClient PackageManager error" , e);
         }
 
-        okHttpClient = new OkHttpClient.Builder()
-                // 设置默认连接超时时间
-                .connectTimeout(application.getResources().getInteger(R.integer
-                        .http_default_connect_timeout) , TimeUnit.MILLISECONDS)
-                // 设置默认读取超时时间
-                .readTimeout(application.getResources().getInteger(R.integer
-                        .http_default_read_timeout) , TimeUnit.MILLISECONDS)
-                // 设置默认写入超时时间
-                .writeTimeout(application.getResources().getInteger(R.integer
-                        .http_default_write_timeout) , TimeUnit.MILLISECONDS)
-                // 设置用户代理信息拦截器
-                .addNetworkInterceptor(chain -> {
-                    final Request originalRequest = chain.request();
-                    final Request requestWithUserAgent = originalRequest.newBuilder()
-                            .removeHeader(USER_AGENT_HEADER_NAME).addHeader
-                                    (USER_AGENT_HEADER_NAME , userAgentBuilder.toString()).build();
-                    return chain.proceed(requestWithUserAgent);
-                }).build();
+        OkHttpClient.Builder builder = GlobalOkHttpClient.getOkHttpClient().newBuilder();
+
+        builder.networkInterceptors().clear();
+
+        // 设置用户代理信息拦截器
+        builder.addNetworkInterceptor(chain -> {
+            final Request originalRequest = chain.request();
+            final Request requestWithUserAgent = originalRequest.newBuilder().removeHeader
+                    (GlobalOkHttpClient.USER_AGENT_HEADER_NAME).addHeader(GlobalOkHttpClient
+                    .USER_AGENT_HEADER_NAME , userAgentBuilder.toString()).build();
+            return chain.proceed(requestWithUserAgent);
+        });
+
+        GlobalOkHttpClient.setOkHttpClient(builder.build());
     }
 }
