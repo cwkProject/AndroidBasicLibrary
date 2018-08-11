@@ -100,10 +100,11 @@ public abstract class PersistenceConfigModel {
         // 尝试读取保存的key
         String key = preferencesUtil.getSharedPreferences().getString(keyTag , null);
 
-        DesDataCipher cipher = new DesDataCipher(ApplicationAttribute.getDesKey() , key);
+        DesDataCipher cipher = new DesDataCipher(ApplicationAttribute.getDesKey());
 
-        if (key == null) {
+        if (key == null || !cipher.setNewKey(key)) {
             key = cipher.createNewKey();
+            cipher.setNewKey(key);
             preferencesUtil.getEditor().putString(keyTag , key).apply();
         }
 

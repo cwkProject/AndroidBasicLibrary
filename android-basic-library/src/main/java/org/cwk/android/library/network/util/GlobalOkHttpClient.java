@@ -9,7 +9,6 @@ import org.cwk.android.library.global.ApplicationStaticValue;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 /**
  * 任务模型网络请求实现类使用的全局OkHttpClient对象管理器，
@@ -32,6 +31,20 @@ public class GlobalOkHttpClient {
     private static OkHttpClient okHttpClient;
 
     static {
+        okHttpClient = new OkHttpClient.Builder()
+                // 设置默认读取超时时间
+                .readTimeout(30 , TimeUnit.SECONDS)
+                // 设置默认写入超时时间
+                .writeTimeout(30 , TimeUnit.SECONDS).build();
+
+    }
+
+    /**
+     * 获取默认的用户代理内容
+     *
+     * @return 默认的用户代理内容
+     */
+    public static String getUserAgent() {
         // 网络请求用户代理字符串
         final StringBuilder userAgentBuilder = new StringBuilder();
 
@@ -61,20 +74,7 @@ public class GlobalOkHttpClient {
         userAgentBuilder.append(")");
         userAgentBuilder.append(".");
 
-        okHttpClient = new OkHttpClient.Builder()
-                // 设置默认读取超时时间
-                .readTimeout(30 , TimeUnit.SECONDS)
-                // 设置默认写入超时时间
-                .writeTimeout(30 , TimeUnit.SECONDS)
-                // 设置用户代理信息拦截器
-                .addNetworkInterceptor(chain -> {
-                    final Request originalRequest = chain.request();
-                    final Request requestWithUserAgent = originalRequest.newBuilder()
-                            .removeHeader(USER_AGENT_HEADER_NAME).addHeader
-                                    (USER_AGENT_HEADER_NAME , userAgentBuilder.toString()).build();
-                    return chain.proceed(requestWithUserAgent);
-                }).build();
-
+        return userAgentBuilder.toString();
     }
 
     /**

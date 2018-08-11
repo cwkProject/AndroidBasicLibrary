@@ -22,7 +22,7 @@ import okhttp3.ResponseBody;
  * @version 1.0 2016/8/3
  * @since 1.0
  */
-public class OkHttpDeleteCommunication extends Communication<Map<String, String>, String> {
+public class OkHttpDeleteCommunication extends OkHttpCommunication<Map<String, String>, String> {
 
     /**
      * 构造函数
@@ -34,12 +34,12 @@ public class OkHttpDeleteCommunication extends Communication<Map<String, String>
     }
 
     @Override
-    protected Request onCreateRequest(Map<String, String> sendData) {
+    protected void onCreateRequest(Request.Builder builder , Map<String, String> sendData) {
 
         // 拼接参数
         RequestBody body = RequestBodyBuilder.onBuildPostForm(logTag , sendData , encoded);
 
-        return new Request.Builder().url(url).delete(body).build();
+        builder.url(url).delete(body);
     }
 
     @Override

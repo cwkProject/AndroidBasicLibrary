@@ -18,7 +18,7 @@ import okhttp3.ResponseBody;
  * @version 2.0 2016/3/7
  * @since 1.0
  */
-public class OkHttpGetCommunication extends Communication<Map<String, String>, String> {
+public class OkHttpGetCommunication extends OkHttpCommunication<Map<String, String>, String> {
 
     /**
      * 构造函数
@@ -30,7 +30,7 @@ public class OkHttpGetCommunication extends Communication<Map<String, String>, S
     }
 
     @Override
-    protected Request onCreateRequest(Map<String, String> sendData) {
+    protected void onCreateRequest(Request.Builder builder ,Map<String, String> sendData) {
 
         // 拼接参数
         String params = RequestBodyBuilder.onBuildParameter(logTag , sendData , encoded);
@@ -39,7 +39,7 @@ public class OkHttpGetCommunication extends Communication<Map<String, String>, S
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
         Log.v(logTag , "final url is " + finalUrl);
 
-        return new Request.Builder().url(finalUrl).build();
+        builder.url(finalUrl);
     }
 
     @Override

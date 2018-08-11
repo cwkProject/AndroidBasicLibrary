@@ -28,30 +28,35 @@ public class DesDataCipher implements PreferencesUtil.DataCipher {
     /**
      * 加解密工具
      */
-    private SymmetricCipherUtil cipherUtil = null;
-
-    /**
-     * 构造函数
-     *
-     * @param key 指定的默认base64密钥
-     */
-    public DesDataCipher(String key) {
-        this(key, null);
-    }
+    private SymmetricCipherUtil cipherUtil;
 
     /**
      * 构造函数
      *
      * @param defaultKey 指定的默认base64密钥
-     * @param newKey     指定的用默认密钥{@code defaultKey}加密的新base64密钥
      */
-    public DesDataCipher(String defaultKey, String newKey) {
-        cipherUtil = new SymmetricCipherUtil(CIPHER_ALGORITHM, new SecretKeySpec(Base64.decode
-                (defaultKey, Base64.DEFAULT), KEY_ALGORITHM));
+    public DesDataCipher(String defaultKey) {
+        cipherUtil = new SymmetricCipherUtil(CIPHER_ALGORITHM , new SecretKeySpec(Base64.decode
+                (defaultKey , Base64.DEFAULT) , KEY_ALGORITHM));
+    }
 
+    /**
+     * 设置新key
+     *
+     * @param newKey 通过{@link #createNewKey()}生成的新key
+     *
+     * @return true表示设置成功，false表示该key已作废
+     */
+    public boolean setNewKey(String newKey) {
         if (newKey != null) {
-            cipherUtil.setKey(cipherUtil.getKey(Base64.decode(newKey, Base64.DEFAULT)));
+            Key key = cipherUtil.getKey(Base64.decode(newKey , Base64.DEFAULT));
+            if (key != null) {
+                cipherUtil.setKey(key);
+                return true;
+            }
         }
+
+        return false;
     }
 
     /**
@@ -60,13 +65,13 @@ public class DesDataCipher implements PreferencesUtil.DataCipher {
      * @return 用默认密钥加密后的BASE64编码新key
      */
     public String createNewKey() {
-        Key key = SymmetricCipherUtil.createKey(KEY_ALGORITHM, 56);
+        Key key = SymmetricCipherUtil.createKey(KEY_ALGORITHM , 56);
 
         byte[] byteKey = cipherUtil.getBinaryKey(key);
 
         cipherUtil.setKey(key);
 
-        return Base64.encodeToString(byteKey, Base64.DEFAULT);
+        return Base64.encodeToString(byteKey , Base64.DEFAULT);
     }
 
 
@@ -82,7 +87,7 @@ public class DesDataCipher implements PreferencesUtil.DataCipher {
         if (data == null) {
             return null;
         }
-        return Base64.encodeToString(cipherUtil.encrypt(data.getBytes()), Base64.DEFAULT);
+        return Base64.encodeToString(cipherUtil.encrypt(data.getBytes()) , Base64.DEFAULT);
     }
 
     /**
@@ -97,6 +102,6 @@ public class DesDataCipher implements PreferencesUtil.DataCipher {
         if (cipherText == null) {
             return null;
         }
-        return new String(cipherUtil.decrypt(Base64.decode(cipherText, Base64.DEFAULT)));
+        return new String(cipherUtil.decrypt(Base64.decode(cipherText , Base64.DEFAULT)));
     }
 }

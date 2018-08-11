@@ -13,6 +13,7 @@ public interface ApplicationStaticValue {
      * 应用程序配置
      */
     interface AppConfig {
+
         /**
          * 设备类型
          */

@@ -207,7 +207,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
 
                 // 发送请求
                 //noinspection unchecked
-                communication.Request(DataModelHandle.serialization(mData) , (result , code ,
+                communication.request(DataModelHandle.serialization(mData) , (result , code ,
                                                                               response) -> {
                     if (!cancelMark) {
                         // 解析响应数据

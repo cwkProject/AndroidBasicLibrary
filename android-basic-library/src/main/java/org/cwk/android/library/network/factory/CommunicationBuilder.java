@@ -7,8 +7,8 @@ import org.cwk.android.library.annotation.Post;
 import org.cwk.android.library.annotation.Put;
 import org.cwk.android.library.annotation.Upload;
 import org.cwk.android.library.annotation.UploadStream;
-import org.cwk.android.library.network.communication.Communication;
 import org.cwk.android.library.network.communication.ICommunication;
+import org.cwk.android.library.network.communication.OkHttpCommunication;
 import org.cwk.android.library.network.communication.OkHttpDeleteCommunication;
 import org.cwk.android.library.network.communication.OkHttpDownloadCommunication;
 import org.cwk.android.library.network.communication.OkHttpGetCommunication;
@@ -21,6 +21,8 @@ import org.cwk.android.library.network.util.NetworkTimeout;
 import org.cwk.android.library.network.util.OnNetworkProgressListener;
 
 import java.lang.reflect.Method;
+
+import okhttp3.Headers;
 
 import static org.cwk.android.library.network.factory.NetworkType.DELETE;
 import static org.cwk.android.library.network.factory.NetworkType.DOWNLOAD;
@@ -48,6 +50,11 @@ public class CommunicationBuilder {
      * 进度监听器，仅上传和下载时有效
      */
     private OnNetworkProgressListener progressListener = null;
+
+    /**
+     * 请求头信息
+     */
+    private Headers.Builder headers = null;
 
     /**
      * 请求重试次数
@@ -224,13 +231,71 @@ public class CommunicationBuilder {
     }
 
     /**
+     * 设置新的头信息，移除所有旧的头信息
+     *
+     * @param name  名称
+     * @param value 值
+     *
+     * @return 构造器
+     */
+    public CommunicationBuilder header(String name , String value) {
+        if (headers == null) {
+            headers = new Headers.Builder();
+        }
+        headers.set(name , value);
+        return this;
+    }
+
+    /**
+     * 添加头信息
+     *
+     * @param name  名称
+     * @param value 值
+     *
+     * @return 构造器
+     */
+    public CommunicationBuilder addHeader(String name , String value) {
+        if (headers == null) {
+            headers = new Headers.Builder();
+        }
+        headers.add(name , value);
+        return this;
+    }
+
+    /**
+     * 移除所有指定名称的头信息
+     *
+     * @param name 头名称
+     *
+     * @return 构造器
+     */
+    public CommunicationBuilder removeHeader(String name) {
+        if (headers != null) {
+            headers.removeAll(name);
+        }
+        return this;
+    }
+
+    /**
+     * 移除所有头信息使用新的头
+     *
+     * @param headers OkHttp头信息对象
+     *
+     * @return 构造器
+     */
+    public CommunicationBuilder headers(Headers headers) {
+        this.headers = headers.newBuilder();
+        return this;
+    }
+
+    /**
      * 构造网络请求工具
      *
      * @return OKHttp网络请求工具
      */
     public ICommunication build() {
 
-        Communication communication;
+        OkHttpCommunication communication;
 
         switch (networkType) {
             case GET:
@@ -285,6 +350,10 @@ public class CommunicationBuilder {
         }
 
         communication.setEncoded(encoded);
+
+        if (headers != null) {
+            communication.setHeaders(headers.build());
+        }
 
         return communication;
     }

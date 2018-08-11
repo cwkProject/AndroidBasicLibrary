@@ -22,7 +22,7 @@ import okhttp3.ResponseBody;
  * @version 1.0 2016/8/3
  * @since 1.0
  */
-public class OkHttpPutCommunication extends Communication<Map<String, String>, String> {
+public class OkHttpPutCommunication extends OkHttpCommunication<Map<String, String>, String> {
 
     /**
      * 构造函数
@@ -34,12 +34,12 @@ public class OkHttpPutCommunication extends Communication<Map<String, String>, S
     }
 
     @Override
-    protected Request onCreateRequest(Map<String, String> sendData) {
+    protected void onCreateRequest(Request.Builder builder , Map<String, String> sendData) {
 
         // 拼接参数
         RequestBody body = RequestBodyBuilder.onBuildPostForm(logTag , sendData , encoded);
 
-        return new Request.Builder().url(url).put(body).build();
+        builder.url(url).put(body);
     }
 
     @Override

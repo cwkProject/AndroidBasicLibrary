@@ -27,5 +27,5 @@ public interface AsyncCommunication<RequestType, ResponseType> extends Cancelabl
      * @param sendData 向服务器发送的数据
      * @param callback 结果回调
      */
-    void Request(RequestType sendData, NetworkCallback<ResponseType> callback);
+    void request(RequestType sendData, NetworkCallback<ResponseType> callback);
 }

@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -25,7 +26,7 @@ import okhttp3.ResponseBody;
  * @version 2.0 2017/11/13
  * @since 1.0
  */
-public abstract class Communication<RequestType, ResponseType> implements
+public abstract class OkHttpCommunication<RequestType, ResponseType> implements
         ICommunication<RequestType, ResponseType> {
 
     /**
@@ -47,6 +48,11 @@ public abstract class Communication<RequestType, ResponseType> implements
      * 请求数据编码，默认使用UTF-8
      */
     protected String encoded = null;
+
+    /**
+     * 请求头信息
+     */
+    private Headers headers = null;
 
     /**
      * 一个请求对象
@@ -78,7 +84,7 @@ public abstract class Communication<RequestType, ResponseType> implements
      *
      * @param tag 标签，用于跟踪日志
      */
-    protected Communication(String tag) {
+    protected OkHttpCommunication(String tag) {
         this.logTag = tag;
     }
 
@@ -95,6 +101,15 @@ public abstract class Communication<RequestType, ResponseType> implements
     public void setEncoded(String encoded) {
         Log.v(logTag , "encoded is " + encoded);
         this.encoded = encoded;
+    }
+
+    /**
+     * 设置请求头信息
+     *
+     * @param headers 头信息
+     */
+    public void setHeaders(Headers headers) {
+        this.headers = headers;
     }
 
     /**
@@ -132,7 +147,9 @@ public abstract class Communication<RequestType, ResponseType> implements
         OkHttpClient okHttpClient = onConfigOkHttpClient();
 
         // 创建请求
-        Request request = onCreateRequest(sendData);
+        Request.Builder builder = new Request.Builder();
+        onCreateRequest(builder , sendData);
+        Request request = builder.build();
 
         try {
             // 发起同步请求
@@ -223,10 +240,9 @@ public abstract class Communication<RequestType, ResponseType> implements
      * 创建请求内容
      *
      * @param sendData 要发送的数据
-     *
-     * @return 请求对象
+     * @param builder  请求构造器，用于装填请求内容，无需调用{@link Request.Builder#build()}
      */
-    protected abstract Request onCreateRequest(RequestType sendData);
+    protected abstract void onCreateRequest(Request.Builder builder , RequestType sendData);
 
     @Override
     public boolean isSuccessful() {
@@ -248,7 +264,7 @@ public abstract class Communication<RequestType, ResponseType> implements
     }
 
     @Override
-    public void Request(RequestType sendData , final NetworkCallback<ResponseType> callback) {
+    public void request(RequestType sendData , final NetworkCallback<ResponseType> callback) {
         Log.v(logTag + "request" , "request start");
 
         if (url == null || (!url.trim().toLowerCase().startsWith("http://") && !url.trim()
@@ -267,7 +283,12 @@ public abstract class Communication<RequestType, ResponseType> implements
         OkHttpClient okHttpClient = onConfigOkHttpClient();
 
         // 创建请求
-        Request request = onCreateRequest(sendData);
+        Request.Builder builder = new Request.Builder();
+        if (headers != null) {
+            builder.headers(headers);
+        }
+        onCreateRequest(builder , sendData);
+        Request request = builder.build();
 
         // 发送异步请求
         call = okHttpClient.newCall(request);

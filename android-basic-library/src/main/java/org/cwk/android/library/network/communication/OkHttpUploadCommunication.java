@@ -25,7 +25,7 @@ import okhttp3.ResponseBody;
  * @version 1.0 2016/7/16
  * @since 1.0
  */
-public class OkHttpUploadCommunication extends Communication<Map<String, Object>, String>
+public class OkHttpUploadCommunication extends OkHttpCommunication<Map<String, Object>, String>
         implements NetworkRefreshProgressHandler {
 
     /**
@@ -43,7 +43,7 @@ public class OkHttpUploadCommunication extends Communication<Map<String, Object>
     }
 
     @Override
-    protected Request onCreateRequest(Map<String, Object> sendData) {
+    protected void onCreateRequest(Request.Builder builder , Map<String, Object> sendData) {
         // 拼接参数
         RequestBody body = RequestBodyBuilder.onBuildUploadForm(logTag , sendData);
 
@@ -52,7 +52,7 @@ public class OkHttpUploadCommunication extends Communication<Map<String, Object>
             body = new ProgressRequestBody(body , onNetworkProgressListener);
         }
 
-        return new Request.Builder().url(url).post(body).build();
+        builder.url(url).post(body);
     }
 
     @Override
