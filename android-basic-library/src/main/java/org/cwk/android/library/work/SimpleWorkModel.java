@@ -48,7 +48,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
     /**
      * 填充服务请求所需的参数
      *
-     * @param dataMap    将要填充的参数数据集<参数名,参数值>
+     * @param dataMap    将要填充的参数数据集(参数名,参数值)
      * @param parameters 任务传入的参数
      */
     @SuppressWarnings("unchecked")

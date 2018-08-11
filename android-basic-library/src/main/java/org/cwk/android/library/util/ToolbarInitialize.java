@@ -9,7 +9,7 @@ import android.widget.TextView;
 import org.cwk.android.library.R;
 
 /**
- * toolbar初始化工具，须在布局中引入{@link org.cwk.android.library.R.layout#toolbar}布局
+ * toolbar初始化工具，须在布局中引入id为toolbar的布局
  *
  * @author 超悟空
  * @version 1.0 2016/7/29

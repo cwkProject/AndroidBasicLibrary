@@ -240,7 +240,7 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
      * 创建请求内容
      *
      * @param sendData 要发送的数据
-     * @param builder  请求构造器，用于装填请求内容，无需调用{@link Request.Builder#build()}
+     * @param builder  请求构造器，用于装填请求内容，无需调用build方法
      */
     protected abstract void onCreateRequest(Request.Builder builder , RequestType sendData);
 

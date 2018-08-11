@@ -19,39 +19,39 @@ import io.reactivex.Single;
 public interface CreateRxObservable<Parameters, DataModel extends IDataModel> {
 
     /**
-     * 创建一个任务的{@link Observable}对象
+     * 创建一个任务的{@link io.reactivex.Observable}对象
      *
      * @param parameters 任务所需参数
      *
-     * @return {@link Observable}对象
+     * @return {@link io.reactivex.Observable}对象
      */
     @SuppressWarnings("unchecked")
     Observable<DataModel> observable(Parameters... parameters);
 
     /**
-     * 创建一个任务的{@link Maybe}对象，执行成功会发送onSuccess，失败发送onComplete，不会发送onError事件
+     * 创建一个任务的{@link io.reactivex.Maybe}对象，执行成功会发送onSuccess，失败发送onComplete，不会发送onError事件
      *
      * @param parameters 任务所需参数
      *
-     * @return {@link Maybe}对象
+     * @return {@link io.reactivex.Maybe}对象
      */
     Maybe<DataModel> maybe(Parameters... parameters);
 
     /**
-     * 创建一个任务的{@link Single}对象，执行成功会发送onSuccess，失败发送onError
+     * 创建一个任务的{@link io.reactivex.Single}对象，执行成功会发送onSuccess，失败发送onError
      *
      * @param parameters 任务所需参数
      *
-     * @return {@link Single}对象
+     * @return {@link io.reactivex.Single}对象
      */
     Single<DataModel> single(Parameters... parameters);
 
     /**
-     * 创建一个任务的{@link Completable}对象，执行成功会发送onComplete，失败发送onError
+     * 创建一个任务的{@link io.reactivex.Completable}对象，执行成功会发送onComplete，失败发送onError
      *
      * @param parameters 任务所需参数
      *
-     * @return {@link Completable}对象
+     * @return {@link io.reactivex.Completable}对象
      */
     Completable completable(Parameters... parameters);
 }
