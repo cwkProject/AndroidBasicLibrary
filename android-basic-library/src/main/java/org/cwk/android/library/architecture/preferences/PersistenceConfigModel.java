@@ -104,7 +104,6 @@ public abstract class PersistenceConfigModel {
 
         if (key == null || !cipher.setNewKey(key)) {
             key = cipher.createNewKey();
-            cipher.setNewKey(key);
             preferencesUtil.getEditor().putString(keyTag , key).apply();
         }
 

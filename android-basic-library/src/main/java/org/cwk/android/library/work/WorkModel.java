@@ -1,6 +1,7 @@
 package org.cwk.android.library.work;
 
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cwk.android.library.data.DataModelHandle;
@@ -394,7 +395,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
      *
      * @param builder 网络访问工具构建器，用于继续设置请求属性
      */
-    protected void onCreateCommunication(CommunicationBuilder builder) {
+    protected void onCreateCommunication(@NonNull CommunicationBuilder builder) {
     }
 
     /**

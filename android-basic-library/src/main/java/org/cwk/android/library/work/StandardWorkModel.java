@@ -1,5 +1,7 @@
 package org.cwk.android.library.work;
 
+import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cwk.android.library.data.WorkDataModel;
@@ -83,8 +85,9 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
         }
     }
 
+    @CallSuper
     @Override
-    protected void onCreateCommunication(CommunicationBuilder builder) {
+    protected void onCreateCommunication(@NonNull CommunicationBuilder builder) {
         builder.retryTimes(retryTimes).networkRefreshProgressListener(onCreateProgressListener());
     }
 
