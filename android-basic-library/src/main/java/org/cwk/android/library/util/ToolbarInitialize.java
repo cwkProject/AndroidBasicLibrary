@@ -19,7 +19,7 @@ public class ToolbarInitialize {
 
     /**
      * 初始化Toolbar<br>
-     * 须在布局中引入{@link org.cwk.android.library.R.layout#toolbar}布局
+     * 须在布局中引入id为toolbar的布局
      *
      * @param activity Activity
      * @param titleId  标题资源id
@@ -29,8 +29,8 @@ public class ToolbarInitialize {
      * @return 初始化完成的Toolbar对象
      */
     @SuppressWarnings("ConstantConditions")
-    public static Toolbar initToolbar(final AppCompatActivity activity, @StringRes int titleId,
-                                      boolean center, boolean back) {
+    public static Toolbar initToolbar(final AppCompatActivity activity , @StringRes int titleId ,
+                                      boolean center , boolean back) {
         Toolbar toolbar = activity.findViewById(R.id.toolbar);
 
         if (toolbar == null) {
@@ -60,20 +60,20 @@ public class ToolbarInitialize {
 
     /**
      * 初始化Toolbar，带有返回按钮，标题局左<br>
-     * 须在布局中引入{@link org.cwk.android.library.R.layout#toolbar}布局
+     * 须在布局中引入带有id为toolbar的布局
      *
      * @param activity Activity
      * @param titleId  标题资源id
      *
      * @return 初始化完成的Toolbar对象
      */
-    public static Toolbar initToolbar(AppCompatActivity activity, @StringRes int titleId) {
-        return initToolbar(activity, titleId, false);
+    public static Toolbar initToolbar(AppCompatActivity activity , @StringRes int titleId) {
+        return initToolbar(activity , titleId , false);
     }
 
     /**
      * 初始化Toolbar，带有返回按钮<br>
-     * 须在布局中引入{@link org.cwk.android.library.R.layout#toolbar}布局
+     * 须在布局中引入id为toolbar的布局
      *
      * @param activity Activity
      * @param titleId  标题资源id
@@ -81,8 +81,8 @@ public class ToolbarInitialize {
      *
      * @return 初始化完成的Toolbar对象
      */
-    public static Toolbar initToolbar(AppCompatActivity activity, @StringRes int titleId, boolean
-            center) {
-        return initToolbar(activity, titleId, center, true);
+    public static Toolbar initToolbar(AppCompatActivity activity , @StringRes int titleId ,
+                                      boolean center) {
+        return initToolbar(activity , titleId , center , true);
     }
 }
