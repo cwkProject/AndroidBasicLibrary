@@ -100,7 +100,9 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
      *
      * @throws Exception 处理过程抛出的异常
      */
-    protected abstract Result onFailedExtract(@NonNull JSONObject jsonResult) throws Exception;
+    protected Result onFailedExtract(@NonNull JSONObject jsonResult) throws Exception {
+        return null;
+    }
 
     /**
      * 当请求成功且返回结果不存在{@link #RESULT}标签的数据时被调用，

@@ -129,7 +129,9 @@ public abstract class SimpleUploadWorkModel<Parameters, Result> extends
      *
      * @throws Exception 处理过程抛出的异常
      */
-    protected abstract Result onFailedExtract(@NonNull JSONObject jsonResult) throws Exception;
+    protected Result onFailedExtract(@NonNull JSONObject jsonResult) throws Exception {
+        return null;
+    }
 
     /**
      * 提取或设置服务返回的失败结果消息<br>
