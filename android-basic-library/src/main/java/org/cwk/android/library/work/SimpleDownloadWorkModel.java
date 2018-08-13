@@ -36,8 +36,7 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
             }
 
             @Override
-            protected String onRequestMessage(boolean result , InputStream handleResult) throws
-                    Exception {
+            protected String onRequestSuccessMessage(InputStream handleResult) throws Exception {
                 return onDownloadSuccessMessage();
             }
         };
@@ -91,6 +90,7 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
 
     /**
      * 提取或设置下载成功的结果消息<br>
+     * 在{@link #onSuccessExtract(InputStream)}}之后被调<br>
      *
      * @return 消息字符串
      *

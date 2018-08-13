@@ -65,7 +65,12 @@ public abstract class SimpleDownloadDataModel<Parameters, Result> extends
     }
 
     @Override
-    protected String onRequestMessage(boolean result , InputStream handleResult) throws Exception {
+    protected final Result onRequestFailed(InputStream handleResult) throws Exception {
+        return super.onRequestFailed(handleResult);
+    }
+
+    @Override
+    protected String onRequestFailedMessage(InputStream handleResult) throws Exception {
         return null;
     }
 }

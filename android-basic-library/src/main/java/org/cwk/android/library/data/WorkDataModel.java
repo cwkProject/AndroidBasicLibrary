@@ -133,19 +133,20 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
             this.success = onRequestResult(handle);
             Log.v(logTag , "parse request result:" + this.success);
 
-            // 提取服务返回的消息
-            this.message = onRequestMessage(this.success , handle);
-            Log.v(logTag , "parse request message:" + this.message);
-
             if (this.success) {
                 // 服务请求成功回调
                 Log.v(logTag , "parse onRequestSuccess invoked");
                 this.result = onRequestSuccess(handle);
+                // 提取服务返回的消息
+                this.message = onRequestSuccessMessage(handle);
             } else {
                 // 服务请求失败回调
                 Log.v(logTag , "parse onRequestFailed invoked");
                 this.result = onRequestFailed(handle);
+                // 提取服务返回的消息
+                this.message = onRequestFailedMessage(handle);
             }
+            Log.v(logTag , "parse request message:" + this.message);
 
             return true;
         } catch (Exception e) {
@@ -225,26 +226,38 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
     protected abstract boolean onRequestResult(Handle handleResult) throws Exception;
 
     /**
-     * 提取服务返回的结果消息<br>
-     * 在{@link #onRequestResult(Object)}之后被调用
+     * 提取或设置服务返回的失败结果消息<br>
+     * 在{@link #onRequestFailed(Object)}之后被调<br>
+     * 且服务器返回的执行结果为失败{@link #isSuccess()}为false
      *
-     * @param result       服务请求执行结果，
-     *                     即{@link #onRequestResult(Object)}返回值
      * @param handleResult 二次处理结果集
      *
      * @return 消息字符串
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected abstract String onRequestMessage(boolean result , Handle handleResult) throws
-            Exception;
+    protected abstract String onRequestFailedMessage(Handle handleResult) throws Exception;
+
+    /**
+     * 提取或设置服务返回的成功结果消息<br>
+     * 在{@link #onRequestSuccess(Object)}之后被调<br>
+     * 且服务器返回的执行结果为成功{@link #isSuccess()}为true
+     *
+     * @param handleResult 二次处理结果集
+     *
+     * @return 消息字符串，默认为null
+     *
+     * @throws Exception 处理过程中可能出现的异常
+     */
+    protected String onRequestSuccessMessage(Handle handleResult) throws Exception {
+        return null;
+    }
 
     /**
      * 提取服务反馈的结果数据<br>
      * 在服务请求成功后调用，
      * 用于生成请求成功后的任务返回结果数据
-     * 即{@link #onRequestResult(Object)}返回值为true时，
-     * 在{@link #onRequestMessage(boolean , Object)}之后被调用，
+     * 即{@link #onRequestResult(Object)}返回值为true时被调用
      *
      * @param handleResult 二次处理结果集
      *
@@ -258,8 +271,7 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
      * 提取服务反馈的结果数据<br>
      * 在服务请求失败后调用，
      * 用于处理错误并返回失败时的默认结果数据
-     * 即{@link #onRequestResult(Object)}返回值为false时，
-     * 在{@link #onRequestMessage(boolean , Object)}之后被调用，
+     * 即{@link #onRequestResult(Object)}返回值为false时被调用
      *
      * @param handleResult 二次处理结果集
      *

@@ -58,6 +58,5 @@ public abstract class StandardDataModel<Value, Response, Handle, Parameters, Res
      * @param dataMap 要发送的数据
      */
     protected void onRequestParametersSign(Map<String, Value> dataMap) {
-
     }
 }

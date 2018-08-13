@@ -56,13 +56,6 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends Standard
     }
 
     @Override
-    protected final String onRequestMessage(boolean result , JSONObject handleResult) throws
-            Exception {
-        return result ? onRequestSuccessMessage(handleResult) : onRequestFailedMessage
-                (handleResult);
-    }
-
-    @Override
     protected final Result onRequestSuccess(JSONObject handleResult) throws Exception {
         return handleResult.isNull(RESULT) ? onDefaultData() : onExtractData(handleResult);
     }
@@ -102,32 +95,12 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends Standard
         return null;
     }
 
-    /**
-     * 提取或设置服务返回的失败结果消息<br>
-     * 在{@link #onRequestResult(Object)}之后被调<br>
-     * 且服务器返回的执行结果为失败{@link #isSuccess()}为false
-     *
-     * @param handleResult 二次处理结果集
-     *
-     * @return 消息字符串
-     *
-     * @throws Exception 处理过程中可能出现的异常
-     */
+    @Override
     protected String onRequestFailedMessage(JSONObject handleResult) throws Exception {
         return handleResult.optString("message");
     }
 
-    /**
-     * 提取或设置服务返回的成功结果消息<br>
-     * 在{@link #onRequestResult(Object)}之后被调<br>
-     * 且服务器返回的执行结果为成功{@link #isSuccess()}为true
-     *
-     * @param handleResult 二次处理结果集
-     *
-     * @return 消息字符串
-     *
-     * @throws Exception 处理过程中可能出现的异常
-     */
+    @Override
     protected String onRequestSuccessMessage(JSONObject handleResult) throws Exception {
         return handleResult.optString("message");
     }

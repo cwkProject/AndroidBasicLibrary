@@ -37,6 +37,12 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
                 return onSuccessExtract(jsonResult);
             }
 
+            @Override
+            protected Result onRequestFailed(JSONObject handleResult) throws Exception {
+                super.onRequestFailed(handleResult);
+                return onFailedExtract(handleResult);
+            }
+
             @SafeVarargs
             @Override
             protected final void onFillRequestParameters(@NonNull Map<String, String> dataMap ,
@@ -84,6 +90,19 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
     protected abstract Result onSuccessExtract(@NonNull JSONObject jsonResult) throws Exception;
 
     /**
+     * 当请求失败时设置一个特殊的返回值，
+     * 即{@link SimpleDataModel#onRequestResult(JSONObject)}返回false时被调用，
+     * 此时{@link SimpleDataModel#getErrorCode()}已经有值
+     *
+     * @param jsonResult 响应的完整json对象
+     *
+     * @return 处理后的任务传出结果
+     *
+     * @throws Exception 处理过程抛出的异常
+     */
+    protected abstract Result onFailedExtract(@NonNull JSONObject jsonResult) throws Exception;
+
+    /**
      * 当请求成功且返回结果不存在{@link #RESULT}标签的数据时被调用，
      * 即{@link #RESULT}为null时此方法用于装配默认结果数据，默认实现为null
      *
@@ -97,7 +116,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
 
     /**
      * 提取或设置服务返回的失败结果消息<br>
-     * 在{@link SimpleDataModel#onRequestResult(Object)}之后被调<br>
+     * 在{@link SimpleDataModel#onRequestFailed(JSONObject)}之后被调<br>
      * 且服务器返回的执行结果为失败{@link SimpleDataModel#isSuccess()}为false
      *
      * @param handleResult 二次处理结果集
@@ -106,13 +125,13 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected String onRequestFailedMessage(JSONObject handleResult) throws Exception {
+    protected String onRequestFailedMessage(@NonNull JSONObject handleResult) throws Exception {
         return handleResult.optString(MESSAGE);
     }
 
     /**
      * 提取或设置服务返回的成功结果消息<br>
-     * 在{@link SimpleDataModel#onRequestResult(Object)}之后被调<br>
+     * 在{@link SimpleDataModel#onRequestSuccess(JSONObject)}}之后被调<br>
      * 且服务器返回的执行结果为成功{@link SimpleDataModel#isSuccess()}为true
      *
      * @param handleResult 二次处理结果集
@@ -121,7 +140,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected String onRequestSuccessMessage(JSONObject handleResult) throws Exception {
+    protected String onRequestSuccessMessage(@NonNull JSONObject handleResult) throws Exception {
         return handleResult.optString(MESSAGE);
     }
 }
