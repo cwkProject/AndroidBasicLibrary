@@ -263,10 +263,11 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
      */
     private void onParseResult(boolean result , int code , Object response) {
         Log.v(TAG , "onParseResult result parse start");
+        DataModelHandle.setCode(mData , code);
         if (result) {
             // 解析数据
             //noinspection unchecked
-            if (DataModelHandle.parse(mData , code , response)) {
+            if (DataModelHandle.parse(mData , response)) {
                 // 解析成功
                 Log.v(TAG , "onParseResult result parse success onParseSuccess invoked");
                 // 解析成功回调
@@ -282,12 +283,18 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
                 // 解析失败回调
                 DataModelHandle.setMessage(mData , onParseFailed());
             }
-        } else {
+        } else if (code > 0) {
             // 网络请求失败
             Log.v(TAG , "onParseResult network request false onNetworkRequestFailed invoked");
 
             // 网络请求失败回调
             DataModelHandle.setMessage(mData , onNetworkRequestFailed());
+        } else {
+            // 网络连接失败
+            Log.v(TAG , "onParseResult network error onNetworkError invoked");
+
+            // 网络错误回调
+            DataModelHandle.setMessage(mData , onNetworkError());
         }
     }
 
@@ -417,14 +424,14 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
 
     /**
      * 服务器响应数据解析成功后调用，
-     * 即在{@link WorkDataModel#parse(int , Object)}返回true时调用
+     * 即在{@link WorkDataModel#parse(Object)}返回true时调用
      */
     protected void onParseSuccess() {
     }
 
     /**
      * 网络请求成功，服务器响应数据解析失败后调用，
-     * 即在{@link WorkDataModel#parse(int , Object)}返回false时调用，
+     * 即在{@link WorkDataModel#parse(Object)}返回false时调用，
      * 同时设置响应数据解析失败时的返回消息，
      * 即{@link WorkDataModel#getMessage()}的消息字段
      *
@@ -435,13 +442,24 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     }
 
     /**
-     * 网络请求失败时调用，
+     * 网络连接建立成功，但是请求失败时调用，即响应码不是200
      * 同时设置网络请求失败时的返回消息，
      * 即{@link WorkDataModel#getMessage()}的消息字段
      *
      * @return 消息内容，默认为null
      */
     protected String onNetworkRequestFailed() {
+        return null;
+    }
+
+    /**
+     * 网络连接建立失败时调用，即网络不可用
+     * 同时设置网络无效时的返回消息，
+     * 即{@link WorkDataModel#getMessage()}的消息字段
+     *
+     * @return 消息内容，默认为null
+     */
+    protected String onNetworkError() {
         return null;
     }
 }

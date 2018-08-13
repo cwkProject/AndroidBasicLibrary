@@ -37,15 +37,14 @@ public class DataModelHandle {
      * 执行任务数据模型解析
      *
      * @param dataModel  任务数据类
-     * @param code       网络请求响应码
      * @param response   网络请求响应数据
      * @param <Response> 网络请求响应数据类型
      *
      * @return true表示解析成功，false表示解析失败
      */
-    public static <Response> boolean parse(WorkDataModel<?, Response, ?, ?, ?> dataModel , int
-            code , Response response) {
-        return dataModel.parse(code , response);
+    public static <Response> boolean parse(WorkDataModel<?, Response, ?, ?, ?> dataModel ,
+                                           Response response) {
+        return dataModel.parse(response);
     }
 
     /**
@@ -56,5 +55,15 @@ public class DataModelHandle {
      */
     public static void setMessage(WorkDataModel<?, ?, ?, ?, ?> dataModel , String message) {
         dataModel.setMessage(message);
+    }
+
+    /**
+     * 设置http响应码
+     *
+     * @param dataModel 任务数据类
+     * @param code      http响应码
+     */
+    public static void setCode(WorkDataModel<?, ?, ?, ?, ?> dataModel , int code) {
+        dataModel.setResponseCode(code);
     }
 }

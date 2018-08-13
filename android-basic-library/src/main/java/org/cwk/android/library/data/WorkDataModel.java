@@ -110,15 +110,13 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
     /**
      * 解析传回的数据，只有当网络请求成功后才会执行
      *
-     * @param code     请求的响应码
      * @param response 要解析的数据
      *
      * @return 解析执行结果
      */
-    final boolean parse(int code , Response response) {
+    final boolean parse(Response response) {
         Log.v(logTag , "parse start");
         LogUtil.v(logTag , "parse response:" + response);
-        responseCode = code;
         if (!onCheckResponse(response)) {
             // 通信异常
             Log.d(logTag , "parse response error onParseFailed invoked");
@@ -167,6 +165,15 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
     final void setMessage(String message) {
         this.message = message;
         Log.v(logTag , "setMessage message:" + this.message);
+    }
+
+    /**
+     * 从外部设置http响应码
+     *
+     * @param code http响应码
+     */
+    final void setResponseCode(int code) {
+        this.responseCode = code;
     }
 
     /**

@@ -32,7 +32,7 @@ public interface IDataModel<Parameters, Result> {
     /**
      * 获取本次http请求返回的响应码
      *
-     * @return http响应码，0表示网络未建立连接
+     * @return http响应码，0表示网络连接建立失败
      */
     int getCode();
 
