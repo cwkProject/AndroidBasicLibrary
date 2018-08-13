@@ -38,7 +38,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
             }
 
             @Override
-            protected Result onRequestFailed(JSONObject handleResult) throws Exception {
+            protected Result onRequestFailed(@NonNull JSONObject handleResult) throws Exception {
                 super.onRequestFailed(handleResult);
                 return onFailedExtract(handleResult);
             }
@@ -56,12 +56,14 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
             }
 
             @Override
-            protected String onRequestFailedMessage(JSONObject handleResult) throws Exception {
+            protected String onRequestFailedMessage(@NonNull JSONObject handleResult) throws
+                    Exception {
                 return SimpleWorkModel.this.onRequestFailedMessage(handleResult);
             }
 
             @Override
-            protected String onRequestSuccessMessage(JSONObject handleResult) throws Exception {
+            protected String onRequestSuccessMessage(@NonNull JSONObject handleResult) throws
+                    Exception {
                 return SimpleWorkModel.this.onRequestSuccessMessage(handleResult);
             }
         };

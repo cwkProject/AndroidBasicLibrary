@@ -34,20 +34,20 @@ public abstract class SimpleDataModel<Parameters, Result> extends JsonDataModel<
     }
 
     @Override
-    protected boolean onRequestResult(JSONObject handleResult) throws Exception {
+    protected boolean onRequestResult(@NonNull JSONObject handleResult) throws Exception {
         // 得到执行结果
         return handleResult.getBoolean("state");
     }
 
     @Override
-    protected final Result onRequestSuccess(JSONObject handleResult) throws Exception {
+    protected final Result onRequestSuccess(@NonNull JSONObject handleResult) throws Exception {
         return handleResult.isNull(RESULT) ? onDefaultData() : onExtractData(handleResult);
     }
 
     @Override
     @CallSuper
-    protected Result onRequestFailed(JSONObject handleResult) throws Exception {
-        if (handleResult != null && !handleResult.isNull("errorCode")) {
+    protected Result onRequestFailed(@NonNull JSONObject handleResult) throws Exception {
+        if (!handleResult.isNull("errorCode")) {
             errorCode = handleResult.getInt("errorCode");
         }
 
@@ -80,12 +80,12 @@ public abstract class SimpleDataModel<Parameters, Result> extends JsonDataModel<
     }
 
     @Override
-    protected String onRequestFailedMessage(JSONObject handleResult) throws Exception {
+    protected String onRequestFailedMessage(@NonNull JSONObject handleResult) throws Exception {
         return handleResult.optString("message");
     }
 
     @Override
-    protected String onRequestSuccessMessage(JSONObject handleResult) throws Exception {
+    protected String onRequestSuccessMessage(@NonNull JSONObject handleResult) throws Exception {
         return handleResult.optString("message");
     }
 

@@ -36,7 +36,8 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
             }
 
             @Override
-            protected String onRequestSuccessMessage(InputStream handleResult) throws Exception {
+            protected String onRequestSuccessMessage(@NonNull InputStream handleResult) throws
+                    Exception {
                 return onDownloadSuccessMessage();
             }
         };

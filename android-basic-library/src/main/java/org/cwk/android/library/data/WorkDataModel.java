@@ -223,7 +223,7 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected abstract boolean onRequestResult(Handle handleResult) throws Exception;
+    protected abstract boolean onRequestResult(@NonNull Handle handleResult) throws Exception;
 
     /**
      * 提取或设置服务返回的失败结果消息<br>
@@ -236,7 +236,7 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected abstract String onRequestFailedMessage(Handle handleResult) throws Exception;
+    protected abstract String onRequestFailedMessage(@NonNull Handle handleResult) throws Exception;
 
     /**
      * 提取或设置服务返回的成功结果消息<br>
@@ -249,7 +249,7 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected String onRequestSuccessMessage(Handle handleResult) throws Exception {
+    protected String onRequestSuccessMessage(@NonNull Handle handleResult) throws Exception {
         return null;
     }
 
@@ -265,7 +265,7 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected abstract Result onRequestSuccess(Handle handleResult) throws Exception;
+    protected abstract Result onRequestSuccess(@NonNull Handle handleResult) throws Exception;
 
     /**
      * 提取服务反馈的结果数据<br>
@@ -279,7 +279,7 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
      *
      * @throws Exception 处理过程中可能出现的异常
      */
-    protected Result onRequestFailed(Handle handleResult) throws Exception {
+    protected Result onRequestFailed(@NonNull Handle handleResult) throws Exception {
         return null;
     }
 }

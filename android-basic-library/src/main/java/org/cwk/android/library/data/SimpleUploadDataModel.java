@@ -2,6 +2,7 @@ package org.cwk.android.library.data;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import org.json.JSONObject;
 
@@ -36,7 +37,7 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends Standard
 
     @Override
     protected final boolean onCheckResponse(String response) {
-        return response != null;
+        return !TextUtils.isEmpty(response);
     }
 
     @Override
@@ -50,20 +51,20 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends Standard
     private int errorCode = 0;
 
     @Override
-    protected boolean onRequestResult(JSONObject handleResult) throws Exception {
+    protected boolean onRequestResult(@NonNull JSONObject handleResult) throws Exception {
         // 得到执行结果
         return handleResult.getBoolean("state");
     }
 
     @Override
-    protected final Result onRequestSuccess(JSONObject handleResult) throws Exception {
+    protected final Result onRequestSuccess(@NonNull JSONObject handleResult) throws Exception {
         return handleResult.isNull(RESULT) ? onDefaultData() : onExtractData(handleResult);
     }
 
     @Override
     @CallSuper
-    protected Result onRequestFailed(JSONObject handleResult) throws Exception {
-        if (handleResult != null && !handleResult.isNull("errorCode")) {
+    protected Result onRequestFailed(@NonNull JSONObject handleResult) throws Exception {
+        if (!handleResult.isNull("errorCode")) {
             errorCode = handleResult.getInt("errorCode");
         }
 
@@ -96,12 +97,12 @@ public abstract class SimpleUploadDataModel<Parameters, Result> extends Standard
     }
 
     @Override
-    protected String onRequestFailedMessage(JSONObject handleResult) throws Exception {
+    protected String onRequestFailedMessage(@NonNull JSONObject handleResult) throws Exception {
         return handleResult.optString("message");
     }
 
     @Override
-    protected String onRequestSuccessMessage(JSONObject handleResult) throws Exception {
+    protected String onRequestSuccessMessage(@NonNull JSONObject handleResult) throws Exception {
         return handleResult.optString("message");
     }
 

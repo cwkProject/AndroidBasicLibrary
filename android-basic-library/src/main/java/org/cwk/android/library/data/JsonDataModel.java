@@ -1,5 +1,7 @@
 package org.cwk.android.library.data;
 
+import android.text.TextUtils;
+
 import org.json.JSONObject;
 import org.cwk.android.library.global.ApplicationAttribute;
 
@@ -31,7 +33,7 @@ public abstract class JsonDataModel<Parameters, Result> extends StandardDataMode
 
     @Override
     protected boolean onCheckResponse(String response) {
-        return response != null;
+        return !TextUtils.isEmpty(response);
     }
 
     @Override
