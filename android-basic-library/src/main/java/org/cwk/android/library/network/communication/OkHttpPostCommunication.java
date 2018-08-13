@@ -2,7 +2,6 @@ package org.cwk.android.library.network.communication;
 
 import android.util.Log;
 
-import org.cwk.android.library.network.util.NetworkCallback;
 import org.cwk.android.library.network.util.RequestBodyBuilder;
 
 import java.io.IOException;
@@ -43,9 +42,8 @@ public class OkHttpPostCommunication extends OkHttpCommunication<Map<String, Str
     }
 
     @Override
-    protected void onAsyncSuccess(ResponseBody body , NetworkCallback<String> callback) throws
-            IOException {
-        callback.onFinish(true , code , body.string());
+    protected String onAsyncSuccess(ResponseBody body) throws IOException {
+        return body.string();
     }
 
     @Override

@@ -317,7 +317,7 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
                         ResponseBody body = response.body();
 
                         // 处理结果
-                        onAsyncSuccess(body , callback);
+                        callback.onFinish(true , code , onAsyncSuccess(body));
 
                         // 关闭流
                         if (body != null) {
@@ -325,7 +325,7 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
                         }
                     } else {
                         Log.v(logTag , "request failed");
-                        callback.onFinish(false , 0 , null);
+                        callback.onFinish(false , code , null);
                     }
                 }
             }
@@ -335,11 +335,11 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
     /**
      * 异步请求成功后的执行，用于结果处理
      *
-     * @param body     响应体
-     * @param callback 回调
+     * @param body 响应体
+     *
+     * @return 正真需要的响应数据
      */
-    protected abstract void onAsyncSuccess(ResponseBody body , NetworkCallback<ResponseType>
-            callback) throws IOException;
+    protected abstract ResponseType onAsyncSuccess(ResponseBody body) throws IOException;
 
     @Override
     public void cancel() {

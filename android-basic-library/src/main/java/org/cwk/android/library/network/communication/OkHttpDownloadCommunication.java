@@ -2,7 +2,6 @@ package org.cwk.android.library.network.communication;
 
 import android.util.Log;
 
-import org.cwk.android.library.network.util.NetworkCallback;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
 import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.ProgressResponseBody;
@@ -77,9 +76,8 @@ public class OkHttpDownloadCommunication extends OkHttpCommunication<Map<String,
     }
 
     @Override
-    protected void onAsyncSuccess(ResponseBody body , NetworkCallback<InputStream> callback)
-            throws IOException {
-        callback.onFinish(true , code , body.byteStream());
+    protected InputStream onAsyncSuccess(ResponseBody body) throws IOException {
+        return body.byteStream();
     }
 
     @Override

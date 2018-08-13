@@ -2,9 +2,8 @@ package org.cwk.android.library.network.communication;
 
 import android.util.Log;
 
-import org.cwk.android.library.network.util.NetworkCallback;
-import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.NetworkRefreshProgressHandler;
+import org.cwk.android.library.network.util.OnNetworkProgressListener;
 import org.cwk.android.library.network.util.ProgressRequestBody;
 import org.cwk.android.library.network.util.RequestBodyBuilder;
 
@@ -56,9 +55,8 @@ public class OkHttpUploadCommunication extends OkHttpCommunication<Map<String, O
     }
 
     @Override
-    protected void onAsyncSuccess(ResponseBody body , NetworkCallback<String> callback) throws
-            IOException {
-        callback.onFinish(true , code , body.string());
+    protected String onAsyncSuccess(ResponseBody body) throws IOException {
+        return body.string();
     }
 
     @Override
