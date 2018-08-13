@@ -23,6 +23,7 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
      */
     protected static final String RESULT = "result";
 
+    @NonNull
     @Override
     protected SimpleDataModel<Parameters, Result> onCreateDataModel() {
         return new SimpleDataModel<Parameters, Result>(TAG) {

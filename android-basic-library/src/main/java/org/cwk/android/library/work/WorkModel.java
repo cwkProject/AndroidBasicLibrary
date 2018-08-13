@@ -71,19 +71,20 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
 
         if (!cancelMark && next) {
             // 执行核心任务
-            if (!onDoWork()) {
-                // 任务执行失败
+            onAsyncDoWork();
+        } else {
+            if (!cancelMark) {
                 // 执行后继任务
                 onStopWork();
-
-                if (!cancelMark) {
-                    // 最后执行
-                    Log.v(TAG , "onFinish invoke");
-                    onFinish();
-                }
-
-                Log.v(TAG , "work end");
             }
+
+            if (!cancelMark) {
+                // 最后执行
+                Log.v(TAG , "onFinish invoke");
+                onFinish();
+            }
+
+            Log.v(TAG , "work end");
         }
     }
 
@@ -104,15 +105,15 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
 
         if (!cancelMark && next) {
             // 执行核心任务
-            onDoWork();
+            onSyncDoWork();
         }
 
-        if (!cancelMark && next) {
+        if (!cancelMark) {
             // 执行后继任务
             onStopWork();
         }
 
-        if (!cancelMark && next) {
+        if (!cancelMark) {
             // 最后执行
             Log.v(TAG , "onFinish invoke");
             onFinish();
@@ -143,7 +144,6 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
 
     /**
      * 任务启动前置方法<br>
-     * 在{@link #onDoWork()}之前被调用，
      * 运行于当前线程
      *
      * @param parameters 任务传入参数
@@ -153,6 +153,9 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     @SuppressWarnings("unchecked")
     @CallSuper
     protected boolean onStartWork(Parameters... parameters) {
+        // 创建数据模型
+        mData = onCreateDataModel();
+
         // 校验参数
         if (!onCheckParameters(parameters)) {
             // 数据异常
@@ -164,9 +167,6 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
         }
 
         mParameters = parameters;
-
-        // 创建数据模型
-        mData = onCreateDataModel();
 
         DataModelHandle.setParams(mData , mParameters);
 
@@ -188,56 +188,67 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     }
 
     /**
-     * 任务逻辑核心方法<br>
+     * 异步执行任务逻辑核心方法<br>
      * 任务主要逻辑应该在该方法中被实现，
-     * 并且方法返回任务执行结果。
-     *
-     * @return 执行结果
+     * 并且任务执行结束后在内部启动后继任务{@link #onStopWork()}和{@link #onFinish()}。
      */
     @SuppressWarnings("unchecked")
-    private boolean onDoWork() {
+    private void onAsyncDoWork() {
         if (!cancelMark) {
             Log.v(TAG , "onDoWork invoked");
 
             // 设置请求地址
             communication.setTaskName(onTaskUri());
 
-            // 进入同步异步请求分支
-            if (isAsync) {
-                // 异步分支
+            // 发送请求
+            //noinspection unchecked
+            communication.request(DataModelHandle.serialization(mData) , (result , code ,
+                                                                          response) -> {
+                if (!cancelMark) {
+                    // 解析响应数据
+                    onParseResult(result , code , response);
+                }
 
-                // 发送请求
-                //noinspection unchecked
-                communication.request(DataModelHandle.serialization(mData) , (result , code ,
-                                                                              response) -> {
-                    if (!cancelMark) {
-                        // 解析响应数据
-                        onParseResult(result , code , response);
+                if (!cancelMark) {
+                    // 执行后继任务
+                    onStopWork();
+                }
 
-                        // 执行后继任务
-                        onStopWork();
-                    }
-                });
+                if (!cancelMark) {
+                    // 最后执行
+                    Log.v(TAG , "onFinish invoke");
+                    onFinish();
+                }
 
-                // 表示成功发送请求，任务被受理
-                return true;
-            } else {
-                // 同步分支
+                Log.v(TAG , "work end");
+            });
+        }
+    }
 
-                // 发送请求
-                //noinspection unchecked
-                communication.request(DataModelHandle.serialization(mData));
+    /**
+     * 同步执行任务逻辑核心方法<br>
+     * 任务主要逻辑应该在该方法中被实现
+     */
+    @SuppressWarnings("unchecked")
+    private void onSyncDoWork() {
+        if (!cancelMark) {
+            Log.v(TAG , "onAsyncDoWork invoked");
 
+            // 设置请求地址
+            communication.setTaskName(onTaskUri());
+
+            // 发送请求
+            //noinspection unchecked
+            communication.request(DataModelHandle.serialization(mData));
+
+            if (!cancelMark) {
                 // 解析响应数据
-                boolean success = onParseResult(communication.isSuccessful() , communication.code
-                        () , communication.response());
-
-                // 关闭网络
-                communication.close();
-                return success;
+                onParseResult(communication.isSuccessful() , communication.code() , communication
+                        .response());
             }
-        } else {
-            return false;
+
+            // 关闭网络
+            communication.close();
         }
     }
 
@@ -247,41 +258,46 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
      * @param result   请求结果
      * @param code     http响应码
      * @param response 响应数据
-     *
-     * @return 任务执行结果，true表示成功
      */
-    private boolean onParseResult(boolean result , int code , Object response) {
+    private void onParseResult(boolean result , int code , Object response) {
         Log.v(TAG , "onParseResult result parse start");
-        // 解析数据
-        //noinspection unchecked
-        if (result && DataModelHandle.parse(mData , code , response)) {
-            // 解析成功
-            Log.v(TAG , "onParseResult result parse success");
-            Log.v(TAG , "onParseSuccess invoked");
-            // 解析成功回调
-            onParseSuccess();
-            if (mData.isSuccess()) {
-                // 设置请求成功后返回的数据
-                Log.v(TAG , "work success");
-                return true;
+        if (result) {
+            // 解析数据
+            //noinspection unchecked
+            if (DataModelHandle.parse(mData , code , response)) {
+                // 解析成功
+                Log.v(TAG , "onParseResult result parse success");
+                Log.v(TAG , "onParseSuccess invoked");
+                // 解析成功回调
+                onParseSuccess();
+                if (mData.isSuccess()) {
+                    Log.v(TAG , "work success");
+                } else {
+                    Log.v(TAG , "work failed");
+                }
             } else {
-                // 设置请求失败后返回的数据
-                Log.v(TAG , "work failed");
-                return false;
+                // 解析失败
+                Log.v(TAG , "onParseResult result parse failed");
+                Log.v(TAG , "onParseFailed invoked");
+                // 解析失败回调
+                onParseFailed();
             }
         } else {
-            // 解析失败
-            Log.v(TAG , "onParseResult result parse failed");
-            Log.v(TAG , "onParseFailed invoked");
-            // 解析失败回调
-            onParseFailed();
-            return false;
+            // 网络请求失败
+            Log.v(TAG , "onParseResult network request false");
+
+            // 设置网络请求失败时的消息
+            Log.v(TAG , "onNetworkRequestFailedMessage invoked");
+            DataModelHandle.setMessage(mData , onNetworkRequestFailedMessage());
+
+            Log.v(TAG , "onNetworkRequestFailed invoked");
+            // 网络请求失败回调
+            onNetworkRequestFailed();
         }
     }
 
     /**
      * 任务完成后置方法<br>
-     * 在{@link #onDoWork()}之后被调用
      */
     @CallSuper
     protected void onStopWork() {
@@ -345,6 +361,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
      *
      * @return 参数设置完毕后的数据模型对象
      */
+    @NonNull
     protected abstract DataModel onCreateDataModel();
 
     /**
@@ -353,7 +370,8 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
      * 需要子类重写检测规则<br>
      * 检测成功任务才会被正常执行，
      * 如果检测失败则{@link #onParameterError(Object[])}会被调用，
-     * 后续其他生命周期将不会再执行，任务会直接被取消，不会有任何返回值
+     * 且后续网络请求任务不再执行，
+     * 任务任然可以正常返回并执行生命周期{@link #onFailed()},{@link #onFinish()}和异步回调
      *
      * @param parameters 任务传入参数
      *
@@ -367,12 +385,16 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     /**
      * 参数检测不合法时调用，
      * 即{@link #onCheckParameters(Object[])}返回false时被调用，
-     * 且后续任务不再执行
+     * 且后续网络请求任务不再执行，
+     * 但是任务任然可以正常返回并执行生命周期{@link #onFailed()},{@link #onFinish()}和异步回调
      *
      * @param parameters 任务传入参数
+     *
+     * @return 给{@link WorkDataModel#getMessage()}设置的错误消息内容
      */
     @SuppressWarnings("unchecked")
-    protected void onParameterError(Parameters... parameters) {
+    protected String onParameterError(Parameters... parameters) {
+        return null;
     }
 
     /**
@@ -406,9 +428,26 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     }
 
     /**
-     * 服务器响应数据解析失败后调用，
+     * 网络请求成功，服务器响应数据解析失败后调用，
      * 即在{@link WorkDataModel#parse(int , Object)}返回false时调用
      */
     protected void onParseFailed() {
+    }
+
+    /**
+     * 网络请求失败时调用，此后不会执行{@link #onParseFailed()}
+     */
+    protected void onNetworkRequestFailed() {
+    }
+
+    /**
+     * 设置网络请求失败时的返回消息，
+     * 即{@link WorkDataModel#getMessage()}的消息字段，
+     * 在@{@link #onNetworkRequestFailed()}之前被调用
+     *
+     * @return 消息内容，默认为null
+     */
+    protected String onNetworkRequestFailedMessage() {
+        return null;
     }
 }

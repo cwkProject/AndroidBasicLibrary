@@ -24,6 +24,7 @@ public abstract class SimpleUploadWorkModel<Parameters, Result> extends
      */
     protected static final String RESULT = "result";
 
+    @NonNull
     @Override
     protected SimpleUploadDataModel<Parameters, Result> onCreateDataModel() {
         return new SimpleUploadDataModel<Parameters, Result>(TAG) {

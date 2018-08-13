@@ -67,6 +67,32 @@ public abstract class SimpleDownloadDataModel<Parameters, Result> extends
     @Override
     protected final String onRequestMessage(boolean result , InputStream handleResult) throws
             Exception {
+        return result ? onRequestSuccessMessage() : onRequestFailedMessage();
+    }
+
+    /**
+     * 提取或设置服务返回的失败结果消息<br>
+     * 在{@link #onRequestResult(Object)}之后被调<br>
+     * 且服务器返回的执行结果为失败{@link #isSuccess()}为false
+     *
+     * @return 消息字符串
+     *
+     * @throws Exception 处理过程中可能出现的异常
+     */
+    protected String onRequestFailedMessage() throws Exception {
+        return null;
+    }
+
+    /**
+     * 提取或设置服务返回的成功结果消息<br>
+     * 在{@link #onRequestResult(Object)}之后被调<br>
+     * 且服务器返回的执行结果为成功{@link #isSuccess()}为true
+     *
+     * @return 消息字符串
+     *
+     * @throws Exception 处理过程中可能出现的异常
+     */
+    protected String onRequestSuccessMessage() throws Exception {
         return null;
     }
 }

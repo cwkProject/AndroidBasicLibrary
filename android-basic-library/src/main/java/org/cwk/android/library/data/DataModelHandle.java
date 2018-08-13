@@ -47,4 +47,14 @@ public class DataModelHandle {
             code , Response response) {
         return dataModel.parse(code , response);
     }
+
+    /**
+     * 设置结果消息，通常用于设置网络请求失败时的消息和覆盖自解析生成的消息
+     *
+     * @param dataModel 任务数据类
+     * @param message   消息内容
+     */
+    public static void setMessage(WorkDataModel<?, ?, ?, ?, ?> dataModel , String message) {
+        dataModel.setMessage(message);
+    }
 }

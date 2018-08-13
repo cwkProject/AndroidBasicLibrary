@@ -18,6 +18,7 @@ import java.util.Map;
  **/
 public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
         StandardWorkModel<Parameters, SimpleDownloadDataModel<Parameters, Result>> {
+    @NonNull
     @Override
     protected SimpleDownloadDataModel<Parameters, Result> onCreateDataModel() {
         return new SimpleDownloadDataModel<Parameters, Result>(TAG) {

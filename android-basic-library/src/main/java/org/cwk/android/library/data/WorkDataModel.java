@@ -123,7 +123,7 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
             // 通信异常
             Log.d(logTag , "parse response error");
             Log.v(logTag , "parse onParseFailed invoked");
-            onParseFailed();
+            this.message = onParseFailed();
             return false;
         }
 
@@ -156,11 +156,20 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
         } catch (Exception e) {
             Log.e(logTag , "parse error" , e);
             Log.v(logTag , "parse onParseFailed invoked");
-            onParseFailed();
+            this.message = onParseFailed();
             return false;
         } finally {
             Log.v(logTag , "parse end");
         }
+    }
+
+    /**
+     * 从外部设置结果消息，通常用于设置网络请求失败时的消息和覆盖自解析生成的消息
+     *
+     * @param message 消息内容
+     */
+    final void setMessage(String message) {
+        this.message = message;
     }
 
     /**
@@ -183,8 +192,11 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
 
     /**
      * 解析失败时调用，即{@link #parse}出现异常时调用
+     *
+     * @return 消息字符串，用于显示协议解析失败时的提示信息
      */
-    protected void onParseFailed() {
+    protected String onParseFailed() {
+        return null;
     }
 
     /**
