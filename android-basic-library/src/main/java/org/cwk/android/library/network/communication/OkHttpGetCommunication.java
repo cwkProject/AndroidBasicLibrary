@@ -30,14 +30,14 @@ public class OkHttpGetCommunication extends OkHttpCommunication<Map<String, Stri
     }
 
     @Override
-    protected void onCreateRequest(Request.Builder builder ,Map<String, String> sendData) {
+    protected void onCreateRequest(Request.Builder builder , Map<String, String> sendData) {
 
         // 拼接参数
         String params = RequestBodyBuilder.onBuildParameter(logTag , sendData , encoded);
 
         // 最终请求地址
         String finalUrl = params.length() == 0 ? url : url + "?" + params;
-        Log.v(logTag , "final url is " + finalUrl);
+        Log.v(logTag , "final url:" + finalUrl);
 
         builder.url(finalUrl);
     }

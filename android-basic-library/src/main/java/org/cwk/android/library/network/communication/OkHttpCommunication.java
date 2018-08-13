@@ -99,7 +99,7 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
      * @param encoded 编码字符串，默认为UTF-8
      */
     public void setEncoded(String encoded) {
-        Log.v(logTag , "encoded is " + encoded);
+        Log.v(logTag , "encoded:" + encoded);
         this.encoded = encoded;
     }
 
@@ -120,13 +120,13 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
     @Override
     public void setTaskName(String url) {
         this.url = url;
-        Log.v(logTag , "url is " + url);
+        Log.v(logTag , "url:" + url);
     }
 
     @Override
     public void setRetryTimes(int times) {
         this.retryTimes = times;
-        Log.v(logTag , "retryTimes is " + times);
+        Log.v(logTag , "retryTimes:" + times);
     }
 
     @Override
@@ -160,14 +160,13 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
             this.code = response.code();
             String message = response.message();
 
-            Log.v(logTag , "response code is " + code);
-            Log.v(logTag , "response message is " + message);
+            Log.v(logTag , "response code:" + code + "  message:" + message);
 
             if (response.isSuccessful()) {
-                Log.v(logTag , "request is success");
+                Log.v(logTag , "request success");
                 this.response = response.body();
             } else {
-                Log.v(logTag , "request is failed");
+                Log.v(logTag , "request failed");
                 this.response = null;
             }
         } catch (IOException e) {
@@ -265,7 +264,7 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
 
     @Override
     public void request(RequestType sendData , final NetworkCallback<ResponseType> callback) {
-        Log.v(logTag + "request" , "request start");
+        Log.v(logTag , "request start");
 
         if (url == null || (!url.trim().toLowerCase().startsWith("http://") && !url.trim()
                 .toLowerCase().startsWith("https://"))) {
@@ -313,7 +312,7 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
 
                 if (callback != null) {
                     if (response.isSuccessful()) {
-                        Log.v(logTag , "request is success");
+                        Log.v(logTag , "request success");
 
                         ResponseBody body = response.body();
 
@@ -325,7 +324,7 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
                             body.close();
                         }
                     } else {
-                        Log.v(logTag , "request is failed");
+                        Log.v(logTag , "request failed");
                         callback.onFinish(false , 0 , null);
                     }
                 }

@@ -41,7 +41,7 @@ public class RequestBodyBuilder {
      * @return 拼接完成的字符串
      */
     @NonNull
-    public static String onBuildParameter(String logTag, Map<String, String> sendData, String
+    public static String onBuildParameter(String logTag , Map<String, String> sendData , String
             encoded) {
         if (encoded == null) {
             encoded = CHARSET;
@@ -54,18 +54,18 @@ public class RequestBodyBuilder {
             // 遍历sendData集合并加入请求参数对象
             if (sendData != null && !sendData.isEmpty()) {
                 int count = sendData.size();
-                Log.v(logTag, "onBuildParameter sendData count is " + count);
+                Log.v(logTag , "onBuildParameter sendData count:" + count);
 
                 // 遍历并追加参数
                 for (Map.Entry<String, String> dataEntry : sendData.entrySet()) {
 
-                    Log.v(logTag, "parameter is " + dataEntry.getKey() + " = " + dataEntry
-                            .getValue());
+                    Log.v(logTag , "parameter:" + dataEntry.getKey() + " = " + dataEntry.getValue
+                            ());
 
                     if (dataEntry.getValue() != null) {
                         params.append(dataEntry.getKey());
                         params.append('=');
-                        params.append(URLEncoder.encode(dataEntry.getValue(), encoded));
+                        params.append(URLEncoder.encode(dataEntry.getValue() , encoded));
                         params.append('&');
                     }
                 }
@@ -75,7 +75,7 @@ public class RequestBodyBuilder {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            Log.e(logTag, "URLEncoder error", e);
+            Log.e(logTag , "URLEncoder error" , e);
         }
         return params.toString();
     }
@@ -89,8 +89,8 @@ public class RequestBodyBuilder {
      *
      * @return 装配好的表单
      */
-    public static RequestBody onBuildPostForm(String logTag, Map<String, String> sendData, String
-            encoded) {
+    public static RequestBody onBuildPostForm(String logTag , Map<String, String> sendData ,
+                                              String encoded) {
         if (encoded == null) {
             encoded = CHARSET;
         }
@@ -100,14 +100,14 @@ public class RequestBodyBuilder {
         // 遍历sendData集合并加入请求参数对象
         if (sendData != null && !sendData.isEmpty()) {
             int count = sendData.size();
-            Log.v(logTag, "onBuildPostForm sendData count is " + count);
+            Log.v(logTag , "onBuildPostForm sendData count:" + count);
 
             // 遍历并追加参数
             for (Map.Entry<String, String> dataEntry : sendData.entrySet()) {
-                Log.v(logTag, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
+                Log.v(logTag , "parameter:" + dataEntry.getKey() + " = " + dataEntry.getValue());
                 if (dataEntry.getValue() != null) {
                     // 加入表单
-                    builder.add(dataEntry.getKey(), dataEntry.getValue());
+                    builder.add(dataEntry.getKey() , dataEntry.getValue());
                 }
             }
         }
@@ -123,24 +123,25 @@ public class RequestBodyBuilder {
      *
      * @return 装配好的表单
      */
-    public static RequestBody onBuildUploadForm(String logTag, Map<String, Object> sendData) {
+    public static RequestBody onBuildUploadForm(String logTag , Map<String, Object> sendData) {
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
         // 遍历sendData集合并加入请求参数对象
         if (sendData != null && !sendData.isEmpty()) {
             int count = sendData.size();
-            Log.v(logTag, "onBuildUploadForm sendData count is " + count);
+            Log.v(logTag , "onBuildUploadForm sendData count:" + count);
 
             // 遍历并追加参数
             for (Map.Entry<String, Object> dataEntry : sendData.entrySet()) {
-                Log.v(logTag, "parameter is " + dataEntry.getKey() + " = " + dataEntry.getValue());
+                Log.v(logTag , "parameter:" + dataEntry.getKey() + " = " + dataEntry.getValue());
 
                 if (dataEntry.getValue() instanceof FileInfo) {
                     // 参数是文件包装类型
                     FileInfo value = (FileInfo) dataEntry.getValue();
                     // 加入表单
-                    builder.addFormDataPart(dataEntry.getKey(), value.getFileName(), RequestBody
-                            .create(MediaType.parse(value.getMimeType()), value.getFile()));
+                    builder.addFormDataPart(dataEntry.getKey() , value.getFileName() ,
+                            RequestBody.create(MediaType.parse(value.getMimeType()) , value
+                                    .getFile()));
                     continue;
                 }
 
@@ -148,8 +149,8 @@ public class RequestBodyBuilder {
                     // 参数是文件类型
                     File value = (File) dataEntry.getValue();
                     // 加入表单
-                    builder.addFormDataPart(dataEntry.getKey(), value.getName(), RequestBody
-                            .create(MediaType.parse(MIMEUtil.getMimeType(value)), value));
+                    builder.addFormDataPart(dataEntry.getKey() , value.getName() , RequestBody
+                            .create(MediaType.parse(MIMEUtil.getMimeType(value)) , value));
                     continue;
                 }
 
@@ -157,8 +158,8 @@ public class RequestBodyBuilder {
                 if (dataEntry.getValue() != null) {
                     // 参数不为空
                     // 加入表单
-                    builder.addFormDataPart(dataEntry.getKey(), String.valueOf(dataEntry.getValue
-                            ()));
+                    builder.addFormDataPart(dataEntry.getKey() , String.valueOf(dataEntry
+                            .getValue()));
                 }
             }
         }
@@ -174,18 +175,18 @@ public class RequestBodyBuilder {
      *
      * @return 装配好的表单
      */
-    public static RequestBody onBuildUploadStream(String logTag, String path) {
+    public static RequestBody onBuildUploadStream(String logTag , String path) {
         if (path != null) {
             File file = new File(path);
 
             if (file.exists()) {
-                Log.v(logTag, "onBuildUploadStream sendStream is " + path);
-                return RequestBody.create(MediaType.parse("application/octet-stream"), file);
+                Log.v(logTag , "onBuildUploadStream sendStream:" + path);
+                return RequestBody.create(MediaType.parse("application/octet-stream") , file);
             } else {
-                Log.d(logTag, "no file " + path);
+                Log.d(logTag , "no file " + path);
             }
         }
 
-        return RequestBody.create(MediaType.parse("application/octet-stream"), new byte[]{});
+        return RequestBody.create(MediaType.parse("application/octet-stream") , new byte[]{});
     }
 }

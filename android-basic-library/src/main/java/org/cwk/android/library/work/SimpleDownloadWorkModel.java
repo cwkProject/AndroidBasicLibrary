@@ -34,6 +34,12 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
                                                          @NonNull Parameters... parameters) {
                 onFill(dataMap , parameters);
             }
+
+            @Override
+            protected String onRequestMessage(boolean result , InputStream handleResult) throws
+                    Exception {
+                return onDownloadSuccessMessage();
+            }
         };
     }
 
@@ -82,4 +88,15 @@ public abstract class SimpleDownloadWorkModel<Parameters, Result> extends
      */
     @SuppressWarnings("unchecked")
     protected abstract String onTaskUri(@NonNull Parameters... parameters);
+
+    /**
+     * 提取或设置下载成功的结果消息<br>
+     *
+     * @return 消息字符串
+     *
+     * @throws Exception 处理过程中可能出现的异常
+     */
+    protected String onDownloadSuccessMessage() throws Exception {
+        return null;
+    }
 }

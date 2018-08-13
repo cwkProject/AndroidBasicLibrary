@@ -161,7 +161,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
             // 数据异常
             Log.d(TAG , "onStartWork parameters is error");
             // 执行异常回调
-            onParameterError(parameters);
+            DataModelHandle.setMessage(mData , onParameterError(parameters));
 
             return false;
         }
@@ -181,6 +181,8 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
                 onCreateCommunication(builder);
 
                 communication = builder.build();
+            } else {
+                Log.v(TAG , "onStartWork communication by intercepted");
             }
         }
 
@@ -195,7 +197,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     @SuppressWarnings("unchecked")
     private void onAsyncDoWork() {
         if (!cancelMark) {
-            Log.v(TAG , "onDoWork invoked");
+            Log.v(TAG , "onAsyncDoWork invoked");
 
             // 设置请求地址
             communication.setTaskName(onTaskUri());
@@ -232,7 +234,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     @SuppressWarnings("unchecked")
     private void onSyncDoWork() {
         if (!cancelMark) {
-            Log.v(TAG , "onAsyncDoWork invoked");
+            Log.v(TAG , "onSyncDoWork invoked");
 
             // 设置请求地址
             communication.setTaskName(onTaskUri());
@@ -266,8 +268,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
             //noinspection unchecked
             if (DataModelHandle.parse(mData , code , response)) {
                 // 解析成功
-                Log.v(TAG , "onParseResult result parse success");
-                Log.v(TAG , "onParseSuccess invoked");
+                Log.v(TAG , "onParseResult result parse success onParseSuccess invoked");
                 // 解析成功回调
                 onParseSuccess();
                 if (mData.isSuccess()) {
@@ -277,22 +278,16 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
                 }
             } else {
                 // 解析失败
-                Log.v(TAG , "onParseResult result parse failed");
-                Log.v(TAG , "onParseFailed invoked");
+                Log.v(TAG , "onParseResult result parse failed onParseFailed invoked");
                 // 解析失败回调
-                onParseFailed();
+                DataModelHandle.setMessage(mData , onParseFailed());
             }
         } else {
             // 网络请求失败
-            Log.v(TAG , "onParseResult network request false");
+            Log.v(TAG , "onParseResult network request false onNetworkRequestFailed invoked");
 
-            // 设置网络请求失败时的消息
-            Log.v(TAG , "onNetworkRequestFailedMessage invoked");
-            DataModelHandle.setMessage(mData , onNetworkRequestFailedMessage());
-
-            Log.v(TAG , "onNetworkRequestFailed invoked");
             // 网络请求失败回调
-            onNetworkRequestFailed();
+            DataModelHandle.setMessage(mData , onNetworkRequestFailed());
         }
     }
 
@@ -429,25 +424,24 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
 
     /**
      * 网络请求成功，服务器响应数据解析失败后调用，
-     * 即在{@link WorkDataModel#parse(int , Object)}返回false时调用
-     */
-    protected void onParseFailed() {
-    }
-
-    /**
-     * 网络请求失败时调用，此后不会执行{@link #onParseFailed()}
-     */
-    protected void onNetworkRequestFailed() {
-    }
-
-    /**
-     * 设置网络请求失败时的返回消息，
-     * 即{@link WorkDataModel#getMessage()}的消息字段，
-     * 在@{@link #onNetworkRequestFailed()}之前被调用
+     * 即在{@link WorkDataModel#parse(int , Object)}返回false时调用，
+     * 同时设置响应数据解析失败时的返回消息，
+     * 即{@link WorkDataModel#getMessage()}的消息字段
      *
      * @return 消息内容，默认为null
      */
-    protected String onNetworkRequestFailedMessage() {
+    protected String onParseFailed() {
+        return null;
+    }
+
+    /**
+     * 网络请求失败时调用，
+     * 同时设置网络请求失败时的返回消息，
+     * 即{@link WorkDataModel#getMessage()}的消息字段
+     *
+     * @return 消息内容，默认为null
+     */
+    protected String onNetworkRequestFailed() {
         return null;
     }
 }

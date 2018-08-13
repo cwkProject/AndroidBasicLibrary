@@ -23,6 +23,11 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
      */
     protected static final String RESULT = "result";
 
+    /**
+     * 服务响应的业务消息的参数默认取值标签
+     */
+    protected static final String MESSAGE = "message";
+
     @NonNull
     @Override
     protected SimpleDataModel<Parameters, Result> onCreateDataModel() {
@@ -42,6 +47,16 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
             @Override
             protected Result onDefaultData() throws Exception {
                 return onSuccessDefault();
+            }
+
+            @Override
+            protected String onRequestFailedMessage(JSONObject handleResult) throws Exception {
+                return SimpleWorkModel.this.onRequestFailedMessage(handleResult);
+            }
+
+            @Override
+            protected String onRequestSuccessMessage(JSONObject handleResult) throws Exception {
+                return SimpleWorkModel.this.onRequestSuccessMessage(handleResult);
             }
         };
     }
@@ -78,5 +93,35 @@ public abstract class SimpleWorkModel<Parameters, Result> extends StandardWorkMo
      */
     protected Result onSuccessDefault() throws Exception {
         return null;
+    }
+
+    /**
+     * 提取或设置服务返回的失败结果消息<br>
+     * 在{@link SimpleDataModel#onRequestResult(Object)}之后被调<br>
+     * 且服务器返回的执行结果为失败{@link SimpleDataModel#isSuccess()}为false
+     *
+     * @param handleResult 二次处理结果集
+     *
+     * @return 消息字符串
+     *
+     * @throws Exception 处理过程中可能出现的异常
+     */
+    protected String onRequestFailedMessage(JSONObject handleResult) throws Exception {
+        return handleResult.optString(MESSAGE);
+    }
+
+    /**
+     * 提取或设置服务返回的成功结果消息<br>
+     * 在{@link SimpleDataModel#onRequestResult(Object)}之后被调<br>
+     * 且服务器返回的执行结果为成功{@link SimpleDataModel#isSuccess()}为true
+     *
+     * @param handleResult 二次处理结果集
+     *
+     * @return 消息字符串
+     *
+     * @throws Exception 处理过程中可能出现的异常
+     */
+    protected String onRequestSuccessMessage(JSONObject handleResult) throws Exception {
+        return handleResult.optString(MESSAGE);
     }
 }

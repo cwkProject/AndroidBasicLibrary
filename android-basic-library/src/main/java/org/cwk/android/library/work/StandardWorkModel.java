@@ -1,11 +1,12 @@
 package org.cwk.android.library.work;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.cwk.android.library.data.WorkDataModel;
-import org.cwk.android.library.global.Global;
 import org.cwk.android.library.network.factory.CommunicationBuilder;
 import org.cwk.android.library.network.util.AsyncCommunication;
 import org.cwk.android.library.network.util.OnNetworkProgressListener;
@@ -33,6 +34,11 @@ import io.reactivex.Single;
 public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataModel> extends
         WorkModel<Parameters, DataModel> implements SyncExecute<Parameters, DataModel>,
         AsyncExecute<Parameters>, Cancelable, CreateRxObservable<Parameters, DataModel> {
+
+    /**
+     * 主线程助手
+     */
+    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
     /**
      * 任务完成回调接口
@@ -77,7 +83,7 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
             Log.v(TAG , "onWorkCanceledListener invoked");
             if (isCancelUiThread) {
                 // 发送到UI线程
-                Global.getUiHandler().post(() -> onWorkCanceledListener.onCanceled(mParameters));
+                MAIN_HANDLER.post(() -> onWorkCanceledListener.onCanceled(mParameters));
             } else {
                 // 发送到当前线程
                 this.onWorkCanceledListener.onCanceled(mParameters);
@@ -99,11 +105,9 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
     protected OnNetworkProgressListener onCreateProgressListener() {
         if (onNetworkProgressListener != null) {
             // 开始绑定
-            Log.v(TAG , "set ProgressListener");
-
             if (isProgressUiThread) {
                 // 发送到UI线程
-                return (current , total , done) -> Global.getUiHandler().post(() ->
+                return (current , total , done) -> MAIN_HANDLER.post(() ->
                         onNetworkProgressListener.onRefreshProgress(current , total , done));
             } else {
                 // 在当前线程
@@ -121,12 +125,13 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
 
         // 如果设置了回调接口则执行回调方法
         if (!cancelMark && isAsync && this.onWorkFinishListener != null) {
-            Log.v(TAG , "onWorkFinishListener invoked");
             if (isEndUiThread) {
                 // 发送到UI线程
-                Global.getUiHandler().post(() -> onWorkFinishListener.onFinish(mData));
+                Log.v(TAG , "onWorkFinishListener invoked in main thread");
+                MAIN_HANDLER.post(() -> onWorkFinishListener.onFinish(mData));
             } else {
                 // 发送到当前线程
+                Log.v(TAG , "onWorkFinishListener invoked in background thread");
                 this.onWorkFinishListener.onFinish(mData);
             }
         }

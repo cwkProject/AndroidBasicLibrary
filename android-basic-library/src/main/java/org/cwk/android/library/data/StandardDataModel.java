@@ -29,7 +29,7 @@ public abstract class StandardDataModel<Value, Response, Handle, Parameters, Res
     }
 
     @Override
-    protected Map<String, Value> onSerialization(Parameters[] parameters) {
+    protected final Map<String, Value> onSerialization(Parameters[] parameters) {
         // 序列化后的参数集
         Map<String, Value> dataMap = new HashMap<>();
         Log.v(logTag , "onSerialization onFillRequestParameters invoked");

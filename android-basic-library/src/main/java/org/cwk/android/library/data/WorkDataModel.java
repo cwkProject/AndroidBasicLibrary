@@ -121,9 +121,8 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
         responseCode = code;
         if (!onCheckResponse(response)) {
             // 通信异常
-            Log.d(logTag , "parse response error");
-            Log.v(logTag , "parse onParseFailed invoked");
-            this.message = onParseFailed();
+            Log.d(logTag , "parse response error onParseFailed invoked");
+            onParseFailed();
             return false;
         }
 
@@ -132,15 +131,13 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
             Log.v(logTag , "parse onCreateHandle invoked");
             Handle handle = onCreateHandle(response);
 
-            Log.v(logTag , "parse onRequestResult invoked");
             // 提取服务执行结果
             this.success = onRequestResult(handle);
-            Log.v(logTag , "parse request result is " + this.success);
+            Log.v(logTag , "parse request result:" + this.success);
 
-            Log.v(logTag , "parse onRequestMessage invoked");
             // 提取服务返回的消息
             this.message = onRequestMessage(this.success , handle);
-            Log.v(logTag , "parse request message is " + this.message);
+            Log.v(logTag , "parse request message:" + this.message);
 
             if (this.success) {
                 // 服务请求成功回调
@@ -154,9 +151,8 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
 
             return true;
         } catch (Exception e) {
-            Log.e(logTag , "parse error" , e);
-            Log.v(logTag , "parse onParseFailed invoked");
-            this.message = onParseFailed();
+            Log.e(logTag , "parse error onParseFailed invoked" , e);
+            onParseFailed();
             return false;
         } finally {
             Log.v(logTag , "parse end");
@@ -170,6 +166,7 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
      */
     final void setMessage(String message) {
         this.message = message;
+        Log.v(logTag , "setMessage message:" + this.message);
     }
 
     /**
@@ -192,11 +189,8 @@ public abstract class WorkDataModel<Request, Response, Handle, Parameters, Resul
 
     /**
      * 解析失败时调用，即{@link #parse}出现异常时调用
-     *
-     * @return 消息字符串，用于显示协议解析失败时的提示信息
      */
-    protected String onParseFailed() {
-        return null;
+    protected void onParseFailed() {
     }
 
     /**
