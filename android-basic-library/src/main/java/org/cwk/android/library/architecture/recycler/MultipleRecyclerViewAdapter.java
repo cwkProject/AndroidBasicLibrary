@@ -143,7 +143,7 @@ public abstract class MultipleRecyclerViewAdapter extends RecyclerView.Adapter<R
     @Override
     public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
         int groupIndex = holder.getItemViewType() / VIEW_TYPE_WEIGHT;
-        managerList.get(groupIndex).onViewRecycled(holder);
+        managerList.get(groupIndex).viewRecycled(holder);
     }
 
     /**

@@ -202,11 +202,21 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
     public abstract ViewHolderType onCreateViewHolder(@NonNull ViewGroup parent , int viewType);
 
     /**
-     * 本组中的控件管理器回收，与{@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}相同
+     * 回收本组中的控件管理器，由{@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}调用
      *
      * @param holder 仅本组的控件管理器
      */
-    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+    final void viewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        //noinspection unchecked
+        onViewRecycled((ViewHolderType) holder);
+    }
+
+    /**
+     * 本组中的控件管理器回收，与{@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}行为相同
+     *
+     * @param holder 仅本组的控件管理器
+     */
+    protected void onViewRecycled(@NonNull ViewHolderType holder) {
     }
 
     /**
