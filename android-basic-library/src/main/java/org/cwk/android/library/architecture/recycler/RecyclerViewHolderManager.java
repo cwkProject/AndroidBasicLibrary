@@ -29,7 +29,7 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
     /**
      * 数据源
      */
-    protected final List<SourceType> dataList = new ArrayList<>();
+    protected List<SourceType> dataList = new ArrayList<>();
 
     /**
      * 依赖的适配器
@@ -272,6 +272,11 @@ public abstract class RecyclerViewHolderManager<SourceType, ViewHolderType exten
         if (position >= 0 && position <= dataList.size() && convertUnit != null) {
             adapter.notifyItemChanged(toAdapterPosition(position));
         }
+    }
+
+    @Override
+    public void bind(List<SourceType> dataList) {
+        this.dataList = dataList;
     }
 
     @Override

@@ -17,6 +17,13 @@ import java.util.List;
 public interface RecyclerViewAdapterFunction<SourceType> {
 
     /**
+     * 绑定一个新的数据源，方便共享和管理外部已有的数据集合
+     *
+     * @param dataList 新的数据集合，建议使用可变集合，如ArrayList
+     */
+    void bind(List<SourceType> dataList);
+
+    /**
      * 在列表末尾追加一条数据
      *
      * @param data 数据
@@ -29,7 +36,7 @@ public interface RecyclerViewAdapterFunction<SourceType> {
      * @param position 索引
      * @param data     数据
      */
-    void add(int position, SourceType data);
+    void add(int position , SourceType data);
 
     /**
      * 在列表末尾追加一组数据
@@ -44,7 +51,7 @@ public interface RecyclerViewAdapterFunction<SourceType> {
      * @param position 索引
      * @param data     数据集
      */
-    void add(int position, Collection<SourceType> data);
+    void add(int position , Collection<SourceType> data);
 
     /**
      * 移除一条数据
@@ -63,7 +70,7 @@ public interface RecyclerViewAdapterFunction<SourceType> {
      *
      * @return 被移除的一组数据，失败返回null
      */
-    List<SourceType> remove(int start, int count);
+    List<SourceType> remove(int start , int count);
 
     /**
      * 变更一条数据
@@ -73,7 +80,7 @@ public interface RecyclerViewAdapterFunction<SourceType> {
      *
      * @return 原数据，失败返回null
      */
-    SourceType change(int position, SourceType data);
+    SourceType change(int position , SourceType data);
 
     /**
      * 变更一组数据
@@ -83,7 +90,7 @@ public interface RecyclerViewAdapterFunction<SourceType> {
      *
      * @return 原数据集，失败返回null
      */
-    List<SourceType> change(int position, Collection<SourceType> data);
+    List<SourceType> change(int position , Collection<SourceType> data);
 
     /**
      * 交换两条数据
@@ -91,7 +98,7 @@ public interface RecyclerViewAdapterFunction<SourceType> {
      * @param fromPosition 索引1
      * @param toPosition   索引2
      */
-    void swap(int fromPosition, int toPosition);
+    void swap(int fromPosition , int toPosition);
 
     /**
      * 移动数据
@@ -99,7 +106,7 @@ public interface RecyclerViewAdapterFunction<SourceType> {
      * @param fromPosition 起始位置
      * @param toPosition   目标位置
      */
-    void move(int fromPosition, int toPosition);
+    void move(int fromPosition , int toPosition);
 
     /**
      * 清空数据

@@ -27,7 +27,7 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
     /**
      * 数据源
      */
-    protected final List<SourceType> dataList = new ArrayList<>();
+    protected List<SourceType> dataList = new ArrayList<>();
 
     /**
      * Item点击事件监听器
@@ -97,6 +97,11 @@ public abstract class SimpleRecyclerViewAdapter<SourceType, ViewHolderType exten
     @Override
     public int getItemCount() {
         return dataList.size();
+    }
+
+    @Override
+    public void bind(List<SourceType> dataList) {
+        this.dataList = dataList;
     }
 
     @Override
