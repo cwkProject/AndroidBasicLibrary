@@ -75,22 +75,6 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
      */
     private int retryTimes = 0;
 
-    @Override
-    public final void cancel() {
-        super.cancel();
-
-        if (onWorkCanceledListener != null) {
-            Log.v(TAG , "onWorkCanceledListener invoked");
-            if (isCancelUiThread) {
-                // 发送到UI线程
-                MAIN_HANDLER.post(() -> onWorkCanceledListener.onCanceled(mParameters));
-            } else {
-                // 发送到当前线程
-                this.onWorkCanceledListener.onCanceled(mParameters);
-            }
-        }
-    }
-
     @CallSuper
     @Override
     protected void onCreateCommunication(@NonNull CommunicationBuilder builder) {
@@ -133,6 +117,21 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
                 // 发送到当前线程
                 Log.v(TAG , "onWorkFinishListener invoked in background thread");
                 this.onWorkFinishListener.onFinish(mData);
+            }
+        }
+    }
+
+    @CallSuper
+    @Override
+    protected void onCanceled() {
+        if (onWorkCanceledListener != null) {
+            Log.v(TAG , "onWorkCanceledListener invoked");
+            if (isCancelUiThread) {
+                // 发送到UI线程
+                MAIN_HANDLER.post(() -> onWorkCanceledListener.onCanceled(mParameters));
+            } else {
+                // 发送到当前线程
+                this.onWorkCanceledListener.onCanceled(mParameters);
             }
         }
     }
@@ -226,7 +225,10 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
      *
      * @param isUiThread             指示是否在UI线程回调，
      *                               true表示在UI线程回调，
-     *                               false表示在当前线程（执行{@link #cancel()}的线程）回调，
+     *                               false表示在原线程回调
+     *                               (如果是{@link #execute(Object[])}方式启动，则在执行任务的线程中执行，<br>
+     *                               如果是{@link #beginExecute(Object[])}方式启动，则可能在网络请求线程被执行，<br>
+     *                               也可能取消速度较快，网络请求还未启动，此时会在执行任务的线程中执行)
      *                               默认为true
      * @param onWorkCanceledListener 监听器对象
      *
