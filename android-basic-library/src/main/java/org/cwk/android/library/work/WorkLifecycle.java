@@ -31,6 +31,11 @@ class WorkLifecycle implements LifecycleObserver {
     private final WeakReference<Cancelable> cancelable;
 
     /**
+     * 是否已被销毁
+     */
+    private boolean isDestroy = false;
+
+    /**
      * 注册生命周期
      *
      * @param lifecycle  生命周期对象
@@ -47,16 +52,18 @@ class WorkLifecycle implements LifecycleObserver {
      * 注销生命周期
      */
     void unregister() {
-        WorkModel.MAIN_HANDLER.post(() -> {
-            Lifecycle lifecycle = this.lifecycle.get();
+        if (!isDestroy) {
+            WorkModel.MAIN_HANDLER.post(() -> {
+                Lifecycle lifecycle = this.lifecycle.get();
 
-            if (lifecycle != null) {
-                lifecycle.removeObserver(this);
-            }
+                if (lifecycle != null) {
+                    lifecycle.removeObserver(this);
+                }
 
-            this.lifecycle.clear();
-            this.cancelable.clear();
-        });
+                this.lifecycle.clear();
+                this.cancelable.clear();
+            });
+        }
     }
 
     /**
@@ -64,6 +71,7 @@ class WorkLifecycle implements LifecycleObserver {
      */
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private void onDestroy() {
+        isDestroy = true;
         Cancelable cancelable = this.cancelable.get();
 
         if (cancelable != null) {
