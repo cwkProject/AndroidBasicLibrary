@@ -1,7 +1,14 @@
 package org.cwk.android.library.work;
 
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.cwk.android.library.data.DataModelHandle;
@@ -21,7 +28,13 @@ import org.cwk.android.library.network.factory.NetworkType;
  * @since 1.0
  */
 public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> implements
-        SyncExecute<Parameters, DataModel>, AsyncExecute<Parameters>, Cancelable {
+        SyncExecute<Parameters, DataModel>, AsyncExecute<Parameters>, LiveDataExecute<Parameters,
+        DataModel>, Cancelable, LifeCycleBindable {
+
+    /**
+     * 主线程助手
+     */
+    static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
     /**
      * 日志标签前缀
@@ -32,6 +45,16 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
      * 网络请求工具
      */
     private ICommunication communication = null;
+
+    /**
+     * 存放任务结果的LiveData
+     */
+    private MutableLiveData<DataModel> liveData = null;
+
+    /**
+     * 任务UI生命周期同步
+     */
+    private WorkLifecycle workLifecycle = null;
 
     /**
      * 协议数据处理器
@@ -53,9 +76,36 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
      */
     protected boolean isAsync = true;
 
+    @NonNull
+    @Override
+    public LiveData<DataModel> getLiveData() {
+        synchronized (this) {
+            if (liveData == null) {
+                liveData = new MutableLiveData<>();
+            }
+        }
+
+        return liveData;
+    }
+
+    @SafeVarargs
+    @NonNull
+    @Override
+    public final LiveData<DataModel> executeLiveData(@Nullable Parameters... parameters) {
+        synchronized (this) {
+            if (liveData == null) {
+                liveData = new MutableLiveData<>();
+            }
+        }
+
+        beginExecute(parameters);
+
+        return liveData;
+    }
+
     @SafeVarargs
     @Override
-    public final void beginExecute(Parameters... parameters) {
+    public final void beginExecute(@Nullable Parameters... parameters) {
         Log.v(TAG , "work beginExecute start");
 
         cancelMark = false;
@@ -90,7 +140,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
 
     @SafeVarargs
     @Override
-    public final DataModel execute(Parameters... parameters) {
+    public final DataModel execute(@Nullable Parameters... parameters) {
         Log.v(TAG , "work execute start");
         cancelMark = false;
         isAsync = false;
@@ -140,6 +190,28 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     @Override
     public boolean isCanceled() {
         return this.cancelMark;
+    }
+
+    @MainThread
+    @Override
+    public WorkModel<Parameters, DataModel> setLifecycleOwner(@NonNull LifecycleOwner
+                                                                          lifecycleOwner) {
+        return setLifecycleOwner(lifecycleOwner , true);
+    }
+
+    @MainThread
+    @Override
+    public WorkModel<Parameters, DataModel> setLifecycleOwner(@NonNull LifecycleOwner
+                                                                          lifecycleOwner ,
+                                                              boolean isOnce) {
+        if (workLifecycle != null) {
+            workLifecycle.unregister();
+        }
+
+        workLifecycle = new WorkLifecycle(lifecycleOwner.getLifecycle() , this);
+        workLifecycle.isOnce = isOnce;
+
+        return this;
     }
 
     /**
@@ -312,6 +384,15 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
             } else {
                 Log.v(TAG , "onFailed invoke");
                 onFailed();
+            }
+
+            if (workLifecycle != null && workLifecycle.isOnce) {
+                workLifecycle.unregister();
+                workLifecycle = null;
+            }
+
+            if (liveData != null) {
+                liveData.postValue(mData);
             }
         }
     }

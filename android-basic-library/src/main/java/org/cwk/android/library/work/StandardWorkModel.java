@@ -1,7 +1,5 @@
 package org.cwk.android.library.work;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -32,13 +30,7 @@ import io.reactivex.Single;
  * @since 1.0 2014/11/2
  */
 public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataModel> extends
-        WorkModel<Parameters, DataModel> implements SyncExecute<Parameters, DataModel>,
-        AsyncExecute<Parameters>, Cancelable, CreateRxObservable<Parameters, DataModel> {
-
-    /**
-     * 主线程助手
-     */
-    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+        WorkModel<Parameters, DataModel> implements CreateRxObservable<Parameters, DataModel> {
 
     /**
      * 任务完成回调接口
