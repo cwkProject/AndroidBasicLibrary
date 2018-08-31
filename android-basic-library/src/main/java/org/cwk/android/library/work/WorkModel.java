@@ -1,14 +1,7 @@
 package org.cwk.android.library.work;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.CallSuper;
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.cwk.android.library.data.DataModelHandle;
@@ -39,7 +32,8 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     /**
      * 日志标签前缀
      */
-    protected final String TAG = this.getClass().getSimpleName();
+    protected final String TAG = this.getClass().getSimpleName() + "@" + Integer.toString(this
+            .hashCode() , 16);
 
     /**
      * 网络请求工具
@@ -88,6 +82,11 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
         return liveData;
     }
 
+    /**
+     * 任务是否已经开始
+     */
+    protected boolean isStart = false;
+
     @SafeVarargs
     @NonNull
     @Override
@@ -107,7 +106,11 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     @Override
     public final void beginExecute(@Nullable Parameters... parameters) {
         Log.v(TAG , "work beginExecute start");
-
+        if (isStart) {
+            Log.w(TAG , "work has started");
+            return;
+        }
+        isStart = true;
         cancelMark = false;
         isAsync = true;
 
@@ -134,6 +137,13 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
                 onFinish();
             }
 
+            if (cancelMark) {
+                // 任务被取消
+                Log.v(TAG , "onCanceled invoked");
+                onCanceled();
+            }
+
+            isStart = false;
             Log.v(TAG , "work end");
         }
     }
@@ -142,6 +152,11 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     @Override
     public final DataModel execute(@Nullable Parameters... parameters) {
         Log.v(TAG , "work execute start");
+        if (isStart) {
+            Log.w(TAG , "work has started");
+            return null;
+        }
+        isStart = true;
         cancelMark = false;
         isAsync = false;
 
@@ -169,22 +184,33 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
             onFinish();
         }
 
+        if (cancelMark) {
+            // 任务被取消
+            Log.v(TAG , "onCanceled invoked");
+            onCanceled();
+        }
+
+        isStart = false;
         Log.v(TAG , "work end");
 
         return mData;
     }
 
-    @CallSuper
     @Override
-    public void cancel() {
+    public final void cancel() {
         Log.v(TAG , "cancel");
-        this.cancelMark = true;
+        if (cancelMark) {
+            Log.v(TAG , "work has been canceled");
+            return;
+        }
+        if (!isStart) {
+            Log.v(TAG , "work not started");
+            return;
+        }
+        cancelMark = true;
         if (communication != null) {
             communication.cancel();
         }
-
-        Log.v(TAG , "onCanceled invoked");
-        onCanceled();
     }
 
     @Override
@@ -294,6 +320,13 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
                     onFinish();
                 }
 
+                if (cancelMark) {
+                    // 任务被取消
+                    Log.v(TAG , "onCanceled invoked");
+                    onCanceled();
+                }
+
+                isStart = false;
                 Log.v(TAG , "work end");
             });
         }
@@ -398,7 +431,9 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
     }
 
     /**
-     * 任务被取消，在执行取消操作的线程中执行
+     * 任务被取消，如果是{@link #execute(Object[])}方式启动，则在执行任务的线程中执行，<br>
+     * 如果是{@link #beginExecute(Object[])}方式启动，则可能在网络请求线程被执行，<br>
+     * 也可能取消速度较快，网络请求还未启动，此时会在执行任务的线程中执行
      */
     protected void onCanceled() {
     }
