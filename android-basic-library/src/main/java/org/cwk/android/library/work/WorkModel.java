@@ -1,7 +1,10 @@
 package org.cwk.android.library.work;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.cwk.android.library.data.DataModelHandle;
@@ -22,6 +25,11 @@ import org.cwk.android.library.network.factory.NetworkType;
  */
 public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> implements
         SyncExecute<Parameters, DataModel>, AsyncExecute<Parameters>, Cancelable {
+
+    /**
+     * 主线程助手
+     */
+    static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
     /**
      * 日志标签前缀
@@ -61,7 +69,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
 
     @SafeVarargs
     @Override
-    public final void beginExecute(Parameters... parameters) {
+    public final void beginExecute(@Nullable Parameters... parameters) {
         Log.v(TAG , "work beginExecute start");
         if (isStart) {
             Log.w(TAG , "work has started");
@@ -107,7 +115,7 @@ public abstract class WorkModel<Parameters, DataModel extends WorkDataModel> imp
 
     @SafeVarargs
     @Override
-    public final DataModel execute(Parameters... parameters) {
+    public final DataModel execute(@Nullable Parameters... parameters) {
         Log.v(TAG , "work execute start");
         if (isStart) {
             Log.w(TAG , "work has started");

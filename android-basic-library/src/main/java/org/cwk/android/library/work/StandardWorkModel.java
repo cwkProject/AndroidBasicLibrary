@@ -1,9 +1,12 @@
 package org.cwk.android.library.work;
 
-import android.os.Handler;
-import android.os.Looper;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.CallSuper;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.cwk.android.library.data.WorkDataModel;
@@ -32,13 +35,8 @@ import io.reactivex.Single;
  * @since 1.0 2014/11/2
  */
 public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataModel> extends
-        WorkModel<Parameters, DataModel> implements SyncExecute<Parameters, DataModel>,
-        AsyncExecute<Parameters>, Cancelable, CreateRxObservable<Parameters, DataModel> {
-
-    /**
-     * 主线程助手
-     */
-    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+        WorkModel<Parameters, DataModel> implements LiveDataExecute<Parameters, DataModel>,
+        LifeCycleBindable, CreateRxObservable<Parameters, DataModel> {
 
     /**
      * 任务完成回调接口
@@ -54,6 +52,16 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
      * 任务被取消回调接口
      */
     private OnWorkCanceledListener<Parameters> onWorkCanceledListener = null;
+
+    /**
+     * 存放任务结果的LiveData
+     */
+    private MutableLiveData<DataModel> liveData = null;
+
+    /**
+     * 任务UI生命周期同步
+     */
+    private WorkLifecycle workLifecycle = null;
 
     /**
      * 指示是否将取消回调接口在UI线程执行，默认为发送到UI线程
@@ -74,6 +82,55 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
      * 任务请求重试次数
      */
     private int retryTimes = 0;
+
+    @NonNull
+    @Override
+    public LiveData<DataModel> getLiveData() {
+        synchronized (this) {
+            if (liveData == null) {
+                liveData = new MutableLiveData<>();
+            }
+        }
+
+        return liveData;
+    }
+
+    @SafeVarargs
+    @NonNull
+    @Override
+    public final LiveData<DataModel> executeLiveData(@Nullable Parameters... parameters) {
+        synchronized (this) {
+            if (liveData == null) {
+                liveData = new MutableLiveData<>();
+            }
+        }
+
+        beginExecute(parameters);
+
+        return liveData;
+    }
+
+    @MainThread
+    @Override
+    public StandardWorkModel<Parameters, DataModel> setLifecycleOwner(@NonNull LifecycleOwner
+                                                                                  lifecycleOwner) {
+        return setLifecycleOwner(lifecycleOwner , true);
+    }
+
+    @MainThread
+    @Override
+    public StandardWorkModel<Parameters, DataModel> setLifecycleOwner(@NonNull LifecycleOwner
+                                                                                  lifecycleOwner
+            , boolean isOnce) {
+        if (workLifecycle != null) {
+            workLifecycle.unregister();
+        }
+
+        workLifecycle = new WorkLifecycle(lifecycleOwner.getLifecycle() , this);
+        workLifecycle.isOnce = isOnce;
+
+        return this;
+    }
 
     @CallSuper
     @Override
@@ -119,6 +176,15 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
                 this.onWorkFinishListener.onFinish(mData);
             }
         }
+
+        if (workLifecycle != null && workLifecycle.isOnce) {
+            workLifecycle.unregister();
+            workLifecycle = null;
+        }
+
+        if (liveData != null) {
+            liveData.postValue(mData);
+        }
     }
 
     @CallSuper
@@ -133,6 +199,11 @@ public abstract class StandardWorkModel<Parameters, DataModel extends WorkDataMo
                 // 发送到当前线程
                 this.onWorkCanceledListener.onCanceled(mParameters);
             }
+        }
+
+        if (workLifecycle != null && workLifecycle.isOnce) {
+            workLifecycle.unregister();
+            workLifecycle = null;
         }
     }
 
