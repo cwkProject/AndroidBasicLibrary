@@ -148,6 +148,9 @@ public abstract class OkHttpCommunication<RequestType, ResponseType> implements
 
         // 创建请求
         Request.Builder builder = new Request.Builder();
+        if (headers != null) {
+            builder.headers(headers);
+        }
         onCreateRequest(builder , sendData);
         Request request = builder.build();
 
