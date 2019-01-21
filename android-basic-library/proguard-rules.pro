@@ -23,10 +23,9 @@
 -keepclassmembernames class * extends org.cwk.android.library.architecture.preferences.PersistenceConfigModel {*;}
 
 # okhttp3
--dontwarn okhttp3.**
--dontwarn okio.**
+-dontwarn okhttp3.internal.platform.ConscryptPlatform
 -dontwarn javax.annotation.**
--dontwarn org.conscrypt.**
+-dontwarn org.codehaus.mojo.animal_sniffer.*
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # rxjava2
